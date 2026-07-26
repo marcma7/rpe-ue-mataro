@@ -943,3 +943,280 @@ body{
     cursor:pointer;
 
 }
+
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin:0;
+
+    font-family:'Inter', sans-serif;
+
+    background:#f5f5f5;
+
+}
+
+
+/* CONTENIDORS */
+
+.container {
+
+    width:100%;
+
+    min-height:100vh;
+
+    padding:15px;
+
+    overflow-x:hidden;
+
+}
+
+
+/* TITOLS */
+
+h1 {
+
+    font-size:28px;
+
+    text-align:center;
+
+    margin:15px 0;
+
+}
+
+
+h2 {
+
+    font-size:22px;
+
+}
+
+
+h3 {
+
+    font-size:18px;
+
+}
+
+
+
+/* BOTONS GENERALS */
+
+button {
+
+    min-height:48px;
+
+    width:100%;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    margin:6px 0;
+
+}
+
+
+
+/* INPUTS */
+
+input,
+textarea,
+select {
+
+    width:100%;
+
+    min-height:45px;
+
+    font-size:16px;
+
+    padding:10px;
+
+    border-radius:10px;
+
+}
+
+
+
+/* LOGIN */
+
+.loginCard {
+
+    width:100%;
+
+    max-width:400px;
+
+    margin:auto;
+
+}
+
+
+
+/* FILES */
+
+.teamRow,
+.dataRow,
+.addPlayerRow,
+.timeInputs,
+.barraBotons {
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+
+
+/* BOTONS INFERIORS */
+
+.rpeBottomButtons {
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+/* RPE */
+
+#rpeGrid {
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:10px;
+
+}
+
+
+.rpeButton {
+
+    aspect-ratio:1;
+
+    font-size:24px;
+
+}
+
+
+
+/* LLISTES */
+
+.questionariFila,
+.jugadorFila,
+.valoracioItem {
+
+    width:100%;
+
+    padding:15px;
+
+    margin-bottom:10px;
+
+    border-radius:12px;
+
+}
+
+
+
+/* BOTONS D'UNA FILA */
+
+.questionariFila {
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+/* DIALOGS */
+
+.dialogCard {
+
+    width:90%;
+
+    max-width:400px;
+
+}
+
+
+
+/* VALORACIONS */
+
+#itemsValoracio {
+
+    width:100%;
+
+}
+
+
+#itemsValoracio textarea {
+
+    min-height:120px;
+
+}
+
+
+
+/* FITXA JUGADOR */
+
+.dadesCard {
+
+    width:95%;
+
+}
+
+
+
+/* ESCRIPTORI */
+
+@media(min-width:768px){
+
+
+.container {
+
+    max-width:900px;
+
+    margin:auto;
+
+}
+
+
+button {
+
+    width:auto;
+
+    padding:0 25px;
+
+}
+
+
+.questionariFila {
+
+    flex-direction:row;
+
+    align-items:center;
+
+}
+
+
+
+}
