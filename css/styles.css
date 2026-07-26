@@ -1220,3 +1220,121 @@ button {
 
 
 }
+
+
+/* =========================
+   FIX MOBILE WIDTH
+========================= */
+
+html,
+body {
+
+    width:100%;
+
+    max-width:100%;
+
+    overflow-x:hidden;
+
+}
+
+
+body {
+
+    margin:0;
+
+}
+
+
+/* Totes les pantalles */
+
+.container {
+
+    width:100%;
+
+    max-width:100vw;
+
+    min-height:100vh;
+
+    padding:15px;
+
+    overflow-x:hidden;
+
+}
+
+
+/* Evita que inputs i botons surtin fora */
+
+input,
+textarea,
+select,
+button {
+
+    max-width:100%;
+
+}
+
+
+/* Files */
+
+.teamRow,
+.addPlayerRow,
+.dataRow,
+.timeInputs,
+.barraBotons,
+.questionariFila {
+
+    width:100%;
+
+}
+
+
+/* Grid RPE */
+
+#rpeGrid {
+
+    width:100%;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+}
+
+
+/* Targetes */
+
+.loginCard,
+.dialogCard,
+.dadesCard {
+
+    width:100%;
+
+    max-width:100%;
+
+}
+
+
+/* Text llarg */
+
+h1,
+h2,
+h3,
+p {
+
+    max-width:100%;
+
+    overflow-wrap:break-word;
+
+}
+
+
+/* Pantalles amb llistes */
+
+#llistaJugadors,
+#llistaQuestionaris,
+#llistaValoracionsGest,
+#llistaValoracioItems,
+#itemsValoracio {
+
+    width:100%;
+
+}
