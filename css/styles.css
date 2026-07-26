@@ -615,17 +615,6 @@ body{
 }
 
 
-.teamRow{
-
-    display:flex;
-
-    gap:12px;
-
-    width:100%;
-
-    margin-bottom:20px;
-
-}
 
 .teamRow select{
 
@@ -1066,17 +1055,12 @@ select {
 
 /* FILES */
 
-.teamRow,
 .dataRow,
-.addPlayerRow,
 .timeInputs,
-.barraBotons {
+.questionariFila {
 
     display:flex;
-
     flex-direction:column;
-
-    gap:10px;
 
 }
 
@@ -1276,7 +1260,6 @@ button {
 
 /* Files */
 
-.teamRow,
 .addPlayerRow,
 .dataRow,
 .timeInputs,
@@ -1336,5 +1319,189 @@ p {
 #itemsValoracio {
 
     width:100%;
+
+}
+
+
+.pantallaTeams h1{
+    width:100%;
+    white-space:nowrap;
+    font-size:28px;
+}
+
+.teamRow{
+
+    display:flex;
+
+    width:100%;
+
+    gap:8px;
+
+    margin-bottom:15px;
+
+}
+
+
+.teamRow select{
+
+    flex:2;
+
+    min-width:0;
+
+}
+
+
+#nouEquipButton{
+
+    flex:1;
+
+    width:auto;
+
+    padding:0;
+
+}
+
+
+#eliminarEquipButton{
+
+    flex:1;
+
+    width:auto;
+
+    padding:0;
+
+}
+
+.proporcioJugador{
+
+    display:flex;
+
+    width:100%;
+
+    gap:8px;
+
+}
+
+
+.proporcioJugador input:nth-child(1){
+    flex:3.5;
+}
+
+
+.proporcioJugador input:nth-child(2){
+    flex:3.5;
+}
+
+
+.proporcioJugador select{
+    flex:2;
+}
+
+
+.proporcioJugador button{
+    flex:1;
+}
+
+
+#llistaJugadors{
+
+    width:100%;
+
+}
+
+
+.jugadorFila{
+
+    display:flex;
+
+    width:100%;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:8px;
+
+    margin-bottom:8px;
+
+    background:#f4f4f4;
+
+    border-radius:10px;
+
+}
+
+
+.jugadorFila span:first-child{
+
+    flex:7;
+
+}
+
+
+.jugadorFila span:nth-child(2){
+
+    flex:1.5;
+
+    text-align:center;
+
+}
+
+
+.deletePlayerButton{
+
+    flex:1.5;
+
+    width:auto;
+
+    background:#ef4444;
+
+}
+
+.jugadorFila span:nth-child(2){
+
+    background:transparent;
+
+    color:#007AFF;
+
+    font-size:25px;
+
+}
+
+
+.barraBotons{
+
+    display:flex;
+
+    width:100%;
+
+    gap:8px;
+
+}
+
+
+.barraBotons button{
+
+    flex:1;
+
+    width:auto;
+
+    padding:0 5px;
+
+    font-size:13px;
+
+}
+
+
+.pantallaTeams{
+
+    padding-left:12px;
+    padding-right:12px;
+
+}
+
+
+.pantallaTeams *{
+
+    max-width:100%;
 
 }
