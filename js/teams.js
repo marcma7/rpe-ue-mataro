@@ -124,6 +124,7 @@ function pintarJugadors(users) {
 
     users.sort((a, b) => {
 
+
         function priority(role) {
 
             switch(role){

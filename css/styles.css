@@ -1371,37 +1371,46 @@ p {
     padding:0;
 
 }
-
 .proporcioJugador{
 
-    display:flex;
+    display:grid;
 
     width:100%;
 
     gap:8px;
 
+    grid-template-columns:1fr 2fr;
+
 }
 
 
+/* Nom */
 .proporcioJugador input:nth-child(1){
-    flex:3.5;
+
+    grid-column:1;
+
 }
 
 
+/* Cognom */
 .proporcioJugador input:nth-child(2){
-    flex:3.5;
+
+    grid-column:2;
+
 }
 
-
+/* Rol fila següent esquerra */
 .proporcioJugador select{
-    flex:2;
+
+    grid-column:1;
 }
 
-
+/* Botó fila següent dreta */
 .proporcioJugador button{
-    flex:1;
-}
 
+    grid-column:2;
+
+}
 
 #llistaJugadors{
 
@@ -1409,18 +1418,15 @@ p {
 
 }
 
-
 .jugadorFila{
 
     display:flex;
 
-    width:100%;
-
     align-items:center;
 
-    gap:8px;
+    width:100%;
 
-    padding:8px;
+    padding:14px 10px;
 
     margin-bottom:8px;
 
@@ -1431,42 +1437,90 @@ p {
 }
 
 
-.jugadorFila span:first-child{
+/* Nom del jugador 70% */
+
+.jugadorFila > span{
 
     flex:7;
 
-}
+    overflow:hidden;
 
+    white-space:nowrap;
 
-.jugadorFila span:nth-child(2){
-
-    flex:1.5;
-
-    text-align:center;
+    text-overflow:ellipsis;
 
 }
 
 
+/* Contenidor dels botons 30% */
+
+.jugadorFila > div{
+
+    flex:3;
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:8px;
+
+}
+
+
+/* Cada botó ocupa 15% visual de la fila */
+
+.addInjuryButton,
 .deletePlayerButton{
 
-    flex:1.5;
+    flex:1;
 
     width:auto;
 
-    background:#ef4444;
+    height:34px;
+
+    min-width:34px;
+
+    padding:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:50%;
 
 }
 
-.jugadorFila span:nth-child(2){
+
+/* Botó + transparent */
+
+.addInjuryButton{
 
     background:transparent;
 
     color:#007AFF;
 
-    font-size:25px;
+    font-size:26px;
+
+    font-weight:bold;
 
 }
 
+
+/* Creu vermella */
+
+.deletePlayerButton{
+
+    background:#ef4444;
+
+    color:white;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+}
 
 .barraBotons{
 
@@ -1503,5 +1557,47 @@ p {
 .pantallaTeams *{
 
     max-width:100%;
+
+}
+
+
+
+.jugadorFila{
+
+    display:grid;
+
+    grid-template-columns:70% 15% 15%;
+
+    align-items:center;
+
+    width:100%;
+
+}
+
+
+.jugadorFila > span{
+
+    grid-column:1;
+
+}
+
+
+.jugadorFila > div{
+
+    display:contents;
+
+}
+
+
+.addInjuryButton{
+
+    grid-column:2;
+
+}
+
+
+.deletePlayerButton{
+
+    grid-column:3;
 
 }
