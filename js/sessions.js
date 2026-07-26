@@ -133,29 +133,29 @@ async function loadDeleteSessions(){
 
 }
 
-
 function pintarLlistesModificar() {
 
     const anteriors =
-        document.getElementById(
-            "llistaSessionsAnteriors"
-        );
+        document.getElementById("llistaSessionsAnteriors");
 
     const futures =
-        document.getElementById(
-            "llistaSessionsFutures"
-        );
+        document.getElementById("llistaSessionsFutures");
+
 
     anteriors.innerHTML = "";
     futures.innerHTML = "";
+
 
     function crearFila(data) {
 
         const boto =
             document.createElement("button");
 
-        boto.className = "jugadorFila";
+
+        boto.className = "sessioModificarFila";
+
         boto.textContent = data;
+
 
         boto.addEventListener(
             "click",
@@ -166,9 +166,11 @@ function pintarLlistesModificar() {
             }
         );
 
+
         return boto;
 
     }
+
 
     pastOrToday.forEach(data => {
 
@@ -177,6 +179,7 @@ function pintarLlistesModificar() {
         );
 
     });
+
 
     future.forEach(data => {
 
@@ -187,7 +190,6 @@ function pintarLlistesModificar() {
     });
 
 }
-
 
 function pintarLlistesEliminar(
     anteriors,
