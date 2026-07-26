@@ -176,52 +176,100 @@
     <!-- SESSIONS -->
     <div id="pantallaSessions" class="container" style="display:none;">
 
-        <h1>SESSIONS</h1>
-        <h2 id="nomEquipSessio"></h2>
+    <h1 id="nomEquipSessio"></h1>
 
-        <div id="zonaAfegirSessio">
-
-            <h2>AFEGIR SESSIÓ</h2>
-
-            <div class="dataRow">
-
-                <label>Data sessió</label>
-                <input id="dataSessio" type="date">
-            </div>
-
-            <div class="timeInputs">
-
-                <div>
-                    <label>ENTRENAMENT</label>
-                    <input id="trainTime" type="number" value="0">
-                </div>
+    <h2 id="titolSessio">
+        AFEGIR SESSIÓ
+    </h2>
 
 
-                <div>
-                    <label>PF</label>
-                    <input id="pfTime" type="number" value="0">
-                </div>
+    <div id="zonaConfiguracioSessio">
 
 
-                <div>
-                    <label>PARTIT</label>
-                    <input id="gameTime" type="number" value="0">
-                </div>
+        <div class="filaSessio dataSessioFila">
 
-            </div>
+            <label>
+                Data sessió
+            </label>
 
-            <button id="aplicarJugadorsButton">APLICAR ALS JUGADORS</button>
-
-            <div id="jugadorsSessio"></div>
-
-            <button id="guardarSessioButton">AFEGIR DADES</button>
+            <input id="dataSessio" type="date">
 
         </div>
 
-        <button id="tornarTeamsButton">ENRERE</button>
+
+        <div class="filaSessio">
+
+            <label>
+                ENTRENAMENT
+            </label>
+
+            <input id="trainTime" type="number" value="0">
+
+        </div>
+
+
+        <div class="filaSessio">
+
+            <label>
+                PF
+            </label>
+
+            <input id="pfTime" type="number" value="0">
+
+        </div>
+
+
+        <div class="filaSessio">
+
+            <label>
+                PARTIT
+            </label>
+
+            <input id="gameTime" type="number" value="0">
+
+        </div>
+
+
+        <button id="aplicarJugadorsButton">
+            APLICAR ALS JUGADORS
+        </button>
+
 
     </div>
 
+
+
+    <div id="zonaJugadorsSessio" style="display:none;">
+
+
+        <button id="configurarDadesEquipButton">
+            CONFIGURAR DADES D'EQUIP
+        </button>
+
+
+        <div id="jugadorsSessio">
+        </div>
+
+
+    </div>
+
+
+
+    <div class="botonsSessioFinal">
+
+        <button id="guardarSessioButton">
+            AFEGIR DADES
+        </button>
+
+
+        <button id="tornarTeamsButton">
+            ENRERE
+        </button>
+
+    </div>
+
+
+</div>
     <!-- MODIFICAR SESSIONS -->
     <div id="pantallaModifySessions" class="container" style="display:none;">
 
@@ -315,29 +363,51 @@
 
     <div id="duplicateDialog" class="dialogOverlay" style="display:none;">
 
-        <div class="dialogCard">
+    <div class="dialogCard duplicateCard">
 
-            <h2>DUPLICAR SESSIÓ</h2>
+        <h2>DUPLICAR SESSIÓ</h2>
+
+
+        <div class="checkRow">
 
             <label>
-                <input type="checkbox" id="repeatDaily">Repetir cada dia
+                <input type="checkbox" id="repeatDaily">
+                Diari
             </label>
+
 
             <label>
-                <input type="checkbox" id="repeatWeekly">Repetir cada setmana
+                <input type="checkbox" id="repeatWeekly">
+                Setmanal
             </label>
 
-            <h3>DATA LÍMIT</h3>
-
-            <input type="date" id="duplicateLimitDate">
-
-            <div class="dialogButtons">
-
-                <button id="cancelDuplicateButton">CANCEL·LAR</button>
-                <button id="confirmDuplicateButton">AFEGIR</button>
-            </div>
         </div>
+
+
+        <h3>DATA LÍMIT</h3>
+
+        <input
+            type="date"
+            id="duplicateLimitDate">
+
+
+        <div class="dialogButtons">
+
+            <button id="confirmDuplicateButton">
+                AFEGIR
+            </button>
+
+
+            <button id="cancelDuplicateButton">
+                CANCEL·LAR
+            </button>
+
+        </div>
+
+
     </div>
+
+</div>
 
 
     <!-- SELECCIONAR VALORACIÓ -->

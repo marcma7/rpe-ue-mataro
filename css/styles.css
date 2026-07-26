@@ -1683,3 +1683,435 @@ p {
     font-size:18px;
 
 }
+
+
+.deletePlayerButton{
+
+    background:#ef4444 !important;
+
+    color:white !important;
+
+    width:28px !important;
+
+    height:28px !important;
+
+    min-width:28px !important;
+
+    min-height:28px !important;
+
+    padding:0 !important;
+
+    margin:0 !important;
+
+    border-radius:50%;
+
+    font-size:16px;
+
+    line-height:1;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+
+.jugadorFila{
+
+    min-height:42px;
+
+    height:auto;
+
+    padding:6px 8px;
+
+}
+
+
+.container {
+
+    width:100%;
+    height:100dvh;
+
+    overflow:hidden;
+
+    padding:15px;
+
+    box-sizing:border-box;
+
+}
+
+/* ===========================
+   SESSIONS MOBILE
+=========================== */
+
+
+#pantallaSessions{
+
+    width:100%;
+
+    padding:15px;
+
+}
+
+
+
+#pantallaSessions h1{
+
+    margin:5px 0;
+
+}
+
+
+.filaSessio{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    width:100%;
+
+    gap:10px;
+
+    margin-bottom:12px;
+
+    align-items:center;
+
+}
+
+
+.filaSessio label{
+
+    font-weight:bold;
+
+    font-size:16px;
+
+}
+
+
+.filaSessio input{
+
+    width:100%;
+
+    margin:0;
+
+}
+
+
+
+.dataSessioFila{
+
+    grid-template-columns:1fr 2fr;
+
+}
+
+
+
+/* zona jugadors */
+
+#zonaJugadorsSessio{
+
+    width:100%;
+
+    flex:1;
+
+}
+
+
+
+#configurarDadesEquipButton{
+
+    width:100%;
+
+    margin-bottom:10px;
+
+}
+
+
+
+#jugadorsSessio{
+
+    height:35vh;
+
+    max-height:300px;
+
+    overflow-y:auto;
+
+}
+
+
+
+/* botons finals */
+
+.botonsSessioFinal{
+
+    display:flex;
+
+    width:100%;
+
+    gap:10px;
+
+    margin-top:auto;
+
+}
+
+
+.botonsSessioFinal button{
+
+    flex:1;
+
+    width:auto;
+
+}
+
+
+.filaSessio{
+
+    display:grid;
+
+    width:100%;
+
+    gap:10px;
+
+    margin-bottom:12px;
+
+    align-items:center;
+
+    grid-template-columns:2fr 1fr;
+
+}
+
+
+.dataSessioFila{
+
+    grid-template-columns:1fr 2fr;
+
+}
+
+
+.filaSessio input[type="number"]{
+
+    text-align:center;
+
+    width:100%;
+
+}
+
+.dataSessioFila input{
+
+    width:100%;
+
+}
+
+
+/* ==========================
+   POPUP SESSIÓ CREADA
+========================== */
+
+
+#postCreateDialog{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.45);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999;
+
+}
+
+
+
+#postCreateDialog .dialogCard{
+
+    background:white;
+
+    width:90%;
+
+    max-width:380px;
+
+    padding:25px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    box-shadow:0 10px 40px rgba(0,0,0,.25);
+
+}
+
+
+
+#postCreateDialog .dialogButtons{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+    margin-top:25px;
+
+}
+
+
+
+#postCreateDialog .dialogButtons button{
+
+    width:100%;
+
+    height:50px;
+
+}
+
+
+/* ===========================
+   DUPLICAR SESSIÓ POPUP
+=========================== */
+
+
+#duplicateDialog{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999;
+
+}
+
+
+
+#duplicateDialog .duplicateCard{
+
+    background:white;
+
+    width:90%;
+
+    max-width:380px;
+
+    padding:25px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    box-shadow:0 10px 40px rgba(0,0,0,.25);
+
+}
+
+
+
+/* CHECKBOX UN AL COSTAT DE L'ALTRE */
+
+.checkRow{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:25px;
+
+    margin:20px 0;
+
+}
+
+
+.checkRow label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-size:15px;
+
+}
+
+
+.checkRow input[type="checkbox"]{
+
+    width:18px;
+
+    height:18px;
+
+    margin:0;
+
+}
+
+
+
+/* DATA */
+
+#duplicateLimitDate{
+
+    width:100%;
+
+    margin-bottom:20px;
+
+}
+
+
+
+/* BOTONS VERTICALS */
+
+#duplicateDialog .dialogButtons{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+}
+
+
+#duplicateDialog .dialogButtons button{
+
+    width:100%;
+
+    height:50px;
+
+}
+
+#duplicateDialog .dialogButtons{
+
+    display:flex;
+
+    flex-direction:row;
+
+    gap:12px;
+
+}
+
+
+#duplicateDialog .dialogButtons button{
+
+    flex:1;
+
+    width:auto;
+
+    height:50px;
+
+}

@@ -1590,12 +1590,28 @@ async ()=>{
 
 
     document
-    .getElementById("duplicateDialog")
-    .style.display="none";
+.getElementById("duplicateDialog")
+.style.display="none";
 
+
+mostrarPantalla("teams");
 
 });
 
+
+document
+.getElementById("cancelDuplicateButton")
+.addEventListener(
+"click",
+()=>{
+
+    document
+    .getElementById("duplicateDialog")
+    .style.display="none";
+
+mostrarPantalla("teams");
+
+});
 
 
 async function duplicarSessio(
@@ -1765,13 +1781,14 @@ document
 .getElementById("addAnotherSessionButton")
 .addEventListener(
 "click",
-async ()=>{
+()=>{
 
     document
     .getElementById("postCreateDialog")
     .style.display="none";
 
-    await loadAddSession();
+
+    reiniciarPantallaSessio();
 
 });
 
@@ -1804,4 +1821,21 @@ document
     .getElementById("postCreateDialog")
     .style.display="none";
 
+
+    reiniciarPantallaSessio();
+
 });
+
+
+function reiniciarPantallaSessio(){
+
+    document
+    .getElementById("zonaConfiguracioSessio")
+    .style.display="block";
+
+
+    document
+    .getElementById("zonaJugadorsSessio")
+    .style.display="none";
+
+}

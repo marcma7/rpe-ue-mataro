@@ -14,6 +14,44 @@ document
 };
 
 document
+.getElementById("aplicarJugadorsButton")
+.addEventListener(
+"click",
+()=>{
+
+
+    document
+    .getElementById("zonaConfiguracioSessio")
+    .style.display="none";
+
+
+    document
+    .getElementById("zonaJugadorsSessio")
+    .style.display="block";
+
+
+});
+
+document
+.getElementById("configurarDadesEquipButton")
+.addEventListener(
+"click",
+()=>{
+
+
+    document
+    .getElementById("zonaConfiguracioSessio")
+    .style.display="block";
+
+
+    document
+    .getElementById("zonaJugadorsSessio")
+    .style.display="none";
+
+
+});
+
+document
 .getElementById("fisioButton")
 .addEventListener(
 "click",
