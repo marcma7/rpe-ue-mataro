@@ -191,10 +191,7 @@ function pintarLlistesModificar() {
 
 }
 
-function pintarLlistesEliminar(
-    anteriors,
-    futures
-){
+function pintarLlistesEliminar(anteriors, futures){
 
     const divAnteriors =
         document.getElementById(
@@ -220,7 +217,7 @@ function pintarLlistesEliminar(
 
 
         boto.className =
-            "jugadorFila";
+            "sessioEliminarFila";
 
 
         boto.textContent =
@@ -234,10 +231,10 @@ function pintarLlistesEliminar(
         boto.onclick = ()=>{
 
 
-            document
-            .querySelectorAll(
-                "#pantallaDeleteSessions .jugadorFila"
-            )
+           document
+.querySelectorAll(
+    "#pantallaDeleteSessions .sessioEliminarFila"
+)
             .forEach(b=>{
 
                 b.classList.remove(
