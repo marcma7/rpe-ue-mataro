@@ -37,29 +37,6 @@ document
 });
 
 document
-.getElementById("configurarDadesEquipButton")
-.addEventListener(
-"click",
-()=>{
-
-
-    document
-    .getElementById("zonaConfiguracioSessio")
-    .style.display="block";
-
-
-    document
-    .getElementById("zonaJugadorsSessio")
-    .style.display="none";
-
-    document
-    .getElementById("botonsSessioFinal")
-    .style.display="none";
-
-
-});
-
-document
     .getElementById("tornarModificarTeamsButton")
     .addEventListener("click", () => {
         mostrarPantalla("pantallaTeams");
