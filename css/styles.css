@@ -2981,12 +2981,28 @@ p {
 
 .jugadorFila > div{
 
-    display:flex;
+    display:grid;
+
+    grid-template-columns:28px 28px;
 
     gap:4px;
 
-    align-items:center;
+    justify-content:end;
 
 }
 
 
+
+
+#pantallaManagement button,
+#pantallaLogin button,
+#pantallaFisio button,
+#pantallaGestioQuestionaris button,
+#pantallaGestioValoracions button,
+#pantallaSeleccionValoracio button,
+#pantallaEnviarQuestionari button,
+#pantallaDades button{
+
+    width:100%;
+
+}

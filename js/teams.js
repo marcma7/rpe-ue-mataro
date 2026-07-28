@@ -177,7 +177,7 @@ function pintarJugadors(users) {
         </button>
         `
         :
-        ""
+        <div style="width:28px;height:28px;"></div>
         }
 
         <button
