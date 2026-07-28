@@ -4191,3 +4191,98 @@ p {
     margin-top:12px;
     flex-shrink:0;
 }
+
+#pantallaEnviarQuestionari{
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+}
+
+.selectorsEnviar{
+    flex:1;
+    display:flex;
+    gap:20px;
+    overflow:hidden;
+}
+
+.selectorColumna{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+}
+
+.selectorColumna h2{
+    flex-shrink:0;
+}
+
+#llistaEquipsEnviar,
+#llistaUsuarisEnviar{
+    flex:1;
+    overflow-y:auto;
+    border:1px solid #ccc;
+    border-radius:12px;
+    padding:10px;
+    box-sizing:border-box;
+}
+
+#enviarQuestionariButton,
+#tornarEnviarQuestionariButton{
+    flex-shrink:0;
+    margin-top:12px;
+}
+
+
+.filaEnviar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 10px;
+    border-bottom:1px solid #eee;
+    gap:12px;
+}
+
+.filaEnviar input[type="checkbox"]{
+    width:18px;
+    height:18px;
+    margin:0;
+    flex-shrink:0;
+}
+
+.filaEnviar span{
+    flex:1;
+}
+
+
+.filaEnviar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 12px;
+    border-bottom:1px solid #ddd;
+    cursor:pointer;
+}
+
+.filaEnviar span{
+    flex:1;
+}
+
+.filaEnviar input[type="checkbox"]{
+    width:18px;
+    height:18px;
+    margin:0;
+    flex-shrink:0;
+}
+
+.botonsEnviarQuestionari{
+    display:flex;
+    gap:12px;
+    margin-top:15px;
+    flex-shrink:0;
+}
+
+#tornarEnviarQuestionariButton,
+#enviarQuestionariButton{
+    flex:1;
+    margin:0;
+}

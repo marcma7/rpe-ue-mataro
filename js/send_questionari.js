@@ -135,37 +135,28 @@ async function carregarEnviarQuestionari(){
 
 }
 
-
 function pintarEquipsEnviar(){
 
     const div =
-    document.getElementById(
-        "llistaEquipsEnviar"
-    );
+    document.getElementById("llistaEquipsEnviar");
 
+    div.innerHTML = "";
 
-    div.innerHTML="";
-
-
-    equipsEnviar.forEach(e=>{
-
+    equipsEnviar.forEach(e => {
 
         div.innerHTML += `
 
-        <label>
+        <label class="filaEnviar">
 
-        <input
-        type="checkbox"
-        onchange="toggleEquipEnviar('${e.uuid}')">
+            <span>${e.team_name}</span>
 
-        ${e.team_name}
+            <input
+                type="checkbox"
+                onchange="toggleEquipEnviar('${e.uuid}')">
 
         </label>
 
-        <br>
-
         `;
-
 
     });
 
@@ -223,49 +214,62 @@ function toggleEquipEnviar(uuid){
 
 }
 
+function capitalitzar(text){
+
+    return text
+        .toLowerCase()
+        .split(" ")
+        .map(
+            p => p.charAt(0).toUpperCase() + p.slice(1)
+        )
+        .join(" ");
+
+}
 
 function pintarUsuarisEnviar(){
 
     const div =
-    document.getElementById(
-        "llistaUsuarisEnviar"
+    document.getElementById("llistaUsuarisEnviar");
+
+    div.innerHTML = "";
+
+    const usuarisOrdenats =
+    [...usuarisEnviar].sort(
+        (a,b) =>
+        a.surname.localeCompare(
+            b.surname,
+            "ca"
+        )
     );
 
-
-    div.innerHTML="";
-
-
-    usuarisEnviar.forEach(u=>{
-
+    usuarisOrdenats.forEach(u => {
 
         const checked =
         usuarisSeleccionats.includes(u.uuid)
         ? "checked"
         : "";
 
-
         div.innerHTML += `
 
-        <label>
+        <label class="filaEnviar">
 
-        <input
-        type="checkbox"
-        ${checked}
-        onchange="toggleUsuariEnviar('${u.uuid}')">
+            <span>
+                ${capitalitzar(u.name)}
+                ${capitalitzar(u.surname)}
+            </span>
 
-        ${u.name} ${u.surname}
+            <input
+                type="checkbox"
+                ${checked}
+                onchange="toggleUsuariEnviar('${u.uuid}')">
 
         </label>
 
-        <br>
-
         `;
-
 
     });
 
 }
-
 
 async function enviarQuestionaris(){
 
