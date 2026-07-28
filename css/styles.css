@@ -3281,3 +3281,72 @@ p {
     border-radius:10px;
 
 }
+
+
+#dialogMessage {
+
+    white-space: pre-line;
+
+    line-height: 1.25;
+
+}
+
+
+
+#dialogButtons {
+
+    display:flex;
+
+    gap:10px;
+
+    width:100%;
+
+}
+
+
+#dialogButtons button {
+
+    width:50%;
+
+}
+
+
+#dialogButtons {
+
+    display: flex;
+
+    gap: 10px;
+
+    width: 100%;
+
+}
+
+
+#dialogButtons button {
+
+    flex: 1;
+
+}
+
+
+#dialogMessage {
+    white-space: pre-line;
+    line-height:1.6;
+}
+
+
+.lesioFila {
+
+    width:100%;
+
+    box-sizing:border-box;
+
+    padding:12px;
+
+    margin-bottom:10px;
+
+    border-radius:10px;
+
+    text-align:left;
+
+}

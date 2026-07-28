@@ -242,7 +242,7 @@ function pintarLesions(){
 
 
         fila.className =
-        "jugadorFila";
+        "lesioFila";
 
         fila.innerHTML =
 
@@ -331,28 +331,46 @@ function mostrarDetallLesio(lesio){
 
 
 
-    let missatge =
+let missatge =
 
-    "Zona: "
-    +
-    lesio.zona
-    +
-    "\n\nTipus: "
-    +
-    lesio.tipus
-    +
-    "\n\nGravetat: "
-    +
-    lesio.gravetat;
+"Data lesió: "
++
+lesio.data_lesio
+
++
+"\n\n"
+
++
+"Zona: "
++
+lesio.zona
++
+"  |  "
++
+"Tipus: "
++
+lesio.tipus
++
+"  |  "
++
+"Gravetat: "
++
+lesio.gravetat;
 
 
 
-    if(lesio.demana_fisio > 0){
+if(lesio.demana_fisio > 0){
 
-        missatge +=
-        "\n\nFISIO DEMANAT";
+    missatge +=
+    "\n\nFISIO SOL·LICITAT";
 
-    }
+}
+else{
+
+    missatge +=
+    "\n\nNo necessita fisio";
+
+}
 
 
 
@@ -364,9 +382,15 @@ function mostrarDetallLesio(lesio){
 
 
     const buttons =
-    document.getElementById(
-        "dialogButtons"
-    );
+document.getElementById(
+    "dialogButtons"
+);
+
+buttons.innerHTML = "";
+
+buttons.style.display = "flex";
+buttons.style.flexDirection = "row";
+buttons.style.gap = "10px";
 
 
     buttons.innerHTML = "";
@@ -377,11 +401,12 @@ function mostrarDetallLesio(lesio){
 
 
         const boto =
-        document.createElement("button");
+document.createElement("button");
 
+boto.textContent =
+"ASSIGNAR HORA";
 
-        boto.textContent =
-        "ASSIGNAR FISIO";
+boto.style.flex = "1";
 
 
         boto.onclick = ()=>{
@@ -412,10 +437,10 @@ function mostrarDetallLesio(lesio){
     const tancar =
     document.createElement("button");
 
+tancar.textContent =
+"ENRERE";
 
-    tancar.textContent =
-    "TANCAR";
-
+tancar.style.flex = "1";
 
     tancar.onclick = ()=>{
 

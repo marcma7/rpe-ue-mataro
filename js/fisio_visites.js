@@ -175,7 +175,6 @@ function filtrarVisitesFisio(){
 }
 
 
-
 function pintarVisitesFisio(){
 
 
@@ -197,11 +196,43 @@ function pintarVisitesFisio(){
 
 
         fila.className =
-        "jugadorFila";
+        "lesioFila";
 
 
-        fila.textContent =
-        visita.text;
+
+        fila.innerHTML =
+
+        `
+        <b>
+        ${capitalize(visita.user?.name ?? "")}
+        ${capitalize(visita.user?.surname ?? "")}
+        </b>
+
+        <br>
+
+        ${visita.date ?? "-"}
+        &nbsp;
+        ${visita.hour ?? ""}
+
+        <br>
+
+        ${visita.injury?.zona ?? "-"}
+        &nbsp; | &nbsp;
+        ${visita.injury?.tipus ?? "-"}
+        &nbsp; | &nbsp;
+        ${visita.injury?.gravetat ?? "-"}
+
+        <br>
+
+        ${
+            visita.visita_feta === 1
+            ?
+            "🟢 Visita feta"
+            :
+            "🔴 Pendent"
+        }
+
+        `;
 
 
 
@@ -216,11 +247,9 @@ function pintarVisitesFisio(){
 
         fila.onclick=()=>{
 
-
             mostrarDetallVisitaFisio(
                 visita
             );
-
 
         };
 
@@ -230,7 +259,6 @@ function pintarVisitesFisio(){
 
 
     });
-
 
 }
 
@@ -249,10 +277,47 @@ function mostrarDetallVisitaFisio(visita){
 
 
 
-    document
-    .getElementById("dialogMessage")
-    .textContent =
-    visita.text;
+    let missatge =
+
+"Data visita: "
++
+visita.date
++
+" "
++
+visita.hour
+
++
+"\n\n"
+
++
+"Zona: "
++
+visita.injury?.zona
++
+"  |  "
++
+"Tipus: "
++
+visita.injury?.tipus
++
+"  |  "
++
+"Gravetat: "
++
+visita.injury?.gravetat
+
++
+"\n\nEquip: "
++
+visita.team?.team_name;
+
+
+
+document
+.getElementById("dialogMessage")
+.textContent =
+missatge;
 
 
 
@@ -262,7 +327,11 @@ function mostrarDetallVisitaFisio(visita){
     );
 
 
-    buttons.innerHTML="";
+buttons.innerHTML = "";
+
+buttons.style.display = "flex";
+buttons.style.flexDirection = "row";
+buttons.style.gap = "10px";
 
 
 
@@ -271,8 +340,9 @@ function mostrarDetallVisitaFisio(visita){
 
 
     introduir.textContent =
-    "INTRODUIR VISITA";
+    "FER VISITA";
 
+introduir.style.flex = "1";
 
 introduir.onclick=()=>{
 
@@ -301,6 +371,7 @@ introduir.onclick=()=>{
     tancar.textContent =
     "TANCAR";
 
+tancar.style.flex = "1";
 
     tancar.onclick=()=>{
 
