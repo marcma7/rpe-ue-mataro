@@ -2514,3 +2514,23 @@ async function addValoracioAnswers(answers){
         throw new Error(await response.text());
 
 }
+
+
+async function deleteQuestion(uuid){
+
+    const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/questions?uuid=eq.${uuid}`,
+        {
+            method:"DELETE",
+            headers:{
+                apikey: SUPABASE_API_KEY,
+                Authorization: `Bearer ${SUPABASE_API_KEY}`
+            }
+        }
+    );
+
+    if(!response.ok){
+        throw new Error(await response.text());
+    }
+
+}

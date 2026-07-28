@@ -37,6 +37,14 @@ document
 });
 
 document
+    .getElementById("tornarQuestionarisButton")
+    .addEventListener("click", () => {
+
+        mostrarPantalla("gestioQuestionaris");
+
+    });
+
+document
     .getElementById("tornarModificarTeamsButton")
     .addEventListener("click", () => {
         mostrarPantalla("teams");
