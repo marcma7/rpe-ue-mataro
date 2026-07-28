@@ -86,60 +86,46 @@ function obrirEditarPregunta(q){
 
 
 
-
-
 function pintarFormPregunta(){
 
+    console.log("tipusPregunta =", `"${tipusPregunta}"`);
 
-    document.getElementById(
-        "preguntaText"
-    ).value =
-    preguntaEditant.pregunta || "";
+    document.getElementById("preguntaText").value =
+        preguntaEditant.pregunta || "";
 
+    document.getElementById("tipusPregunta").value =
+        tipusPregunta;
 
+    document.getElementById("minPregunta").value =
+        minimPregunta;
 
-    document.getElementById(
-        "tipusPregunta"
-    ).value =
-    tipusPregunta;
+    document.getElementById("maxPregunta").value =
+        maximPregunta;
 
+    // Mostrar/amagar segons el tipus
+    const divEscala = document.getElementById("filaEscalaPregunta");
+    const divOpcions = document.getElementById("configOpcions");
 
+    divEscala.style.display =
+        tipusPregunta === "ESCALA NUMÈRICA" ? "flex" : "none";
 
-    document.getElementById(
-        "minPregunta"
-    ).value =
-    minimPregunta;
-
-
-
-    document.getElementById(
-        "maxPregunta"
-    ).value =
-    maximPregunta;
-
-
+    divOpcions.style.display =
+        tipusPregunta === "OPCIONS" ? "block" : "none";
 
     pintarOpcionsPregunta();
-
 }
-
-
 
 
 function canviarTipusPregunta(){
 
-
     tipusPregunta =
-    document.getElementById(
-        "tipusPregunta"
-    ).value;
+        document.getElementById("tipusPregunta").value;
 
+    console.log("CANVI", `"${tipusPregunta}"`);
 
     pintarFormPregunta();
 
 }
-
-
 
 
 

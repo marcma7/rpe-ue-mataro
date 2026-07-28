@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=17">
+    <link rel="stylesheet" href="css/styles.css?v=18">
 </head>
 
 <body>
@@ -789,33 +789,34 @@ TEXT
 
 </select>
 
+        <div id="filaEscalaPregunta">
 
+    <div class="campEscalaPregunta">
+        <label for="minPregunta">Mínim</label>
+        <input id="minPregunta" type="number">
+    </div>
 
-<div>
-
-<label>Mínim</label>
-<input id="minPregunta" type="number">
-
-
-<label>Màxim</label>
-<input id="maxPregunta" type="number">
-
-</div>
-
-
-
-<div>
-
-<input id="novaOpcio">
-
-<button onclick="afegirOpcioPregunta()">
-AFEGIR
-</button>
+    <div class="campEscalaPregunta">
+        <label for="maxPregunta">Màxim</label>
+        <input id="maxPregunta" type="number">
+    </div>
 
 </div>
 
+<div id="configOpcions">
 
-<div id="llistaOpcions"></div>
+    <input
+        id="novaOpcio"
+        placeholder="Nova opció">
+
+    <button onclick="afegirOpcioPregunta()">
+        AFEGIR OPCIÓ
+    </button>
+
+    <div id="llistaOpcions"></div>
+
+</div>
+
 
 
 

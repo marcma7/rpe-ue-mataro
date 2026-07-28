@@ -3958,3 +3958,188 @@ p {
     margin:0 auto;
 
 }
+
+
+.escalaPregunta{
+
+    display:flex;
+
+    gap:15px;
+
+    align-items:flex-end;
+
+}
+
+.escalaPregunta > div{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.escalaPregunta label{
+
+    margin-bottom:6px;
+
+    font-weight:bold;
+
+}
+
+#configEscala{
+
+    display:flex;
+
+    flex-direction:row ;
+
+    gap:15px;
+
+    align-items:flex-end;
+
+}
+
+#configEscala > div{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+#configEscala{
+    display:flex;
+    gap:15px;
+    align-items:flex-end;
+}
+
+#configEscala > div{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+}
+
+
+#configEscala{
+
+    display:flex;
+    flex-direction:row;
+    gap:15px;
+    align-items:flex-end;
+    width:100%;
+
+}
+
+#configEscala > div{
+
+    flex:1 1 0;
+    display:flex;
+    flex-direction:column;
+
+}
+
+#configEscala label{
+
+    margin-bottom:6px;
+
+}
+
+#configEscala input{
+
+    width:100%;
+    box-sizing:border-box;
+
+}
+
+#filaEscalaPregunta{
+
+    display:flex;
+
+    flex-direction:row;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:20px;
+
+    width:100%;
+
+}
+
+.campEscalaPregunta{
+
+    display:flex;
+
+    flex-direction:column;
+
+    flex:1;
+
+}
+
+.campEscalaPregunta label{
+
+    font-weight:bold;
+
+    text-align:center;
+
+    margin-bottom:8px;
+
+}
+
+.campEscalaPregunta input{
+
+    width:100%;
+
+    box-sizing:border-box;
+
+}
+
+#filaEscalaPregunta{
+
+    display:flex;
+
+    flex-direction:row !important;
+
+    gap:20px;
+
+}
+
+#filaEscalaPregunta > .columnaEscalaPregunta{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+#configOpcions{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+    width:100%;
+
+}
+
+#configOpcions #novaOpcio{
+
+    width:100%;
+
+    box-sizing:border-box;
+
+}
+
+#configOpcions button{
+
+    width:100%;
+
+}
