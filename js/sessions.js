@@ -1837,4 +1837,8 @@ function reiniciarPantallaSessio(){
     .getElementById("zonaJugadorsSessio")
     .style.display="none";
 
+    document
+    .getElementById("botonsSessioFinal")
+    .style.display="none";
+
 }

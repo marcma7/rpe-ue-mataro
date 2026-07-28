@@ -26,6 +26,10 @@ document
 
 
     document
+    .getElementById("botonsSessioFinal")
+    .style.display="block";
+
+    document
     .getElementById("zonaJugadorsSessio")
     .style.display="block";
 
@@ -46,6 +50,10 @@ document
 
     document
     .getElementById("zonaJugadorsSessio")
+    .style.display="none";
+
+    document
+    .getElementById("botonsSessioFinal")
     .style.display="none";
 
 

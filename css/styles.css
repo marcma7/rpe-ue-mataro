@@ -1,49 +1,166 @@
-/* Elimina els marges que posa el navegador per defecte */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: white;
+/* ==========================================================
+   BASE GLOBAL
+========================================================== */
+
+*{
+    box-sizing:border-box;
 }
 
-/* Contenidor principal */
-.container {
-    min-height: 100vh;
+html,
+body{
 
-    display: flex;
-    flex-direction: column;
+    width:100%;
+    height:100%;
 
-    justify-content: center;
-    align-items: center;
+    margin:0;
+    padding:0;
 
-    padding: 20px;
-    box-sizing: border-box;
+    overflow:hidden;
+
+    font-family:"Inter",Arial,sans-serif;
+
+    background:#f5f5f5;
+
+    color:#1f2937;
+
 }
 
-/* Títol */
-h1 {
-    font-size: 50px;
-    font-weight: bold;
-    text-align: center;
+body{
 
-    margin-bottom: 40px;
+    display:flex;
+
+    justify-content:center;
+
 }
 
-/* Caixa del codi */
-input {
-    width: 320px;
+.container{
 
-    padding: 14px;
+    width:100%;
+    max-width:900px;
 
-    font-size: 18px;
-    text-align: center;
+    height:100dvh;
 
-    border: 1px solid #cccccc;
-    border-radius: 8px;
+    display:flex;
+    flex-direction:column;
 
-    margin-bottom: 20px;
+    padding:12px;
 
-    box-sizing: border-box;
+    overflow:hidden;
+
+}
+
+h1{
+
+    font-size:30px;
+
+    font-weight:800;
+
+    text-align:center;
+
+    margin:8px 0 14px;
+
+    flex-shrink:0;
+
+}
+
+h2{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    text-align:center;
+
+    margin:6px 0 10px;
+
+    flex-shrink:0;
+
+}
+
+h3{
+
+    font-size:17px;
+
+    font-weight:600;
+
+    text-align:center;
+
+    margin:4px 0 8px;
+
+    flex-shrink:0;
+
+}
+
+button{
+
+    min-height:42px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#007AFF;
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.15s;
+
+}
+
+button:hover{
+
+    background:#0068dd;
+
+}
+
+button:active{
+
+    transform:scale(.98);
+
+}
+
+input,
+select,
+textarea{
+
+    width:100%;
+
+    min-height:40px;
+
+    padding:10px 12px;
+
+    border:1px solid #d7dce5;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+    font-family:inherit;
+
+    outline:none;
+
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+
+    border-color:#007AFF;
+
+    box-shadow:0 0 0 3px rgba(0,122,255,.15);
+
+}
+
+textarea{
+
+    resize:vertical;
+
 }
 
 .barraBotons{
@@ -57,31 +174,7 @@ input {
     width:auto;
 }
 
-/* Botó */
-button {
-    width: 320px;
-
-    padding: 14px;
-
-    font-size: 18px;
-    font-weight: bold;
-
-    border: none;
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    background-color: #007AFF;
-    color: white;
-}
-
-/* Quan passem el ratolí per sobre */
-button:hover {
-    background-color: #0063d1;
-}
-
 /* ---------- RPE ---------- */
-
 #rpeGrid {
     display: grid;
     grid-template-columns: repeat(3, 90px);
@@ -1323,443 +1416,197 @@ p {
 }
 
 
-.pantallaTeams h1{
+/* ===========================
+   GESTIÓ D'EQUIPS
+=========================== */
+
+#pantallaTeams{
     width:100%;
-    white-space:nowrap;
-    font-size:28px;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.pantallaTeams h1{
+    font-size:24px;
+    margin:6px 0;
 }
 
 .teamRow{
-
     display:flex;
-
-    width:100%;
-
     gap:8px;
-
-    margin-bottom:15px;
-
+    width:100%;
 }
-
 
 .teamRow select{
-
     flex:2;
-
     min-width:0;
-
 }
 
-
-#nouEquipButton{
-
-    flex:1;
-
-    width:auto;
-
-    padding:0;
-
-}
-
-
+#nouEquipButton,
 #eliminarEquipButton{
-
     flex:1;
-
     width:auto;
-
     padding:0;
-
 }
+
 .proporcioJugador{
-
     display:grid;
-
-    width:100%;
-
-    gap:8px;
-
     grid-template-columns:1fr 2fr;
-
+    gap:6px;
+    width:100%;
 }
 
-
-/* Nom */
 .proporcioJugador input:nth-child(1){
-
     grid-column:1;
-
 }
 
-
-/* Cognom */
 .proporcioJugador input:nth-child(2){
-
     grid-column:2;
-
 }
 
-/* Rol fila següent esquerra */
 .proporcioJugador select{
-
     grid-column:1;
 }
 
-/* Botó fila següent dreta */
 .proporcioJugador button{
-
     grid-column:2;
-
 }
 
 #llistaJugadors{
-
-    width:100%;
-
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    margin-top:8px;
 }
 
 .jugadorFila{
-
-    display:flex;
-
+    display:grid;
+    grid-template-columns:1fr 32px 32px;
     align-items:center;
+    gap:6px;
 
-    width:100%;
+    min-height:34px;
 
-    padding:14px 10px;
-
-    margin-bottom:8px;
+    padding:2px 8px;
+    margin-bottom:4px;
 
     background:#f4f4f4;
-
-    border-radius:10px;
-
+    border-radius:8px;
 }
-
-
-/* Nom del jugador 70% */
 
 .jugadorFila > span{
-
-    flex:7;
-
     overflow:hidden;
-
     white-space:nowrap;
-
     text-overflow:ellipsis;
-
+    font-size:14px;
 }
-
-
-/* Contenidor dels botons 30% */
-
-.jugadorFila > div{
-
-    flex:3;
-
-    display:flex;
-
-    justify-content:flex-end;
-
-    gap:8px;
-
-}
-
-
-/* Cada botó ocupa 15% visual de la fila */
 
 .addInjuryButton,
 .deletePlayerButton{
-
-    flex:1;
-
-    width:auto;
-
-    height:34px;
-
-    min-width:34px;
-
-    padding:0;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    border-radius:50%;
-
+    width:28px !important;
+    height:28px !important;
+    min-width:28px !important;
+    min-height:28px !important;
+    margin:0 !important;
+    padding:0 !important;
 }
-
-
-/* Botó + transparent */
 
 .addInjuryButton{
-
-    background:transparent;
-
-    color:#007AFF;
-
-    font-size:26px;
-
-    font-weight:bold;
-
+    background:transparent !important;
+    color:#ef4444 !important;
+    font-size:22px;
 }
 
-
-/* Creu vermella */
-
 .deletePlayerButton{
-
-    background:#ef4444;
-
+    background:#ef4444 !important;
     color:white;
-
-    font-size:20px;
-
-    font-weight:bold;
-
+    font-size:15px;
 }
 
 .barraBotons{
-
     display:flex;
-
-    width:100%;
-
     gap:8px;
-
+    width:100%;
 }
-
 
 .barraBotons button{
-
     flex:1;
-
-    width:auto;
-
-    padding:0 5px;
-
     font-size:13px;
-
 }
 
 
-.pantallaTeams{
-
-    padding-left:12px;
-    padding-right:12px;
-
-}
-
-
-.pantallaTeams *{
-
-    max-width:100%;
-
-}
-
-
-
-.jugadorFila{
-
-    display:grid;
-
-    grid-template-columns:70% 15% 15%;
-
-    align-items:center;
-
-    width:100%;
-
-}
-
-
-.jugadorFila > span{
-
-    grid-column:1;
-
-}
-
-
-.jugadorFila > div{
-
-    display:contents;
-
-}
-
-
-.addInjuryButton{
-
-    grid-column:2;
-
-}
-
-
-.deletePlayerButton{
-
-    grid-column:3;
-
-}
-
-
-.addInjuryButton{
-
-    background:transparent !important;
-
-    color:#ef4444 !important;
-
-    border:none;
-
-    font-size:32px;
-
-    font-weight:bold;
-
-    width:34px !important;
-
-    height:34px !important;
-
-    min-width:34px;
-
-    padding:0;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-}
-
-.jugadorFila{
-
-    display:grid;
-
-    grid-template-columns:70% 15% 15%;
-
-    align-items:center;
-
-    width:100%;
-
-    height:42px;
-
-    padding:4px 8px;
-
-    margin-bottom:5px;
-
-    background:#f4f4f4;
-
-    border-radius:8px;
-
-    box-sizing:border-box;
-
-}
-
-
-#llistaJugadors{
-
-    width:100%;
-
-    height:30vh;
-
-    min-height:180px;
-
-    max-height:350px;
-
-    overflow-y:auto;
-
-}
-
-
-.addInjuryButton,
-.deletePlayerButton{
-
-    width:28px !important;
-
-    height:28px !important;
-
-    min-width:28px;
-
-    font-size:18px;
-
-}
-
-
-.deletePlayerButton{
-
-    background:#ef4444 !important;
-
-    color:white !important;
-
-    width:28px !important;
-
-    height:28px !important;
-
-    min-width:28px !important;
-
-    min-height:28px !important;
-
-    padding:0 !important;
-
-    margin:0 !important;
-
-    border-radius:50%;
-
-    font-size:16px;
-
-    line-height:1;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-}
-
-
-.jugadorFila{
-
-    min-height:42px;
-
-    height:auto;
-
-    padding:6px 8px;
-
-}
-
-
-.container {
+.container{
 
     width:100%;
     height:100dvh;
 
+    display:flex;
+    flex-direction:column;
+
     overflow:hidden;
 
-    padding:15px;
+    padding:12px;
 
     box-sizing:border-box;
+}
+
+
+/* Les pantalles ocupen tota l'alçada disponible */
+
+[id^="pantalla"]{
+
+    flex:1;
+
+    min-height:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    overflow:hidden;
 
 }
 
 /* ===========================
-   SESSIONS MOBILE
+   SESSIONS
 =========================== */
-
 
 #pantallaSessions{
 
-    width:100%;
+    display:flex;
+    flex-direction:column;
 
-    padding:15px;
+    width:100%;
+    height:100%;
+
+    gap:8px;
 
 }
 
 
-
 #pantallaSessions h1{
 
-    margin:5px 0;
+    margin:0;
+    font-size:24px;
+
+}
+
+
+#titolSessio{
+
+    margin:0 0 6px 0;
+    font-size:20px;
+
+}
+
+
+#zonaConfiguracioSessio{
+
+    display:flex;
+    flex-direction:column;
+    gap:6px;
 
 }
 
@@ -1767,92 +1614,90 @@ p {
 .filaSessio{
 
     display:grid;
-
-    grid-template-columns:2fr 1fr;
-
-    width:100%;
-
-    gap:10px;
-
-    margin-bottom:12px;
+    grid-template-columns:1.6fr .8fr;
 
     align-items:center;
+
+    gap:8px;
+
+}
+
+
+.dataSessioFila{
+
+    grid-template-columns:1fr 1.6fr;
 
 }
 
 
 .filaSessio label{
 
-    font-weight:bold;
-
-    font-size:16px;
+    font-size:15px;
+    font-weight:600;
 
 }
 
 
 .filaSessio input{
 
-    width:100%;
+    margin:0;
+    min-height:38px;
+
+}
+
+
+#aplicarJugadorsButton{
+
+    margin-top:4px;
+
+}
+
+
+#zonaJugadorsSessio{
+
+    flex:1;
+
+    min-height:0;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+
+#configurarDadesEquipButton{
 
     margin:0;
 
 }
 
 
-
-.dataSessioFila{
-
-    grid-template-columns:1fr 2fr;
-
-}
-
-
-
-/* zona jugadors */
-
-#zonaJugadorsSessio{
-
-    width:100%;
+#jugadorsSessio{
 
     flex:1;
 
-}
-
-
-
-#configurarDadesEquipButton{
-
-    width:100%;
-
-    margin-bottom:10px;
-
-}
-
-
-
-#jugadorsSessio{
-
-    height:35vh;
-
-    max-height:300px;
+    min-height:0;
 
     overflow-y:auto;
 
+    border-radius:10px;
+
+    background:#f7f7f7;
+
+    padding:6px;
+
 }
 
-
-
-/* botons finals */
 
 .botonsSessioFinal{
 
     display:flex;
 
-    width:100%;
+    gap:8px;
 
-    gap:10px;
-
-    margin-top:auto;
+    margin-top:8px;
 
 }
 
@@ -1861,49 +1706,7 @@ p {
 
     flex:1;
 
-    width:auto;
-
 }
-
-
-.filaSessio{
-
-    display:grid;
-
-    width:100%;
-
-    gap:10px;
-
-    margin-bottom:12px;
-
-    align-items:center;
-
-    grid-template-columns:2fr 1fr;
-
-}
-
-
-.dataSessioFila{
-
-    grid-template-columns:1fr 2fr;
-
-}
-
-
-.filaSessio input[type="number"]{
-
-    text-align:center;
-
-    width:100%;
-
-}
-
-.dataSessioFila input{
-
-    width:100%;
-
-}
-
 
 /* ==========================
    POPUP SESSIÓ CREADA
@@ -2117,274 +1920,42 @@ p {
 }
 
 /* ===========================
-   MODIFICAR SESSIONS MOBILE
+   MODIFICAR SESSIÓ
 =========================== */
-
 
 #pantallaModifySessions{
 
     width:100%;
-    padding:12px;
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:8px;
 
 }
 
 
-/* dues columnes de sessions */
+#pantallaModifySessions h1{
+
+    margin:0;
+    font-size:24px;
+
+}
+
 
 .modificarColumnes{
 
     display:flex;
-
-    width:100%;
 
     gap:10px;
 
-}
-
-
-.modificarColumnes > div{
-
-    width:50%;
+    flex:0 0 auto;
 
 }
 
 
-/* títols petits */
-
-.modificarColumnes h3{
-
-    font-size:14px;
-    text-align:center;
-
-}
-
-
-/* scroll independent */
-
-#llistaSessionsAnteriors,
-#llistaSessionsFutures{
-
-    height:180px;
-
-    overflow-y:auto;
-
-    background:#f5f5f5;
-
-    border-radius:10px;
-
-    padding:6px;
-
-}
-
-
-/* separador */
-
-#pantallaModifySessions hr{
-
-    width:100%;
-
-    margin:15px 0;
-
-}
-
-
-
-/* temps sessió */
-
-.tempsSessio{
-
-    display:grid;
-
-    grid-template-columns:2fr 1fr;
-
-    gap:8px;
-
-    width:100%;
-
-}
-
-
-.tempsSessio label{
-
-    display:flex;
-
-    align-items:center;
-
-    font-weight:bold;
-
-}
-
-
-.tempsSessio input{
-
-    width:100%;
-
-    margin:0;
-
-}
-
-
-
-/* botó aplicar */
-
-#aplicarJugadorsModificarButton{
-
-    grid-column:1 / 3;
-
-    width:100%;
-
-}
-
-
-/* llista jugadors */
-
-#jugadorsModificar{
-
-    width:100%;
-
-    max-height:250px;
-
-    overflow-y:auto;
-
-    margin-top:15px;
-
-}
-
-
-
-/* botons finals */
-
-.botonsFinalsSessio{
-
-    display:flex;
-
-    width:100%;
-
-    gap:8px;
-
-    margin-top:15px;
-
-}
-
-
-.botonsFinalsSessio button{
-
-    flex:1;
-
-    width:auto;
-
-}
-
-
-.sessioModificarFila{
-
-    width:100%;
-
-    height:18px;
-
-    margin-bottom:8px;
-
-    background:#f4f4f4;
-
-    color:black;
-
-    border:none;
-
-    border-radius:8px;
-
-    font-size:13px;
-
-    font-weight:600;
-
-    text-align:center;
-
-    padding:0;
-
-}
-
-
-.sessioModificarFila:hover{
-
-    background:#e5e5e5;
-
-}
-
-.modificarColumnes{
-
-    display:flex;
-    gap:15px;
-    width:100%;
-
-}
-
-
-.modificarColumnes > div{
-
-    flex:1;
-
-}
-
-
-#llistaSessionsAnteriors,
-#llistaSessionsFutures{
-
-    height:180px;
-
-    overflow-y:auto;
-
-}
-
-
-.sessioEliminarFila{
-
-    width:100%;
-
-    height:28px;
-
-    margin-bottom:5px;
-
-    background:#f4f4f4;
-
-    color:black;
-
-    border:none;
-
-    border-radius:6px;
-
-    font-size:14px;
-
-    font-weight:600;
-
-    text-align:center;
-
-    padding:0;
-
-    line-height:28px;
-
-}
-
-
-.sessioEliminarFila.seleccionat{
-
-    background:#007AFF;
-
-    color:white;
-
-}
-
-
-.eliminarColumnes{
-
-    display:flex;
-
-    width:100%;
-
-    gap:15px;
-
-}
-
-
-.eliminarColumnes > div{
+.modificarColumnes>div{
 
     flex:1;
 
@@ -2393,14 +1964,25 @@ p {
 }
 
 
-#llistaSessionsAnteriorsEliminar,
-#llistaSessionsFuturesEliminar{
+.modificarColumnes h3{
 
-    height:180px;
+    margin:0 0 6px;
+
+    font-size:15px;
+
+    text-align:center;
+
+}
+
+
+#llistaSessionsAnteriors,
+#llistaSessionsFutures{
+
+    height:140px;
 
     overflow-y:auto;
 
-    background:#fafafa;
+    background:#f7f7f7;
 
     border-radius:10px;
 
@@ -2409,43 +1991,991 @@ p {
 }
 
 
-/* Files de dates */
-
-.sessioEliminarFila{
+.sessioModificarFila{
 
     width:100%;
 
-    height:28px;
+    min-height:30px;
 
-    margin-bottom:5px;
-
-    background:#f4f4f4;
-
-    color:black;
+    margin-bottom:4px;
 
     border:none;
 
     border-radius:6px;
 
-    font-size:14px;
+    background:#f4f4f4;
+
+    color:black;
+
+    font-size:13px;
 
     font-weight:600;
 
-    text-align:center;
-
-    padding:0;
-
-    line-height:28px;
+    padding:0 6px;
 
 }
 
 
-/* Data seleccionada */
+.sessioModificarFila.seleccionat{
+
+    background:#007AFF;
+
+    color:white;
+
+}
+
+
+.tempsSessio{
+
+    display:grid;
+
+    grid-template-columns:1.5fr .8fr;
+
+    gap:8px;
+
+    align-items:center;
+
+    margin-bottom:6px;
+
+}
+
+
+.tempsSessio label{
+
+    font-size:15px;
+
+    font-weight:600;
+
+}
+
+
+.tempsSessio input{
+
+    margin:0;
+
+    min-height:38px;
+
+}
+
+
+#aplicarJugadorsModificarButton{
+
+    width:100%;
+
+    margin-top:4px;
+
+}
+
+
+#jugadorsModificar{
+
+    flex:1;
+
+    min-height:0;
+
+    overflow-y:auto;
+
+    margin-top:8px;
+
+    background:#f7f7f7;
+
+    border-radius:10px;
+
+    padding:6px;
+
+}
+
+
+.botonsFinalsSessio{
+
+    display:flex;
+
+    gap:8px;
+
+    margin-top:8px;
+
+}
+
+
+.botonsFinalsSessio button{
+
+    flex:1;
+
+}
+
+
+/* ===========================
+   ELIMINAR SESSIÓ
+=========================== */
+
+#pantallaEliminarSessions{
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+#pantallaEliminarSessions h1{
+
+    margin:0;
+    font-size:24px;
+
+}
+
+.eliminarColumnes{
+
+    display:flex;
+
+    gap:10px;
+
+    flex:1;
+
+    min-height:0;
+
+}
+
+.eliminarColumnes>div{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    min-width:0;
+
+}
+
+.eliminarColumnes h3{
+
+    margin:0 0 6px;
+
+    text-align:center;
+
+    font-size:15px;
+
+}
+
+#llistaSessionsAnteriorsEliminar,
+#llistaSessionsFuturesEliminar{
+
+    flex:1;
+
+    min-height:0;
+
+    overflow-y:auto;
+
+    background:#f7f7f7;
+
+    border-radius:10px;
+
+    padding:5px;
+
+}
+
+.sessioEliminarFila{
+
+    width:100%;
+
+    min-height:30px;
+
+    margin-bottom:4px;
+
+    border:none;
+
+    border-radius:6px;
+
+    background:#f4f4f4;
+
+    color:black;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    padding:0 6px;
+
+}
 
 .sessioEliminarFila.seleccionat{
 
     background:#007AFF;
 
     color:white;
+
+}
+
+
+/* ===========================
+   QUESTIONARIS
+=========================== */
+
+#pantallaQuestionaris{
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+#pantallaQuestionaris h1{
+
+    margin:0;
+    font-size:24px;
+
+}
+
+#pantallaQuestionaris h3{
+
+    margin:0 0 6px;
+
+    font-size:15px;
+    font-weight:500;
+
+    color:#666;
+
+}
+
+#questionsContainer{
+
+    flex:1;
+
+    min-height:0;
+
+    overflow-y:auto;
+
+    padding-right:4px;
+
+}
+
+.questionBloc{
+
+    margin-bottom:10px;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    background:white;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+
+}
+
+.questionBloc h3{
+
+    margin:0 0 12px;
+
+    font-size:16px;
+
+    color:#1f2937;
+
+}
+
+.escalaGrid{
+
+    display:grid;
+
+    grid-template-columns:repeat(5,1fr);
+
+    gap:8px;
+
+}
+
+.escalaGrid button{
+
+    width:100%;
+
+    height:42px;
+
+    margin:0;
+
+    font-size:15px;
+
+}
+
+.questionBloc textarea{
+
+    min-height:90px;
+
+}
+
+#confirmarQuestionariButton{
+
+    flex-shrink:0;
+
+    margin-top:8px;
+
+}
+
+/* ===========================
+   GESTIÓ QÜESTIONARIS
+=========================== */
+
+#pantallaGestioQuestionaris{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    gap:10px;
+}
+
+#llistaQuestionaris{
+    flex:1;
+    overflow-y:auto;
+    min-height:0;
+    background:#f7f7f7;
+    border-radius:10px;
+    padding:6px;
+}
+
+.questionariFila{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:8px;
+
+    padding:8px 10px;
+    margin-bottom:6px;
+
+    background:#f4f4f4;
+    border-radius:8px;
+}
+
+.questionariFila span{
+    flex:1;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:14px;
+}
+
+#nouQuestionariButton{
+    width:52px;
+    height:52px;
+    align-self:center;
+
+    border-radius:50%;
+
+    font-size:28px;
+    padding:0;
+}
+
+#tornarGestioButton{
+    width:100%;
+}
+
+
+/* ===========================
+   PREGUNTES
+=========================== */
+
+#questions{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    gap:10px;
+}
+
+#llistaPreguntes{
+    flex:1;
+    overflow-y:auto;
+    min-height:0;
+
+    background:#f7f7f7;
+    border-radius:10px;
+    padding:6px;
+}
+
+.preguntaFila{
+    padding:10px;
+    margin-bottom:6px;
+
+    background:#f4f4f4;
+    border-radius:8px;
+
+    font-size:14px;
+}
+
+#novaPreguntaButton{
+    width:52px;
+    height:52px;
+
+    align-self:center;
+
+    border-radius:50%;
+
+    font-size:28px;
+    padding:0;
+}
+
+/* ===========================
+   AFEGIR PREGUNTA
+=========================== */
+
+#addQuestion{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+#preguntaText{
+    min-height:100px;
+}
+
+#tipusPregunta{
+    margin-bottom:4px;
+}
+
+#addQuestion label{
+    font-weight:600;
+    margin-top:6px;
+}
+
+#addQuestion > div{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+#llistaOpcions{
+    max-height:160px;
+    overflow-y:auto;
+
+    background:#f7f7f7;
+    border-radius:8px;
+    padding:6px;
+}
+
+.opcioFila{
+    padding:8px;
+    margin-bottom:4px;
+
+    background:#f4f4f4;
+    border-radius:6px;
+}
+
+
+/* ===========================
+   GESTIÓ VALORACIONS
+=========================== */
+
+#pantallaGestioValoracions{
+
+    display:flex;
+    flex-direction:column;
+
+    height:100%;
+
+    gap:10px;
+
+}
+
+#llistaValoracionsGest{
+
+    flex:1;
+
+    min-height:0;
+
+    overflow-y:auto;
+
+    background:#f7f7f7;
+
+    border-radius:10px;
+
+    padding:6px;
+
+}
+
+.valoracioFila{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:8px 10px;
+
+    margin-bottom:6px;
+
+    background:#f4f4f4;
+
+    border-radius:8px;
+
+}
+
+.valoracioFila span{
+
+    flex:1;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
+    font-size:14px;
+
+}
+
+#novaValoracioButton{
+
+    width:52px;
+
+    height:52px;
+
+    align-self:center;
+
+    border-radius:50%;
+
+    font-size:28px;
+
+    padding:0;
+
+}
+
+#tornarValoracioButton{
+
+    width:100%;
+
+}
+
+
+/* ===========================
+   ÍTEMS VALORACIÓ
+=========================== */
+
+#pantallaValoracioItems{
+
+    display:flex;
+
+    flex-direction:column;
+
+    height:100%;
+
+    gap:10px;
+
+}
+
+#llistaValoracioItems{
+
+    flex:1;
+
+    min-height:0;
+
+    overflow-y:auto;
+
+    background:#f7f7f7;
+
+    border-radius:10px;
+
+    padding:6px;
+
+}
+
+.itemValoracioFila{
+
+    padding:10px;
+
+    margin-bottom:6px;
+
+    background:#f4f4f4;
+
+    border-radius:8px;
+
+    font-size:14px;
+
+}
+
+#nouItemValoracioButton{
+
+    width:52px;
+
+    height:52px;
+
+    align-self:center;
+
+    border-radius:50%;
+
+    font-size:28px;
+
+    padding:0;
+
+}
+
+#tornarValoracionsButton{
+
+    width:100%;
+
+}
+
+
+/* ===========================
+   AFEGIR ÍTEM VALORACIÓ
+=========================== */
+
+#pantallaAddValoracioItem{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+#itemValoracioText{
+
+    min-height:100px;
+
+}
+
+#configEscalaValoracio{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+}
+
+#configEscalaValoracio label{
+
+    font-weight:600;
+
+}
+
+#configOpcionsValoracio{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+}
+
+#llistaOpcionsValoracio{
+
+    max-height:160px;
+
+    overflow-y:auto;
+
+    background:#f7f7f7;
+
+    border-radius:8px;
+
+    padding:6px;
+
+}
+
+.opcioValoracioFila{
+
+    padding:8px;
+
+    margin-bottom:4px;
+
+    background:#f4f4f4;
+
+    border-radius:6px;
+
+}
+
+#guardarItemValoracioButton{
+
+    width:100%;
+
+}
+
+
+/* ===========================
+   LESIONS
+=========================== */
+
+#pantallaLesions{
+
+    display:flex;
+    flex-direction:column;
+
+    height:100%;
+
+    gap:10px;
+
+}
+
+#filtreLesions{
+
+    width:100%;
+
+}
+
+#llistaLesions{
+
+    flex:1;
+
+    min-height:0;
+
+    overflow-y:auto;
+
+    background:#f7f7f7;
+
+    border-radius:10px;
+
+    padding:6px;
+
+}
+
+.lesioFila{
+
+    padding:10px;
+
+    margin-bottom:6px;
+
+    background:#f4f4f4;
+
+    border-radius:8px;
+
+    font-size:14px;
+
+}
+
+#tornarFisioButton{
+
+    width:100%;
+
+}
+
+
+/* ===========================
+   VISITES FISIO
+=========================== */
+
+#pantallaVisites{
+
+    display:flex;
+    flex-direction:column;
+
+    height:100%;
+
+    gap:10px;
+
+}
+
+#llistaVisitesFisio{
+
+    flex:1;
+
+    min-height:0;
+
+    overflow-y:auto;
+
+    background:#f7f7f7;
+
+    border-radius:10px;
+
+    padding:6px;
+
+}
+
+.visitaFila{
+
+    padding:10px;
+
+    margin-bottom:6px;
+
+    background:#f4f4f4;
+
+    border-radius:8px;
+
+}
+
+#tornarFisioVisitesButton{
+
+    width:100%;
+
+}
+
+/* ===========================
+   AFEGIR LESIÓ
+=========================== */
+
+#pantallaAfegirLesio{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+#pantallaAfegirLesio h2{
+
+    margin-top:0;
+
+}
+
+#pantallaAfegirLesio .dataRow{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+}
+
+#pantallaAfegirLesio label{
+
+    font-weight:600;
+
+}
+
+#needsFisio{
+
+    width:22px;
+    height:22px;
+
+}
+
+#pantallaAfegirLesio .barraBotons{
+
+    margin-top:auto;
+
+}
+
+
+/* ===========================
+   ASSIGNAR HORA
+=========================== */
+
+#pantallaAssignarHora{
+
+    display:flex;
+
+    flex-direction:column;
+
+    height:100%;
+
+    gap:10px;
+
+}
+
+.taulaFisio{
+
+    flex:1;
+
+    min-height:0;
+
+    display:flex;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+}
+
+#horesFisio{
+
+    width:70px;
+
+    overflow-y:auto;
+
+    background:#fafafa;
+
+}
+
+.scrollDiesFisio{
+
+    flex:1;
+
+    overflow:auto;
+
+}
+
+#graellaFisio{
+
+    min-width:900px;
+
+}
+
+#horaSeleccionada{
+
+    min-height:40px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:8px;
+
+    background:#f4f4f4;
+
+    font-weight:600;
+
+}
+
+#visitesHoraFisio{
+
+    max-height:150px;
+
+    overflow-y:auto;
+
+}
+
+#confirmarHoraFisioButton,
+#tornarLesionsButton{
+
+    width:100%;
+
+}
+
+
+/* ===========================
+   INFO VISITA
+=========================== */
+
+#pantallaInfoVisita{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+#pantallaInfoVisita label{
+
+    font-weight:600;
+
+}
+
+#pantallaInfoVisita textarea{
+
+    min-height:90px;
+
+}
+
+#pantallaInfoVisita .barraBotons{
+
+    margin-top:auto;
 
 }
