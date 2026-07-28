@@ -105,6 +105,7 @@ pintarGraellaFisio();
 
 }
 
+
 function pintarHoresFisio(){
 
 
@@ -117,14 +118,18 @@ function pintarHoresFisio(){
     div.innerHTML="";
 
 
-    // espai per alinear amb capçalera
+
+    // espai superior alineat amb dies
 
     const buit =
     document.createElement("div");
 
-    buit.style.height="30px";
+    buit.className =
+    "horaBuitFisio";
+
 
     div.appendChild(buit);
+
 
 
 
@@ -135,12 +140,12 @@ function pintarHoresFisio(){
         document.createElement("div");
 
 
+        h.className =
+        "targetaHoraFisio";
+
+
         h.textContent =
         hora;
-
-
-        h.style.height="30px";
-        h.style.fontWeight="bold";
 
 
         div.appendChild(h);
@@ -164,17 +169,19 @@ function pintarGraellaFisio(){
     div.innerHTML="";
 
 
+
     const scroll =
     document.createElement("div");
 
-    scroll.style.overflowX="auto";
+    scroll.className =
+"scrollInternFisio";
 
 
     const contingut =
     document.createElement("div");
 
-    contingut.style.width =
-    (diesFisio.length * 70) + "px";
+    contingut.className =
+    "contenidorGraellaFisio";
 
 
 
@@ -183,7 +190,9 @@ function pintarGraellaFisio(){
     const header =
     document.createElement("div");
 
-    header.style.display="flex";
+    header.className =
+    "headerDiesFisio";
+
 
 
     diesFisio.forEach(dia=>{
@@ -197,22 +206,19 @@ function pintarGraellaFisio(){
         dia;
 
 
-        d.style.width="70px";
-        d.style.height="30px";
-        d.style.textAlign="center";
-        d.style.fontWeight="bold";
-
-
         header.appendChild(d);
 
+
     });
+
 
 
     contingut.appendChild(header);
 
 
 
-    // FILES
+
+    // FILES HORES
 
     horesFisio.forEach(hora=>{
 
@@ -220,21 +226,20 @@ function pintarGraellaFisio(){
         const fila =
         document.createElement("div");
 
+        fila.className =
+        "filaHoraFisio";
 
-        fila.style.display="flex";
 
 
-
-        diesFisio.forEach(
-        (dia,index)=>{
+        diesFisio.forEach((dia,index)=>{
 
 
             const boto =
             document.createElement("button");
 
 
-            boto.style.width="70px";
-            boto.style.height="30px";
+            boto.className =
+            "casellaFisio";
 
 
 
@@ -248,6 +253,7 @@ function pintarGraellaFisio(){
                     v.hour === hora
                 );
 
+
             }).length;
 
 
@@ -259,7 +265,7 @@ function pintarGraellaFisio(){
 
 
 
-            boto.onclick=()=>{
+            boto.onclick = ()=>{
 
 
                 seleccionarHoraFisio(
@@ -271,10 +277,12 @@ function pintarGraellaFisio(){
             };
 
 
+
             fila.appendChild(boto);
 
 
         });
+
 
 
         contingut.appendChild(fila);

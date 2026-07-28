@@ -3350,3 +3350,496 @@ p {
     text-align:left;
 
 }
+
+
+.taulaFisio{
+    display:flex;
+    width:100%;
+    height:55vh;
+    overflow:hidden;
+}
+
+
+/* columna hores */
+#horesFisio{
+
+    width:80px;
+    flex-shrink:0;
+
+}
+
+
+/* espai buit superior */
+#horesFisio > div:first-child{
+
+    height:40px!important;
+
+}
+
+
+/* hores */
+#horesFisio div{
+
+    height:40px!important;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:14px;
+
+}
+
+
+/* scroll dies */
+.scrollDiesFisio{
+
+    flex:1;
+    overflow:auto;
+
+}
+
+
+
+/* contenidor graella */
+
+.contenidorGraellaFisio{
+
+    width:max-content;
+
+}
+
+
+
+/* dies */
+
+.headerDiesFisio{
+
+    display:flex;
+
+}
+
+
+.headerDiesFisio div{
+
+    width:90px;
+    height:40px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-weight:bold;
+
+}
+
+
+
+/* files */
+
+.filaHoraFisio{
+
+    display:flex;
+
+}
+
+
+
+.casellaFisio{
+
+    width:90px;
+    height:40px;
+
+    border:1px solid white;
+    padding:0;
+
+    cursor:pointer;
+
+}
+
+
+.taulaFisio{
+
+    display:flex;
+    width:100%;
+    height:55vh;
+    overflow:hidden;
+
+}
+
+
+
+/* columna hores */
+
+#horesFisio{
+
+    width:80px;
+    flex-shrink:0;
+
+}
+
+
+
+/* capçalera buida */
+
+#horesFisio > div:first-child{
+
+    height:40px !important;
+
+}
+
+
+
+/* hores */
+
+#horesFisio div{
+
+    height:40px !important;
+
+    box-sizing:border-box;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:14px;
+
+}
+
+
+
+/* zona dies */
+
+.scrollDiesFisio{
+
+    flex:1;
+
+    overflow:auto;
+
+}
+
+
+
+/* contenidor graella */
+
+.contenidorGraellaFisio{
+
+    width:max-content;
+
+}
+
+
+
+/* capçalera dies */
+
+.headerDiesFisio{
+
+    display:flex;
+
+}
+
+
+
+.headerDiesFisio div{
+
+    width:90px;
+
+    height:40px;
+
+    box-sizing:border-box;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:bold;
+
+}
+
+
+
+/* files */
+
+.filaHoraFisio{
+
+    display:flex;
+
+}
+
+
+
+/* quadrats */
+
+.casellaFisio{
+
+    width:90px;
+
+    height:40px;
+
+    box-sizing:border-box;
+
+    padding:0;
+
+    margin:0;
+
+    border:1px solid white;
+
+    appearance:none;
+
+    cursor:pointer;
+
+}
+
+
+.taulaFisio{
+
+    display:flex;
+    width:100%;
+    height:55vh;
+    overflow:hidden;
+
+}
+
+
+/* columna esquerra hores */
+
+#horesFisio{
+
+    width:90px;
+    flex:none;
+
+}
+
+
+
+#horesFisio div{
+
+    height:45px;
+
+    box-sizing:border-box;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-weight:bold;
+
+}
+
+
+
+/* espai superior igual que dies */
+
+#horesFisio div:first-child{
+
+    height:45px;
+
+}
+
+
+
+/* zona dreta */
+
+.scrollDiesFisio{
+
+    flex:1;
+
+    overflow-x:auto;
+    overflow-y:hidden;
+
+}
+
+
+
+/* graella sencera */
+
+.contenidorGraellaFisio{
+
+    width:max-content;
+
+}
+
+
+
+/* dies */
+
+.headerDiesFisio{
+
+    display:flex;
+
+}
+
+
+
+.headerDiesFisio div{
+
+    width:90px;
+    height:45px;
+
+    box-sizing:border-box;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-weight:bold;
+
+}
+
+
+
+/* files */
+
+.filaHoraFisio{
+
+    display:flex;
+
+}
+
+
+
+.casellaFisio{
+
+    width:90px;
+
+    height:45px;
+
+    box-sizing:border-box;
+
+    padding:0;
+    margin:0;
+
+    border:1px solid white;
+
+}
+
+
+.taulaFisio{
+
+    display:flex;
+    width:100%;
+    height:55vh;
+
+}
+
+
+/* hores */
+
+#horesFisio{
+
+    width:90px;
+    flex:none;
+
+}
+
+
+.horaBuitFisio{
+
+    width:90px;
+    height:45px;
+
+}
+
+
+
+.targetaHoraFisio{
+
+    width:90px;
+    height:45px;
+
+    box-sizing:border-box;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:1px solid #ddd;
+
+    background:white;
+
+    font-weight:bold;
+
+}
+
+
+
+/* scroll horitzontal */
+
+.scrollDiesFisio{
+
+    flex:1;
+
+    overflow-x:auto;
+    overflow-y:hidden;
+
+}
+
+
+
+.scrollInternFisio{
+
+    width:max-content;
+
+}
+
+
+
+/* dies */
+
+.headerDiesFisio{
+
+    display:flex;
+
+}
+
+
+
+.headerDiesFisio div{
+
+    width:90px;
+    height:45px;
+
+    box-sizing:border-box;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-weight:bold;
+
+}
+
+
+
+/* files */
+
+.filaHoraFisio{
+
+    display:flex;
+
+    height:45px;
+
+}
+
+
+
+/* caselles */
+
+.casellaFisio{
+
+    width:90px;
+    height:45px;
+
+    min-width:90px;
+
+    box-sizing:border-box;
+
+    padding:0;
+
+    margin:0;
+
+    border:1px solid white;
+
+}
