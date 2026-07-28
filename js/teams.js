@@ -167,18 +167,20 @@ function pintarJugadors(users) {
     <div>
 
         ${
-        user.role === "JUGADOR"
-        ?
-        `
-        <button
-            class="addInjuryButton"
-            data-uuid="${user.uuid}">
-            +
-        </button>
-        `
-        :
-        <div style="width:28px;height:28px;"></div>
-        }
+user.role === "JUGADOR"
+?
+`
+<button
+    class="addInjuryButton"
+    data-uuid="${user.uuid}">
+    +
+</button>
+`
+:
+`
+<div class="addInjuryPlaceholder"></div>
+`
+}
 
         <button
             class="deletePlayerButton"

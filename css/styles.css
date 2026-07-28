@@ -3006,3 +3006,25 @@ p {
     width:100%;
 
 }
+
+.jugadorFila > div{
+
+    display:grid;
+
+    grid-template-columns:28px 28px;
+
+    gap:4px;
+
+    justify-content:end;
+
+    align-items:center;
+
+}
+
+.addInjuryPlaceholder{
+
+    width:28px;
+
+    height:28px;
+
+}
