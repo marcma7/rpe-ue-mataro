@@ -285,65 +285,75 @@ function convertirData(data){
 
 }
 
-
 function pintarDades(jugadors){
 
-
     const div =
-        document.getElementById(
-            "llistaDadesJugadors"
-        );
+        document.getElementById("llistaDadesJugadors");
+
+    div.innerHTML = "";
 
 
-    div.innerHTML="";
-
-
-    jugadors.forEach(jugador=>{
-
+    for(let i = 0; i < jugadors.length; i += 2){
 
         const fila =
             document.createElement("div");
 
+        fila.className = "filaJugadors";
 
-        fila.className =
-            "jugadorFila";
+
+        const jugador1 = jugadors[i];
+        const jugador2 = jugadors[i+1];
 
 
         fila.innerHTML = `
 
-            <span>
-                ${jugador.nom}
-            </span>
+            <div class="cardDadaJugador">
+                <div class="nomJugador">
+                    ${jugador1.nom}
+                </div>
 
-            <span
-            style="
-            font-size:30px;
-            background:${colorACWR(jugador.value)};
-            padding:5px;
-            ">
+                <div class="valorJugador"
+                     style="background:${colorACWR(jugador1.value)}">
+                    ${jugador1.value.toFixed(2)}
+                </div>
+            </div>
 
-            ${jugador.value.toFixed(2)}
 
-            </span>
+            ${
+                jugador2 ?
+                `
+                <div class="cardDadaJugador">
+                    <div class="nomJugador">
+                        ${jugador2.nom}
+                    </div>
+
+                    <div class="valorJugador"
+                         style="background:${colorACWR(jugador2.value)}">
+                        ${jugador2.value.toFixed(2)}
+                    </div>
+                </div>
+                `
+                :
+                `
+                <div></div>
+                `
+            }
 
         `;
-
-
-        fila.onclick = ()=>{
-
-            mostrarCardJugador(jugador);
-
-        };
 
 
         div.appendChild(fila);
 
 
-    });
+        fila.children[0].onclick = ()=>mostrarCardJugador(jugador1);
 
+        if(jugador2){
+            fila.children[1].onclick = ()=>mostrarCardJugador(jugador2);
+        }
+
+    }
 
 }
-
 
 async function mostrarCardJugador(jugador){
 

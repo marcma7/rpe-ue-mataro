@@ -3028,3 +3028,99 @@ p {
     height:28px;
 
 }
+
+
+.botonsFinalsSessio {
+    display: flex;
+    width: 100%;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.botonsFinalsSessio button {
+    flex: 1;
+}
+
+.filaJugadors {
+
+    display:grid;
+
+    grid-template-columns:
+        2fr 1fr 2fr 1fr;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-bottom:10px;
+
+}
+
+
+.nomJugador {
+
+    font-size:22px;
+
+}
+
+
+.valorJugador {
+
+    font-size:30px;
+
+    text-align:center;
+
+    padding:5px;
+
+    border-radius:8px;
+
+}
+
+#selectorDadesTeams {
+    margin-bottom: 15px;
+}
+
+.filaJugadors {
+
+    display:grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap:20px;
+
+    margin-bottom:15px;
+
+}
+
+
+.cardDadaJugador {
+
+    text-align:center;
+
+    padding:10px;
+
+    border-radius:10px;
+
+}
+
+
+.nomJugador {
+
+    font-size:16px;
+
+    margin-bottom:5px;
+
+}
+
+
+.valorJugador {
+
+    font-size:36px;
+
+    font-weight:bold;
+
+    padding:10px;
+
+    border-radius:10px;
+
+}

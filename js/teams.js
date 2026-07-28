@@ -43,8 +43,14 @@ document
 document
     .getElementById("tornarTeamsButton")
     .addEventListener("click", () => {
+               mostrarPantalla("teams");
 
-        mostrarPantalla("teams");
+    });
+
+document
+    .getElementById("enrereSessionsATeams")
+    .addEventListener("click", () => {
+               mostrarPantalla("management");
 
     });
 

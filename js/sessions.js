@@ -51,11 +51,7 @@ async function loadModifySessions() {
 
 async function loadDeleteSessions(){
 
-    console.log("ENTRANT A DELETE");
-
     if(!window.teamSeleccionat){
-
-        console.log("NO HI HA EQUIP SELECCIONAT");
 
         return;
 
@@ -66,12 +62,6 @@ async function loadDeleteSessions(){
         await getPracticesByTeam(
             window.teamSeleccionat.uuid
         );
-
-
-    console.log(
-        "SESSIONS TROBADES:",
-        practices
-    );
 
 
     const anteriors = [];
@@ -110,17 +100,6 @@ async function loadDeleteSessions(){
 
 
     });
-
-
-    console.log(
-        "ANTERIORS:",
-        anteriors
-    );
-
-    console.log(
-        "FUTURES:",
-        futures
-    );
 
 
     anteriors.reverse();
@@ -439,6 +418,23 @@ function pintarJugadorsModificar() {
 
 }
 
+async function obrirModificarSessio(practiceUuid) {
+
+    await loadModifySessions();
+
+    const practice =
+        modifyPractices.find(
+            x => x.uuid === practiceUuid
+        );
+
+    if (!practice)
+        return;
+
+    await loadModifyPractice(
+        practice.practice_date
+    );
+
+}
 
 document
     .addEventListener("click", async e => {
@@ -448,7 +444,6 @@ document
 
         const practiceUuid =
             e.target.dataset.uuid;
-
 
         mostrarPantalla("modifySessions");
         await obrirModificarSessio(
@@ -843,9 +838,6 @@ function aplicarTempsModificar() {
     }
 
     pintarJugadorsModificar();
-    document.querySelector(
-    ".modificarColumnes"
-).style.display = "none";
 
 }
 

@@ -1956,8 +1956,6 @@ async function insertVisit(visit){
 async function insertInjury(injury){
 
 
-    console.log("ENVIANT LESIO:", injury);
-
 
     const response =
     await fetch(
@@ -1992,13 +1990,6 @@ async function insertInjury(injury){
 
 
     const text = await response.text();
-
-    console.log(
-        "RESPOSTA SUPABASE:",
-        response.status,
-        text
-    );
-
 
     return JSON.parse(text);
 

@@ -39,13 +39,13 @@ document
 document
     .getElementById("tornarModificarTeamsButton")
     .addEventListener("click", () => {
-        mostrarPantalla("pantallaTeams");
+        mostrarPantalla("teams");
     });
 
 document
     .getElementById("tornarEliminarTeamsButton")
     .addEventListener("click", () => {
-        mostrarPantalla("pantallaTeams");
+        mostrarPantalla("teams");
     });
 
 document
@@ -85,26 +85,6 @@ const botonsSortir =
 
 botoEntrar.addEventListener("click", entrar);
 
-botonsSortir.forEach(button => {
-
-    button.addEventListener("click", () => {
-
-        const pantallaRPE =
-            document.getElementById("pantallaRPE");
-
-        if (pantallaRPE.style.display !== "none") {
-
-            tancarSessioRPE();
-
-        } else {
-
-            sortir();
-
-        }
-
-    });
-
-});
 
 window.addEventListener("load", iniciarAplicacio);
 
