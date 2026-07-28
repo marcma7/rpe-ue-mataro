@@ -611,17 +611,7 @@ function aplicarTempsSessio(){
 
 
     pintarJugadorsSessio();
-    document.getElementById(
-    "zonaConfiguracioSessio"
-).style.display = "none";
-
-document.getElementById(
-    "zonaJugadorsSessio"
-).style.display = "flex";
-
-document.querySelector(
-    ".botonsSessioFinal"
-).style.display = "flex";
+mostrarPantalla("teams");
 
 }
 
