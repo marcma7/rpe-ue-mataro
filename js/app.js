@@ -43,6 +43,12 @@ document
     });
 
 document
+    .getElementById("tornarGestioButton")
+    .addEventListener("click", () => {
+        mostrarPantalla("management");
+    });
+
+document
     .getElementById("tornarEliminarTeamsButton")
     .addEventListener("click", () => {
         mostrarPantalla("teams");

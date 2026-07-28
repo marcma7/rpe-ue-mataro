@@ -62,34 +62,33 @@ function pintarQuestionaris(){
         "questionariFila";
 
 
-        fila.innerHTML=`
+        fila.innerHTML = `
 
-        <div>
+    <div class="nomQuestionari">
+        ${q.name}
+    </div>
 
-            <b>${q.name}</b>
+    <div class="infoQuestionari">
+        ${q.nQuestions} preguntes
+    </div>
 
-            <br>
-
-            ${q.nQuestions} preguntes
-
-        </div>
-
+    <div class="botonsQuestionari">
 
         <button class="editar">
-            ✎
+            ✎ Modificar
         </button>
-
 
         <button class="enviar">
-            ➤
+            ➤ Enviar
         </button>
-
 
         <button class="eliminar">
-            ✕
+            ✕ Eliminar
         </button>
 
-        `;
+    </div>
+
+`;
 
 
 

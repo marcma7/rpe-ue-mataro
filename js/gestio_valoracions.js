@@ -55,29 +55,31 @@ function pintarGestValoracions(){
 
         fila.innerHTML = `
 
-        <div>
+    <div class="nomValoracio">
+        ${v.name}
+    </div>
 
-            <b>${v.name}</b>
+    <div class="infoValoracio">
+        ${v.nItems} ítems
+    </div>
 
-            <br>
-
-            ${v.nItems} ítems
-
-        </div>
+    <div class="botonsValoracio">
 
         <button class="editar">
-            ✎
+            ✎ Modificar
         </button>
 
         <button class="enviar">
-            ➤
+            ➤ Enviar
         </button>
 
         <button class="eliminar">
-            ✕
+            ✕ Eliminar
         </button>
 
-        `;
+    </div>
+
+`;
 
         fila.querySelector(".editar")
         .onclick = ()=>{
