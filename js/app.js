@@ -86,6 +86,14 @@ const botonsSortir =
 botoEntrar.addEventListener("click", entrar);
 
 
+document
+    .getElementById("enrereDades")
+    .addEventListener("click", ()=>{
+
+        mostrarPantalla("management");
+
+    });
+
 window.addEventListener("load", iniciarAplicacio);
 
 const botoConfirmar =

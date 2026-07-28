@@ -3124,3 +3124,102 @@ p {
     border-radius:10px;
 
 }
+
+.dialogCard {
+
+    background:white;
+
+    width:90%;
+
+    max-width:380px;
+
+    padding:25px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    box-shadow:0 10px 40px rgba(0,0,0,.25);
+
+}
+
+.botonsJugador {
+
+    display:grid;
+
+    grid-template-columns: 2fr 1fr;
+
+    gap:10px;
+
+    width:100%;
+
+    margin-top:20px;
+
+}
+
+
+.botonsJugador button {
+
+    width:100%;
+
+    padding:12px;
+
+}
+
+#enrereDades {
+
+    width:100%;
+
+    margin-top:20px;
+
+    padding:15px;
+
+    font-size:18px;
+
+}
+
+
+#pantallaDades {
+
+    height:100vh;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+#selectorDadesTeams {
+
+    flex-shrink:0;
+
+    margin-bottom:15px;
+
+}
+
+
+#llistaDadesJugadors {
+
+    flex:1;
+
+    overflow-y:auto;
+
+    min-height:0;
+
+}
+
+
+#enrereDades {
+
+    flex-shrink:0;
+
+    width:100%;
+
+    margin-top:15px;
+
+    padding:15px;
+
+    font-size:18px;
+
+}

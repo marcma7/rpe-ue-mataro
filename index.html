@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=13">
+    <link rel="stylesheet" href="css/styles.css?v=14">
 </head>
 
 <body>
@@ -461,13 +461,19 @@
 
     <div id="pantallaDades" class="container" style="display:none;">
 
-        <h1>VEURE DADES</h1>
+    <h1>VEURE DADES</h1>
 
-        <select id="selectorDadesTeams"></select>
+    <select id="selectorDadesTeams"></select>
 
-        <div id="llistaDadesJugadors"></div>
 
-    </div>
+    <div id="llistaDadesJugadors"></div>
+
+
+    <button id="enrereDades">
+        TORNAR A GESTIÓ
+    </button>
+
+</div>
 
     <!-- PASSAR VALORACIÓ -->
     <div id="pantallaPassarValoracio" class="container" style="display:none;">
@@ -1000,14 +1006,18 @@ CONFIRMAR
         <h3>SALUT I MOVIMENT</h3>
 
 
-        <button id="passarValoracioButton">
-            PASSAR VALORACIONS
-        </button>
+        <div class="botonsJugador">
+
+    <button id="passarValoracioButton">
+        PASSAR VALORACIONS
+    </button>
 
 
-        <button id="tancarCardButton">
-            TANCAR
-        </button>
+    <button id="tancarCardButton">
+        TANCAR
+    </button>
+
+</div>
 
     </div>
 
