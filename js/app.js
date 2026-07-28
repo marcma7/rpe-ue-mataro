@@ -36,6 +36,19 @@ document
 
 });
 
+
+document
+.getElementById(
+    "tornarValoracionsButton"
+)
+.onclick = () => {
+
+    mostrarPantalla(
+        "gestioValoracions"
+    );
+
+};
+
 document
     .getElementById("tornarQuestionarisButton")
     .addEventListener("click", () => {

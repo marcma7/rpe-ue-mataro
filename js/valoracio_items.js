@@ -68,27 +68,34 @@ function pintarValoracioItems(){
         `;
 
         fila.querySelector(".up")
-        .onclick = ()=>{
+.onclick = (e)=>{
 
-            moureItemAmunt(index);
+    e.stopPropagation();
 
-        };
+    moureItemAmunt(index);
 
-        fila.querySelector(".down")
-        .onclick = ()=>{
+};
 
-            moureItemAvall(index);
 
-        };
+fila.querySelector(".down")
+.onclick = (e)=>{
+
+    e.stopPropagation();
+
+    moureItemAvall(index);
+
+};
 
         fila.querySelector(".delete")
-        .onclick = ()=>{
+.onclick = (e)=>{
 
-            eliminarValoracioItem(
-                item.uuid
-            );
+    e.stopPropagation();
 
-        };
+    eliminarValoracioItem(
+        item.uuid
+    );
+
+};
 
         fila.onclick = ()=>{
 
@@ -168,17 +175,16 @@ async function guardarOrdreItems(){
 
 }
 
-
 async function eliminarValoracioItem(uuid){
+
+    console.log("ELIMINANT ITEM", uuid);
 
     if(!confirm(
         "Segur que vols eliminar aquest ítem?"
     ))
         return;
 
-    await deleteValoracioItem(
-        uuid
-    );
+    await deleteValoracioItem(uuid);
 
     await loadValoracioItems();
 

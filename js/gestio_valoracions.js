@@ -69,10 +69,6 @@ function pintarGestValoracions(){
             ✎ Modificar
         </button>
 
-        <button class="enviar">
-            ➤ Enviar
-        </button>
-
         <button class="eliminar">
             ✕ Eliminar
         </button>
@@ -90,13 +86,6 @@ function pintarGestValoracions(){
 
         };
 
-        fila.querySelector(".enviar").onclick = () => {
-
-    valoracioActualGestio = v;
-
-    obrirSeleccionarJugadorValoracio();
-
-};
 
         fila.querySelector(".eliminar")
         .onclick = ()=>{

@@ -728,7 +728,6 @@
 
     <h1>VALORACIONS</h1>
 
-
     <div id="llistaValoracionsGest"></div>
 
 
@@ -738,11 +737,10 @@
 
 
     <button id="tornarValoracioButton">
-        ENRERE
+        TORNAR A GESTIÓ
     </button>
 
 </div>
-
     <div id="pantallaSeleccionarJugadorValoracio" class="container" style="display:none;">
 
     <h2>Selecciona jugador</h2>
@@ -870,26 +868,36 @@ CONFIRMAR
 </div>
 
 </div>
-
     <div id="pantallaValoracioItems" class="container" style="display:none;">
 
     <h1>ÍTEMS</h1>
 
+
     <div id="llistaValoracioItems"></div>
 
-    <button id="nouItemValoracioButton">+</button>
+
+    <button id="nouItemValoracioButton">
+        +
+    </button>
+
 
     <button id="tornarValoracionsButton">
-        ENRERE
+        TORNAR A VALORACIONS
     </button>
 
 </div>
+
 
     <div id="pantallaAddValoracioItem" class="container" style="display:none;">
 
     <h1>AFEGIR ÍTEM</h1>
 
-    <textarea id="itemValoracioText"></textarea>
+
+    <textarea
+        id="itemValoracioText"
+        class="inputGran">
+    </textarea>
+
 
     <select id="tipusItemValoracio">
 
@@ -900,33 +908,47 @@ CONFIRMAR
 
     </select>
 
+
     <div id="configEscalaValoracio">
 
         <label>Mínim</label>
 
-        <input id="minItemValoracio" type="number">
+        <input
+        id="minItemValoracio"
+        type="number">
+
 
         <label>Màxim</label>
 
-        <input id="maxItemValoracio" type="number">
+        <input
+        id="maxItemValoracio"
+        type="number">
 
     </div>
 
+
     <div id="configOpcionsValoracio">
 
-        <input id="novaOpcioValoracio">
+
+        <input
+        id="novaOpcioValoracio">
+
 
         <button id="afegirOpcioValoracioButton">
             AFEGIR
         </button>
 
+
         <div id="llistaOpcionsValoracio"></div>
 
+
     </div>
+
 
     <button id="guardarItemValoracioButton">
         CONFIRMAR
     </button>
+
 
 </div>
 

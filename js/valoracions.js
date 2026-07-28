@@ -1,247 +1,4 @@
-equipValoracio = ""
-
-function pintarValoracio(){
-
-
-document.getElementById("valoracioTitol")
-.textContent =
-valoracioActual.name;
-
-
-
-document.getElementById("valoracioDescripcio")
-.textContent =
-valoracioActual.description;
-
-
-
-document.getElementById("valoracioJugador")
-.textContent =
-jugadorValoracio.name+
-" "+
-jugadorValoracio.surname;
-
-
-
-const container =
-document.getElementById(
-"itemsValoracio"
-);
-
-
-container.innerHTML="";
-
-
-
-valoracioItems.forEach(item=>{
-
-
-let html="";
-
-
-switch(item.tipus_item){
-
-
-case "ESCALA NUMÈRICA":
-
-html =
-crearEscala(item);
-
-break;
-
-
-
-case "OPCIONS":
-
-html =
-crearOpcions(item);
-
-break;
-
-
-
-case "NÚMERO LLIURE":
-
-html =
-crearNumero(item);
-
-break;
-
-
-
-default:
-
-html =
-crearText(item);
-
-}
-
-
-
-container.innerHTML += html;
-
-
-});
-
-
-}
-
-
-async function enviarValoracio(){
-
-
-for(const item of valoracioItems){
-
-
-    if(
-        !respostesValoracio[item.uuid]
-    ){
-
-        alert(
-        "Falta respondre algunes preguntes"
-        );
-
-        return;
-
-    }
-
-
-}
-
-
-
-const avui =
-new Date();
-
-
-const data =
-String(avui.getDate()).padStart(2,"0")
-+
-"-"
-+
-String(avui.getMonth()+1).padStart(2,"0")
-+
-"-"
-+
-avui.getFullYear();
-
-
-
-const answers =
-valoracioItems.map(item=>({
-
-
-    user_uuid:
-    jugadorValoracio.uuid,
-
-
-    valoracio_item_uuid:
-    item.uuid,
-
-
-    date:
-    data,
-
-
-    resposta:
-    respostesValoracio[item.uuid]
-
-
-}));
-
-
-
-await addValoracioAnswers(
-    answers
-);
-
-
-alert("VALORACIÓ PASSADA");
-
-
-if(equipValoracio){
-
-    await carregarDadesEquip(equipValoracio);
-    mostrarPantalla("dades");
-
-}else{
-
-    mostrarPantalla("gestioValoracions");
-
-}
-
-
-}
-
-
-document
-.getElementById(
-"confirmarValoracioButton"
-)
-.addEventListener(
-"click",
-async()=>{
-
-await enviarValoracio();
-
-});
-
-
-async function obrirSelectorValoracions(){
-
-    document
-    .getElementById("playerCard")
-    .style.display="none";
-
-
-    mostrarPantalla(
-        "seleccionValoracio"
-    );
-
-
-    valoracionsDisponibles =
-        await getAllValoracions();
-
-
-    const div =
-    document.getElementById(
-        "llistaValoracions"
-    );
-
-
-    div.innerHTML="";
-
-
-    valoracionsDisponibles.forEach(v=>{
-
-
-        const b =
-        document.createElement("button");
-
-
-        b.textContent =
-        v.name;
-
-
-        b.onclick=()=>{
-
-
-            obrirValoracio(
-                v.uuid,
-                jugadorActual.uuid
-            );
-
-
-        };
-
-
-        div.appendChild(b);
-
-
-    });
-
-
-}
+let equipValoracio = null;
 
 
 async function obrirValoracio(
@@ -249,29 +6,39 @@ async function obrirValoracio(
     userUuid
 ){
 
-
     jugadorValoracio =
-    await getUser(userUuid);
+        await getUser(userUuid);
 
-if(!jugadorValoracio){
-    alert("No s'ha trobat el jugador");
-    return;
-}
 
+    if(!jugadorValoracio){
+
+        alert(
+            "No s'ha trobat el jugador"
+        );
+
+        return;
+    }
 
 
     valoracioActual =
-        await getValoracio(valoracioUuid);
-
+        await getValoracio(
+            valoracioUuid
+        );
 
 
     valoracioItems =
-        await getValoracioItems(valoracioUuid);
+        await getValoracioItems(
+            valoracioUuid
+        );
 
 
+    valoracioItems.sort(
+        (a,b)=>
+        a.num_item-b.num_item
+    );
 
-    respostesValoracio={};
 
+    respostesValoracio = {};
 
 
     mostrarPantalla(
@@ -281,82 +48,188 @@ if(!jugadorValoracio){
 
     pintarValoracio();
 
+}
+
+
+
+function pintarValoracio(){
+
+
+    document
+    .getElementById("valoracioTitol")
+    .textContent =
+    valoracioActual.name;
+
+
+    document
+    .getElementById("valoracioDescripcio")
+    .textContent =
+    valoracioActual.description;
+
+
+    document
+    .getElementById("valoracioJugador")
+    .textContent =
+    `${jugadorValoracio.name} ${jugadorValoracio.surname}`;
+
+
+    const container =
+    document.getElementById(
+        "itemsValoracio"
+    );
+
+      container.className = "questionBloc";
+
+
+    container.innerHTML="";
+
+
+    valoracioItems.forEach(item=>{
+
+
+        switch(item.tipus_item){
+
+
+            case "ESCALA NUMÈRICA":
+
+                container.innerHTML +=
+                crearEscala(container,item);
+
+                break;
+
+
+            case "OPCIONS":
+
+                container.innerHTML +=
+                crearOpcions(container,item);
+
+                break;
+
+
+            case "NÚMERO LLIURE":
+
+                container.innerHTML +=
+                crearNumero(container,item);
+
+                break;
+
+
+            default:
+
+                container.innerHTML +=
+                crearText(container,item);
+
+        }
+
+
+    });
+
 
 }
 
 
 
+async function enviarValoracio(){
+
+
+    for(const item of valoracioItems){
+
+
+        if(
+            respostesValoracio[item.uuid] === undefined ||
+            respostesValoracio[item.uuid] === ""
+        ){
+
+            alert(
+                "Falta respondre algunes preguntes"
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    const avui =
+    new Date();
+
+
+    const data =
+    `${String(avui.getDate()).padStart(2,"0")}-${String(avui.getMonth()+1).padStart(2,"0")}-${avui.getFullYear()}`;
 
 
 
-function crearNumero(item){
+    const answers =
+    valoracioItems.map(item=>({
 
-    return `
-
-    <div class="valoracioItem">
-
-        <h3>
-        ${item.item}
-        </h3>
+        user_uuid:
+        jugadorValoracio.uuid,
 
 
-        <input
+        valoracio_item_uuid:
+        item.uuid,
 
-        type="number"
 
-        step="0.1"
+        date:
+        data,
 
-        oninput="
-        guardarResposta(
-            '${item.uuid}',
-            this.value
-        )">
 
-    </div>
+        resposta:
+        respostesValoracio[item.uuid]
 
-    `;
+    }));
+
+
+    await addValoracioAnswers(
+        answers
+    );
+
+
+    alert(
+        "VALORACIÓ PASSADA"
+    );
+
+
+    if(equipValoracio){
+
+        await carregarDadesEquip(
+            equipValoracio
+        );
+
+
+        mostrarPantalla(
+            "dades"
+        );
+
+
+    }else{
+
+
+        mostrarPantalla(
+            "gestioValoracions"
+        );
+
+
+    }
 
 }
 
 
 
-
-function crearText(item){
-
-
-    return `
-
-    <div class="valoracioItem">
-
-
-        <h3>
-        ${item.item}
-        </h3>
-
-
-        <textarea
-
-        oninput="
-        guardarResposta(
-            '${item.uuid}',
-            this.value
-        )">
-
-        </textarea>
-
-
-    </div>
-
-
-    `;
-
-
-}
+document
+.getElementById(
+"confirmarValoracioButton"
+)
+.onclick =
+enviarValoracio;
 
 
 
-
-function guardarResposta(uuid,valor){
+function guardarResposta(
+    uuid,
+    valor
+){
 
     respostesValoracio[uuid]=valor;
 
@@ -364,21 +237,21 @@ function guardarResposta(uuid,valor){
 
 
 
-
-function seleccionarResposta(uuid,valor,boto){
-
+function seleccionarResposta(
+    uuid,
+    valor,
+    boto
+){
 
     respostesValoracio[uuid]=valor;
 
 
-    const botons =
-        boto.parentElement
-        .querySelectorAll("button");
-
-
-    botons.forEach(b=>{
+    boto.parentElement
+    .querySelectorAll("button")
+    .forEach(b=>{
 
         b.style.background="";
+        b.style.color="";
 
     });
 

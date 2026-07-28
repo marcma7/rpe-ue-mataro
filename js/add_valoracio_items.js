@@ -75,6 +75,17 @@ function obrirEditarValoracioItem(item){
         "addValoracioItem"
     );
 
+     // Mostrar/amagar segons el tipus
+    const divEscala = document.getElementById("configEscalaValoracio");
+    const divOpcions = document.getElementById("configOpcionsValoracio");
+
+    divEscala.style.display =
+        tipusItem === "ESCALA NUMÈRICA" ? "flex" : "none";
+
+    divOpcions.style.display =
+        tipusItem === "OPCIONS" ? "block" : "none";
+
+
     pintarFormValoracioItem();
 
 }
@@ -101,6 +112,29 @@ function pintarFormValoracioItem(){
     .getElementById("maxItemValoracio")
     .value =
     maximItem;
+
+    const divEscala =
+document.getElementById(
+    "configEscalaValoracio"
+);
+
+const divOpcions =
+document.getElementById(
+    "configOpcionsValoracio"
+);
+
+
+divEscala.style.display =
+tipusItem==="ESCALA NUMÈRICA"
+? "flex"
+: "none";
+
+
+divOpcions.style.display =
+tipusItem==="OPCIONS"
+? "block"
+: "none";
+
 
     pintarOpcionsValoracio();
 
@@ -166,20 +200,27 @@ function pintarOpcionsValoracio(){
 
         div.innerHTML += `
 
-        <div>
+<div class="questionFila">
 
-            ${op}
+    <div class="questionInfo">
+        ${op}
+    </div>
 
-            <button
-            onclick="eliminarOpcioValoracio('${op}')">
 
-            ✕
+    <div class="questionButtons">
 
-            </button>
+        <button
+        onclick="eliminarOpcioValoracio('${op}')">
 
-        </div>
+        ✕
 
-        `;
+        </button>
+
+    </div>
+
+</div>
+
+`;
 
     });
 
