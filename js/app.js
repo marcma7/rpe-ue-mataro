@@ -60,6 +60,18 @@ document
 });
 
 document
+    .getElementById("tornarModificarTeamsButton")
+    .addEventListener("click", () => {
+        mostrarPantalla("pantallaTeams");
+    });
+
+document
+    .getElementById("tornarEliminarTeamsButton")
+    .addEventListener("click", () => {
+        mostrarPantalla("pantallaTeams");
+    });
+
+document
 .getElementById("fisioButton")
 .addEventListener(
 "click",
