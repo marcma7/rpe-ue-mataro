@@ -99,203 +99,90 @@ await getVisitsByDates(
 await completarDadesVisitesFisio();
 
 
-pintarHoresFisio();
-
 pintarGraellaFisio();
 
 }
 
 
-function pintarHoresFisio(){
-
-
-    const div =
-    document.getElementById(
-        "horesFisio"
-    );
-
-
-    div.innerHTML="";
-
-
-
-    // espai superior alineat amb dies
-
-    const buit =
-    document.createElement("div");
-
-    buit.className =
-    "horaBuitFisio";
-
-
-    div.appendChild(buit);
-
-
-
-
-    horesFisio.forEach(hora=>{
-
-
-        const h =
-        document.createElement("div");
-
-
-        h.className =
-        "targetaHoraFisio";
-
-
-        h.textContent =
-        hora;
-
-
-        div.appendChild(h);
-
-
-    });
-
-
-}
-
 
 function pintarGraellaFisio(){
 
+    const div = document.getElementById("graellaFisio");
+    div.innerHTML = "";
 
-    const div =
-    document.getElementById(
-        "graellaFisio"
-    );
+    const taula = document.createElement("div");
 
+    taula.className = "taulaFisio";
 
-    div.innerHTML="";
-
-
-
-    const scroll =
-    document.createElement("div");
-
-    scroll.className =
-"scrollInternFisio";
+    taula.style.gridTemplateColumns =
+        "80px repeat(" + diesFisio.length + ",70px)";
 
 
-    const contingut =
-    document.createElement("div");
-
-    contingut.className =
-    "contenidorGraellaFisio";
-
+    // cantonada superior esquerra
+    const corner = document.createElement("div");
+    corner.className = "cella corner";
+    taula.appendChild(corner);
 
 
-    // CAPÇALERA DIES
-
-    const header =
-    document.createElement("div");
-
-    header.className =
-    "headerDiesFisio";
-
-
-
+    // dies
     diesFisio.forEach(dia=>{
 
+        const d = document.createElement("div");
 
-        const d =
-        document.createElement("div");
+        d.className = "cella header";
 
+        d.textContent = dia;
 
-        d.textContent =
-        dia;
-
-
-        header.appendChild(d);
-
+        taula.appendChild(d);
 
     });
 
 
-
-    contingut.appendChild(header);
-
-
-
-
-    // FILES HORES
-
+    // hores
     horesFisio.forEach(hora=>{
 
+        // columna esquerra
+        const h = document.createElement("div");
 
-        const fila =
-        document.createElement("div");
+        h.className = "cella hora";
 
-        fila.className =
-        "filaHoraFisio";
+        h.textContent = hora;
+
+        taula.appendChild(h);
 
 
-
+        // caselles
         diesFisio.forEach((dia,index)=>{
 
+            const cell = document.createElement("div");
+cell.className = "cella";
 
-            const boto =
-            document.createElement("button");
+const boto = document.createElement("button");
+boto.className = "casellaFisio";
 
+const ocupades = visitesFisio.filter(v =>
+    v.date === diesFilterFisio[index] &&
+    v.hour === hora
+).length;
 
-            boto.className =
-            "casellaFisio";
+boto.style.background = colorConsultesFisio(ocupades);
 
+boto.onclick = () => {
+    seleccionarHoraFisio(index, hora);
+};
 
-
-            const ocupades =
-            visitesFisio.filter(v=>{
-
-
-                return (
-                    v.date === diesFilterFisio[index]
-                    &&
-                    v.hour === hora
-                );
-
-
-            }).length;
-
-
-
-            boto.style.background =
-            colorConsultesFisio(
-                ocupades
-            );
-
-
-
-            boto.onclick = ()=>{
-
-
-                seleccionarHoraFisio(
-                    index,
-                    hora
-                );
-
-
-            };
-
-
-
-            fila.appendChild(boto);
-
+cell.appendChild(boto);
+console.log(getComputedStyle(boto).width);
+taula.appendChild(cell);
 
         });
 
-
-
-        contingut.appendChild(fila);
-
-
     });
 
-
-
-    scroll.appendChild(contingut);
-
-    div.appendChild(scroll);
-
+    div.appendChild(taula);
+    console.log(taula.children.length);
+console.log(horesFisio.length);
+console.log(diesFisio.length);
 
 }
 
@@ -376,38 +263,31 @@ function pintarVisitesHoraFisio(){
     visitesFisioHora.forEach(visita=>{
 
 
-        const card =
-        document.createElement("div");
-
-
-        card.className =
-        "jugadorFila";
-
-
-
-        card.innerHTML =
+        const card = document.createElement("div");
+card.className =
+        "lesioFila";
+card.innerHTML =
 
         `
         <b>
-        ${visita.user?.name ?? ""}
-        ${visita.user?.surname ?? ""}
+        ${capitalize(visita.user?.name ?? "")}
+        ${capitalize(visita.user?.surname ?? "")}
         </b>
+
         <br>
-        Zona:
+
         ${visita.injury?.zona ?? "-"}
-        <br>
-        Tipus:
+        &nbsp; | &nbsp;
         ${visita.injury?.tipus ?? "-"}
-        <br>
-        Gravetat:
+        &nbsp; | &nbsp;
         ${visita.injury?.gravetat ?? "-"}
+
+        <br>
+
+
         `;
 
-
-
         div.appendChild(card);
-
-
     });
 
 

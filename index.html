@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=18">
+    <link rel="stylesheet" href="css/styles.css?v=19">
 </head>
 
 <body>
@@ -59,9 +59,9 @@
 
             </div>
 
-            <div class="rpeBottomButtons">
+            <div class="barraBotons">
 
-                <button class="sortirButton">TANCAR SESSIÓ</button>
+                <button id="sortirButtonRPE">TANCAR SESSIÓ</button>
 
                 <button id="confirmarRPEButton">CONFIRMAR</button>
 
@@ -123,7 +123,7 @@
         <button id="fisioButton">GESTIÓ FISIO</button>
         <button id="questionarisButton">GESTIÓ QÜESTIONARIS</button>
         <button id="valoracionsButton">GESTIÓ VALORACIONS</button>
-        <button class="sortirButton">SORTIR</button>
+        <button id="botoSortir">SORTIR</button>
 
     </div>
 
@@ -530,46 +530,36 @@
 </div>
 
     <!-- ASSIGNAR HORA FISIO -->
-    <div id="pantallaAssignarHora" class="container" style="display:none;">
+<div id="pantallaAssignarHora" class="container" style="display:none;">
 
     <h1>ASSIGNAR HORA</h1>
 
-
-    <div class="taulaFisio">
-
-    <div id="horesFisio"></div>
-
-    <div class="scrollDiesFisio">
-
-        <div id="graellaFisio"></div>
-
-    </div>
-
+<div class="graellaWrapper">
+    <div id="graellaFisio"></div>
 </div>
 
-
-    <h3>
-        HORA ESCOLLIDA:
-    </h3>
-
-    <div id="horaSeleccionada">
-    </div>
-
+    <div class="horaEscollidaFila">
+    <h3>HORA ESCOLLIDA:</h3>
+    <div id="horaSeleccionada"></div>
+</div>
 
     <div id="visitesHoraFisio"></div>
 
-
-    <button id="confirmarHoraFisioButton">
+<div class="barraBotons">
+ <button id="tornarLesionsButton">
+        TORNAR A LESIONS
+    </button>
+    
+<button id="confirmarHoraFisioButton">
         CONFIRMAR
     </button>
 
-
-    <button id="tornarLesionsButton">
-        ENRERE
-    </button>
-
+   
+</div>
 </div>
 
+
+   
     <!-- VISITES FISIO -->
     <div id="pantallaVisites" class="container" style="display:none;">
 
@@ -689,8 +679,8 @@
 
     <div class="barraBotons">
 
-        <button id="veureLesionsJugadorButton">
-            VEURE LESIONS
+        <button id="enrereLesions">
+            ENRERE
         </button>
 
 

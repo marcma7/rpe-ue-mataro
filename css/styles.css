@@ -468,29 +468,6 @@ body{
 }
 
 
-.dataRow{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    gap:25px;
-
-    margin-bottom:50px;
-
-}
-
-.dataRow label{
-
-    font-size:22px;
-
-    font-weight:600;
-
-    white-space:nowrap;
-
-}
 
 #selectorData{
 
@@ -949,11 +926,6 @@ body{
 
 }
 
-.taulaFisio{
-    display:flex;
-    width:100%;
-}
-
 
 #horesFisio{
     width:60px;
@@ -1116,9 +1088,6 @@ select {
 
 
 
-/* FILES */
-
-.dataRow,
 .timeInputs,
 .questionariFila {
 
@@ -1324,7 +1293,6 @@ button {
 /* Files */
 
 .addPlayerRow,
-.dataRow,
 .timeInputs,
 .barraBotons,
 .questionariFila {
@@ -2808,15 +2776,6 @@ p {
 
 }
 
-#pantallaAfegirLesio .dataRow{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:6px;
-
-}
 
 #pantallaAfegirLesio label{
 
@@ -2865,8 +2824,6 @@ p {
     border:1px solid #e5e7eb;
 
     border-radius:10px;
-
-    overflow:hidden;
 
 }
 
@@ -3338,7 +3295,6 @@ p {
     display:flex;
     width:100%;
     height:55vh;
-    overflow:hidden;
 }
 
 
@@ -3425,29 +3381,6 @@ p {
 
 }
 
-
-
-.casellaFisio{
-
-    width:90px;
-    height:40px;
-
-    border:1px solid white;
-    padding:0;
-
-    cursor:pointer;
-
-}
-
-
-.taulaFisio{
-
-    display:flex;
-    width:100%;
-    height:55vh;
-    overflow:hidden;
-
-}
 
 
 
@@ -3552,38 +3485,6 @@ p {
 
 
 
-/* quadrats */
-
-.casellaFisio{
-
-    width:90px;
-
-    height:40px;
-
-    box-sizing:border-box;
-
-    padding:0;
-
-    margin:0;
-
-    border:1px solid white;
-
-    appearance:none;
-
-    cursor:pointer;
-
-}
-
-
-.taulaFisio{
-
-    display:flex;
-    width:100%;
-    height:55vh;
-    overflow:hidden;
-
-}
-
 
 /* columna esquerra hores */
 
@@ -3681,21 +3582,6 @@ p {
 }
 
 
-
-.casellaFisio{
-
-    width:90px;
-
-    height:45px;
-
-    box-sizing:border-box;
-
-    padding:0;
-    margin:0;
-
-    border:1px solid white;
-
-}
 
 
 .taulaFisio{
@@ -3807,24 +3693,6 @@ p {
 
 
 
-/* caselles */
-
-.casellaFisio{
-
-    width:90px;
-    height:45px;
-
-    min-width:90px;
-
-    box-sizing:border-box;
-
-    padding:0;
-
-    margin:0;
-
-    border:1px solid white;
-
-}
 
 
 .questionariFila{
@@ -4376,4 +4244,266 @@ p {
 
     box-sizing:border-box;
 
+}
+
+
+#graellaFisio{
+    height:100%;
+    overflow:auto;
+    border-radius:10px;
+}
+
+.taulaFisio{
+    display:grid;
+    grid-auto-rows:48px;
+    width:max-content;
+}
+
+.cella{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #ddd;
+    box-sizing:border-box;
+}
+
+.header{
+    position:sticky;
+    top:0;
+    background:white;
+    font-weight:bold;
+    z-index:30;
+}
+
+.hora{
+    position:sticky;
+    left:0;
+    background:white;
+    font-weight:bold;
+    justify-content:flex-start;
+    padding-left:10px;
+    z-index:20;
+    width:80px;
+}
+
+.corner{
+    position:sticky;
+    top:0;
+    left:0;
+    background:white;
+    z-index:40;
+    width:80px;
+}
+
+
+
+.cella{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.casellaFisio{
+    width:60px;
+    height:15px;
+    padding:0;
+    margin:0;
+    border:2px solid black;
+    border-radius:6px;
+    box-sizing:border-box;
+}
+
+
+.horaEscollidaFila{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:10px 0;
+}
+
+.horaEscollidaFila h3{
+    margin:0;
+}
+
+#horaSeleccionada{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.graellaWrapper{
+
+    flex:1;
+    min-height:0;
+
+    overflow:auto;
+
+    border:1px solid #ccc;
+    border-radius:10px;
+
+    max-width:100%;
+}
+
+.taulaFisio{
+
+    display:grid;
+
+    min-width:max-content;
+}
+
+
+.cella{
+
+    width:70px;
+    height:55px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+
+.casellaFisio{
+
+    width:60px;
+    height:40px;
+}
+
+#pantallaAssignarHora{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    min-height:0;
+}
+
+.graellaWrapper{
+    flex:1;
+    min-height:0;
+    overflow:auto;
+}
+
+#pantallaAssignarHora{
+
+    display:flex;
+    flex-direction:column;
+
+    height:100%;
+    min-height:0;
+
+    gap:10px;
+}
+
+.graellaWrapper{
+
+    flex:1;
+
+    min-height:0;
+
+    overflow:auto;
+
+    border:1px solid #ccc;
+}
+.graellaWrapper{
+
+    max-height:45vh;
+
+    overflow:auto;
+}
+
+
+.visitaHoraCard{
+
+    background:#fff;
+
+    border-radius:12px;
+
+    padding:14px;
+
+    border-left:6px solid #3b82f6;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+
+    display:flex;
+    flex-direction:column;
+
+    gap:10px;
+
+    margin-bottom:10px;
+
+    transition:.2s;
+}
+
+.visitaHoraCard:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 6px 16px rgba(0,0,0,.12);
+}
+
+.visitaNom{
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#1f2937;
+}
+
+.visitaInfo{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+
+    gap:8px;
+
+    font-size:14px;
+
+    color:#4b5563;
+}
+
+.visitaInfo span{
+
+    background:#f5f7fa;
+
+    padding:8px;
+
+    border-radius:8px;
+}
+
+.dataRow{
+
+    display:grid;
+
+    grid-template-columns:180px 300px;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:18px;
+
+    justify-content:center;
+}
+
+.dataRow label{
+
+    margin:0;
+
+    text-align:right;
+
+    font-weight:600;
+}
+
+.dataRow input:not([type="checkbox"]),
+.dataRow select{
+
+    width:300px;
+}
+
+.dataRow input[type="checkbox"]{
+
+    width:22px;
+    height:22px;
+
+    justify-self:start;
 }

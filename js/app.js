@@ -49,6 +49,19 @@ document
 
 };
 
+
+document
+.getElementById(
+    "tornarLesionsButton"
+)
+.onclick = () => {
+
+    mostrarPantalla(
+        "lesions"
+    );
+
+};
+
 document
     .getElementById("tornarQuestionarisButton")
     .addEventListener("click", () => {
@@ -107,8 +120,28 @@ async ()=>{
 
 });
 
-const botonsSortir =
-    document.querySelectorAll(".sortirButton");
+
+
+
+document
+.getElementById("enrereLesions")
+.addEventListener(
+"click",
+()=>{
+
+    mostrarPantalla("teams");
+
+});
+
+const botoSortir =
+    document.getElementById("botoSortir");
+
+botoSortir.addEventListener("click", sortir);
+
+const sortirButtonRPE =
+    document.getElementById("sortirButtonRPE");
+
+sortirButtonRPE.addEventListener("click", sortir);
 
 botoEntrar.addEventListener("click", entrar);
 
