@@ -1,59 +1,30 @@
 let usuarisEnviar = [];
-
 let usuarisSeleccionats = [];
-
 let equipsEnviar = [];
-
 let equipsSeleccionats = [];
 
+document.getElementById("enviarQuestionariButton").onclick = enviarQuestionaris;
 
-
-document
-.getElementById("enviarQuestionariButton")
-.onclick =
-enviarQuestionaris;
-
-
-document
-.getElementById("tornarEnviarQuestionariButton")
-.onclick =
-()=>{
-
-    mostrarPantalla(
-        "gestioQuestionaris"
-    );
-
+document.getElementById("tornarEnviarQuestionariButton").onclick = ()=>{
+    mostrarPantalla("gestioQuestionaris");
 };
 
-// ===============================
-// OBRIR PANTALLA
-// ===============================
 
 function obrirEnviar(q){
 
     questionariEnviar = q;
-
     usuarisSeleccionats = [];
     equipsSeleccionats = [];
 
-    mostrarPantalla(
-        "enviarQuestionari"
-    );
-
+    mostrarPantalla("enviarQuestionari");
     carregarEnviarQuestionari();
 
 }
 
 
-// ===============================
-// CARREGAR EQUIPS I USUARIS
-// ===============================
-
 async function carregarEnviarQuestionari(){
 
-
-    const usersResponse =
-    await fetch(
+    const usersResponse = await fetch(
         `${SUPABASE_URL}/rest/v1/app_users?select=*`,
         {
             headers:{
@@ -63,14 +34,9 @@ async function carregarEnviarQuestionari(){
         }
     );
 
+    usuarisEnviar = await usersResponse.json();
 
-    usuarisEnviar =
-    await usersResponse.json();
-
-
-
-    const teamsResponse =
-    await fetch(
+    const teamsResponse = await fetch(
         `${SUPABASE_URL}/rest/v1/teams?select=*`,
         {
             headers:{
@@ -80,14 +46,9 @@ async function carregarEnviarQuestionari(){
         }
     );
 
+    equipsEnviar = await teamsResponse.json();
 
-    equipsEnviar =
-    await teamsResponse.json();
-
-
-
-    const relacioResponse =
-    await fetch(
+    const relacioResponse = await fetch(
         `${SUPABASE_URL}/rest/v1/user_teams?select=*`,
         {
             headers:{
@@ -97,260 +58,100 @@ async function carregarEnviarQuestionari(){
         }
     );
 
+    const relacions = await relacioResponse.json();
 
-    const relacions =
-    await relacioResponse.json();
-
-
-
-    equipsEnviar =
-    equipsEnviar.map(e=>{
-
-
-        const ids =
-        relacions
-        .filter(
-            r=>r.team_uuid===e.uuid
-        )
-        .map(
-            r=>r.user_uuid
-        );
-
-
-        e.users =
-        usuarisEnviar.filter(
-            u=>ids.includes(u.uuid)
-        );
-
-
+    equipsEnviar = equipsEnviar.map(e=>{
+        const ids = relacions.filter(r=>r.team_uuid===e.uuid).map(r=>r.user_uuid);
+        e.users = usuarisEnviar.filter(u=>ids.includes(u.uuid));
         return e;
-
     });
 
-
-
     pintarEquipsEnviar();
-
     pintarUsuarisEnviar();
-
 }
+
 
 function pintarEquipsEnviar(){
 
-    const div =
-    document.getElementById("llistaEquipsEnviar");
-
+    const div = document.getElementById("llistaEquipsEnviar");
     div.innerHTML = "";
 
     equipsEnviar.forEach(e => {
-
         div.innerHTML += `
-
-        <label class="filaEnviar">
-
-            <span>${e.team_name}</span>
-
-            <input
-                type="checkbox"
-                onchange="toggleEquipEnviar('${e.uuid}')">
-
-        </label>
-
+            <label class="filaEnviar">
+                <span>${e.team_name}</span>
+                <input type="checkbox" onchange="toggleEquipEnviar('${e.uuid}')">
+            </label>
         `;
-
     });
-
 }
 
 
 function toggleEquipEnviar(uuid){
 
-
-    const equip =
-    equipsEnviar.find(
-        e=>e.uuid===uuid
-    );
-
-
+    const equip = equipsEnviar.find(e=>e.uuid===uuid);
 
     if(equipsSeleccionats.includes(uuid)){
-
-
-        equipsSeleccionats =
-        equipsSeleccionats.filter(
-            x=>x!==uuid
-        );
-
-
-    }
-    else{
-
-
+        equipsSeleccionats = equipsSeleccionats.filter(x=>x!==uuid);
+    } else {
         equipsSeleccionats.push(uuid);
-
-
-
-        const nousUsuaris =
-        equip.users.map(
-            u=>u.uuid
-        );
-
-
-        usuarisSeleccionats =
-        [
-            ...new Set(
-                [
-                    ...usuarisSeleccionats,
-                    ...nousUsuaris
-                ]
-            )
-        ];
-
-
+        const nousUsuaris = equip.users.map(u=>u.uuid);
+        usuarisSeleccionats = [...new Set([...usuarisSeleccionats, ...nousUsuaris])];
     }
-
 
     pintarUsuarisEnviar();
-
 }
+
 
 function capitalitzar(text){
-
-    return text
-        .toLowerCase()
-        .split(" ")
-        .map(
-            p => p.charAt(0).toUpperCase() + p.slice(1)
-        )
-        .join(" ");
-
+    return text.toLowerCase().split(" ").map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
 }
+
 
 function pintarUsuarisEnviar(){
 
-    const div =
-    document.getElementById("llistaUsuarisEnviar");
-
+    const div = document.getElementById("llistaUsuarisEnviar");
     div.innerHTML = "";
 
-    const usuarisOrdenats =
-    [...usuarisEnviar].sort(
-        (a,b) =>
-        a.surname.localeCompare(
-            b.surname,
-            "ca"
-        )
-    );
-
+    const usuarisOrdenats = [...usuarisEnviar].sort((a,b) => a.surname.localeCompare(b.surname, "ca"));
     usuarisOrdenats.forEach(u => {
-
-        const checked =
-        usuarisSeleccionats.includes(u.uuid)
-        ? "checked"
-        : "";
-
+        const checked = usuarisSeleccionats.includes(u.uuid) ? "checked" : "";
         div.innerHTML += `
-
-        <label class="filaEnviar">
-
-            <span>
-                ${capitalitzar(u.name)}
-                ${capitalitzar(u.surname)}
-            </span>
-
-            <input
-                type="checkbox"
-                ${checked}
-                onchange="toggleUsuariEnviar('${u.uuid}')">
-
-        </label>
-
+            <label class="filaEnviar">
+                <span> ${capitalitzar(u.name)} ${capitalitzar(u.surname)}</span>
+                <input type="checkbox" ${checked} onchange="toggleUsuariEnviar('${u.uuid}')">
+            </label>
         `;
-
     });
-
 }
+
 
 async function enviarQuestionaris(){
 
-
     if(usuarisSeleccionats.length===0){
-
-        alert(
-            "Selecciona algun usuari"
-        );
-
+        alert("Selecciona algun usuari");
         return;
-
     }
 
+    const avui = new Date();
+    const dia = String(avui.getDate()).padStart(2,"0");
+    const mes = String(avui.getMonth()+1).padStart(2,"0");
+    const any = avui.getFullYear();
+    const data = `${dia}-${mes}-${any}`;
 
-    const avui =
-    new Date();
-
-
-    const dia =
-    String(avui.getDate())
-    .padStart(2,"0");
-
-
-    const mes =
-    String(avui.getMonth()+1)
-    .padStart(2,"0");
-
-
-    const any =
-    avui.getFullYear();
-
-
-    const data =
-    `${dia}-${mes}-${any}`;
-
-
-
-    const registres =
-    usuarisSeleccionats.map(u=>({
-
+    const registres = usuarisSeleccionats.map(u=>({
         user_uuid:u,
-
-        questionari_uuid:
-        questionariEnviar.uuid,
-
+        questionari_uuid: questionariEnviar.uuid,
         data_enviament:data,
-
         contestat:0
-
     }));
 
-
-
     try {
-
-        await upsertContestarQuestionari(
-            registres
-        );
-
-
-        alert(
-            "Questionari enviat"
-        );
-
-
-        mostrarPantalla(
-            "gestioQuestionaris"
-        );
-
-
+        await upsertContestarQuestionari(registres);
+        alert("Qüestionari enviat");
+        mostrarPantalla("gestioQuestionaris");
     } catch(error){
-
-
         console.error(error);
-
-
-        alert(
-            "Error enviant qüestionari"
-        );
-
+        alert("Error enviant qüestionari");
     }
-
 }
