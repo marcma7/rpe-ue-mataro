@@ -694,23 +694,20 @@ async function getPracticesByTeam(teamUuid) {
 }
 
 
-async function insertPractice(practice){
-
-    console.log("NOVA insertPractice");
+async function insertPractice(practice) {
 
     const response = await fetch(
 
         `${SUPABASE_URL}/rest/v1/practices`,
 
         {
-
             method: "POST",
 
             headers: {
                 "Content-Type": "application/json",
                 "Prefer": "return=representation",
                 "apikey": SUPABASE_API_KEY,
-                "Authorization": "Bearer " + SUPABASE_API_KEY
+                "Authorization": `Bearer ${SUPABASE_API_KEY}`
             },
 
             body: JSON.stringify(practice)
@@ -721,13 +718,17 @@ async function insertPractice(practice){
 
     const result = await response.json();
 
-    return {
-        ok: response.ok,
-        status: response.status,
-        data: response.ok ? result : null,
-        error: response.ok ? null : result
-    };
+    if (!response.ok) {
 
+        const error = new Error(result.message || "Error en crear la sessió");
+        error.status = response.status;
+        error.code = result.code;
+        error.details = result.details;
+
+        throw error;
+    }
+
+    return result;
 }
 
 
