@@ -1,108 +1,41 @@
 let injuryAssignada = "";
-
 let diesFisio = [];
-
 let diesFilterFisio = [];
-
-let horesFisio = [
-"17:00",
-"17:30",
-"18:00",
-"18:30",
-"19:00",
-"19:30",
-"20:00",
-"20:30",
-"21:00",
-"21:30"
-];
-
-
+let horesFisio = ["17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
 let horaSeleccionadaFisio = null;
-
 let visitesFisioHora = [];
 
 
-
 async function obrirAssignarHora(injuryUuid){
-
     injuryAssignada = injuryUuid;
-
-
-    mostrarPantalla(
-        "assignarHora"
-    );
-
-
+    mostrarPantalla("assignarHora");
     await carregarGraellaFisio();
-
 }
-
 
 
 async function carregarGraellaFisio(){
 
-
     diesFisio=[];
     diesFilterFisio=[];
-
-
-    let avui =
-    new Date();
-
-
+    let avui = new Date();
 
     for(let i=0;i<=13;i++){
-
-
-        let d =
-        new Date(avui);
-
-
-        d.setDate(
-            avui.getDate()+i
-        );
-
-
-        diesFisio.push(
-            d.toLocaleDateString(
-                "ca-ES",
+        let d = new Date(avui);
+        d.setDate(avui.getDate()+i);
+        diesFisio.push(d.toLocaleDateString("ca-ES",
                 {
                     day:"2-digit",
                     month:"2-digit"
                 }
             )
         );
-
-
-        diesFilterFisio.push(
-            String(d.getDate()).padStart(2,"0")
-            +
-            "-"
-            +
-            String(d.getMonth()+1).padStart(2,"0")
-            +
-            "-"
-            +
-            d.getFullYear()
-        );
-
+        diesFilterFisio.push(String(d.getDate()).padStart(2,"0") + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + d.getFullYear());
     }
 
-
-visitesFisio =
-await getVisitsByDates(
-    diesFilterFisio
-);
-
-
-await completarDadesVisitesFisio();
-
-
-pintarGraellaFisio();
-
+    visitesFisio = await getVisitsByDates(diesFilterFisio);
+    await completarDadesVisitesFisio();
+    pintarGraellaFisio();
 }
-
 
 
 function pintarGraellaFisio(){
@@ -111,393 +44,158 @@ function pintarGraellaFisio(){
     div.innerHTML = "";
 
     const taula = document.createElement("div");
-
     taula.className = "taulaFisio";
-
-    taula.style.gridTemplateColumns =
-        "80px repeat(" + diesFisio.length + ",70px)";
-
+    taula.style.gridTemplateColumns = "80px repeat(" + diesFisio.length + ",70px)";
 
     // cantonada superior esquerra
     const corner = document.createElement("div");
     corner.className = "cella corner";
     taula.appendChild(corner);
 
-
     // dies
     diesFisio.forEach(dia=>{
-
         const d = document.createElement("div");
-
         d.className = "cella header";
-
         d.textContent = dia;
-
         taula.appendChild(d);
-
     });
-
 
     // hores
     horesFisio.forEach(hora=>{
-
         // columna esquerra
         const h = document.createElement("div");
-
         h.className = "cella hora";
-
         h.textContent = hora;
-
         taula.appendChild(h);
-
 
         // caselles
         diesFisio.forEach((dia,index)=>{
-
             const cell = document.createElement("div");
-cell.className = "cella";
+            cell.className = "cella";
 
-const boto = document.createElement("button");
-boto.className = "casellaFisio";
+            const boto = document.createElement("button");
+            boto.className = "casellaFisio";
 
-const ocupades = visitesFisio.filter(v =>
-    v.date === diesFilterFisio[index] &&
-    v.hour === hora
-).length;
+            const ocupades = visitesFisio.filter(v => v.date === diesFilterFisio[index] && v.hour === hora).length;
+            boto.style.background = colorConsultesFisio(ocupades);
+            boto.onclick = () => { 
+                seleccionarHoraFisio(index, hora);
+            };
 
-boto.style.background = colorConsultesFisio(ocupades);
-
-boto.onclick = () => {
-    seleccionarHoraFisio(index, hora);
-};
-
-cell.appendChild(boto);
-console.log(getComputedStyle(boto).width);
-taula.appendChild(cell);
-
+            cell.appendChild(boto);
+            taula.appendChild(cell);
         });
-
     });
 
     div.appendChild(taula);
-    console.log(taula.children.length);
-console.log(horesFisio.length);
-console.log(diesFisio.length);
-
 }
 
 
-async function seleccionarHoraFisio(
-    diaIndex,
-    hora
-){
+async function seleccionarHoraFisio(diaIndex, hora){
 
-    horaSeleccionadaFisio =
-    {
+    horaSeleccionadaFisio = {
         index:diaIndex,
         hora:hora
     };
 
+    document.getElementById("horaSeleccionada").textContent = diesFisio[diaIndex] + " " + hora;
 
-    document
-    .getElementById(
-        "horaSeleccionada"
-    )
-    .textContent =
-    diesFisio[diaIndex]
-    +
-    " "
-    +
-    hora;
+    const data = diesFilterFisio[diaIndex];
 
-
-
-    const data =
-    diesFilterFisio[diaIndex];
-
-
-    visitesFisioHora =
-    visitesFisio.filter(v=>{
-
-        return (
-            v.date === data
-            &&
-            v.hour === hora
-        );
-
+    visitesFisioHora = visitesFisio.filter(v=>{
+        return (v.date === data && v.hour === hora);
     });
 
-
-
     pintarVisitesHoraFisio();
-
-
 }
+
 
 function pintarVisitesHoraFisio(){
 
-
-    const div =
-    document.getElementById(
-        "visitesHoraFisio"
-    );
-
-
+    const div = document.getElementById("visitesHoraFisio");
     div.innerHTML="";
 
-
-
     if(visitesFisioHora.length===0){
-
-
-        div.textContent =
-        "No hi ha visites assignades";
-
-
+        div.textContent = "No hi ha visites assignades";
         return;
-
     }
-
-
 
     visitesFisioHora.forEach(visita=>{
-
-
         const card = document.createElement("div");
-card.className =
-        "lesioFila";
-card.innerHTML =
-
-        `
-        <b>
-        ${capitalize(visita.user?.name ?? "")}
-        ${capitalize(visita.user?.surname ?? "")}
-        </b>
-
-        <br>
-
-        ${visita.injury?.zona ?? "-"}
-        &nbsp; | &nbsp;
-        ${visita.injury?.tipus ?? "-"}
-        &nbsp; | &nbsp;
-        ${visita.injury?.gravetat ?? "-"}
-
-        <br>
-
-
+        card.className = "lesioFila";
+        card.innerHTML = `
+            <b>${capitalize(visita.user?.name ?? "")} ${capitalize(visita.user?.surname ?? "")}</b>
+            <br>
+            ${visita.injury?.zona ?? "-"} &nbsp; | &nbsp; ${visita.injury?.tipus ?? "-"} &nbsp; | &nbsp; ${visita.injury?.gravetat ?? "-"}
+            <br>
         `;
-
         div.appendChild(card);
     });
-
-
 }
 
-document
-.getElementById(
-"confirmarHoraFisioButton"
-)
-.addEventListener(
-"click",
-async()=>{
 
-
+document.getElementById("confirmarHoraFisioButton").addEventListener("click", async()=>{
     if(!horaSeleccionadaFisio){
-
-        alert(
-            "Selecciona una hora"
-        );
-
+        alert("Selecciona una hora");
         return;
-
     }
 
-
-
-    const episodes =
-    await getEpisodesByInjury(
-        [
-            injuryAssignada
-        ]
-    );
-
+    const episodes = await getEpisodesByInjury([injuryAssignada]);
 
     if(episodes.length===0){
-
-        alert(
-            "No hi ha episodi de fisio"
-        );
-
+        alert("No hi ha episodi de fisio");
         return;
-
     }
 
-
-
-    const visits =
-    await getVisitsByEpisodes(
-        episodes.map(
-            e=>e.uuid
-        )
-    );
-
+    const visits = await getVisitsByEpisodes(episodes.map(e=>e.uuid));
 
     if(visits.length===0){
-
-        alert(
-            "No hi ha visita creada"
-        );
-
+        alert("No hi ha visita creada");
         return;
-
     }
 
-
-
-    const ultimaVisita =
-    visits.sort(
-        (a,b)=>
-        b.num_visit-a.num_visit
-    )[0];
-
-
+    const ultimaVisita = visits.sort((a,b)=>b.num_visit-a.num_visit)[0];
 
     await upsertPhysioHour([{
+        uuid: ultimaVisita.uuid,
+        date: diesFilterFisio[horaSeleccionadaFisio.index],
+        hour: horaSeleccionadaFisio.hora
+    }]);
 
-    uuid:
-    ultimaVisita.uuid,
-
-    date:
-    diesFilterFisio[
-        horaSeleccionadaFisio.index
-    ],
-
-    hour:
-    horaSeleccionadaFisio.hora
-
-}]);
-
-
-document
-.getElementById("pantallaAssignarHora")
-.style.display="none";
-
-
-
-
-
-    alert(
-        "HORA ASSIGNADA"
-    );
-
-
+    document.getElementById("pantallaAssignarHora").style.display="none";
+    alert("HORA ASSIGNADA");
     horaSeleccionadaFisio = null;
-
-
     await obrirLesionsFisio();
-
-
 });
 
 
 function colorConsultesFisio(num){
 
-
     switch(num){
-
-        case 0:
-            return "green";
-
-
-        case 1:
-            return "#99e65c";
-
-
-        case 2:
-            return "yellow";
-
-
-        case 3:
-            return "orange";
-
-
+        case 0: return "green";
+        case 1: return "#99e65c";
+        case 2: return "yellow";
+        case 3: return "orange";
         case 4:
-        default:
+        default: 
             return "red";
-
     }
-
 }
 
 
 async function completarDadesVisitesFisio(){
 
+    if(visitesFisio.length===0) return;
 
-    if(visitesFisio.length===0)
-        return;
-
-
-
-    const episodes =
-    await getEpisodesByUuid(
-        [
-            ...new Set(
-                visitesFisio.map(v=>v.episode_uuid)
-            )
-        ]
-    );
-
-
-
-    const injuries =
-    await getInjuriesByUuid(
-        [
-            ...new Set(
-                episodes.map(e=>e.injury_uuid)
-            )
-        ]
-    );
-
-
-
-    const users =
-    await getAllUsers(
-        [
-            ...new Set(
-                injuries.map(i=>i.user_uuid)
-            )
-        ]
-    );
-
-
+    const episodes = await getEpisodesByUuid([...new Set(visitesFisio.map(v=>v.episode_uuid))]);
+    const injuries = await getInjuriesByUuid([...new Set(episodes.map(e=>e.injury_uuid))]);
+    const users = await getAllUsers([...new Set(injuries.map(i=>i.user_uuid))]);
 
     visitesFisio.forEach(v=>{
-
-
-        const ep =
-        episodes.find(
-            e=>e.uuid===v.episode_uuid
-        );
-
-
-        const injury =
-        injuries.find(
-            i=>i.uuid===ep?.injury_uuid
-        );
-
-
-        const user =
-        users.find(
-            u=>u.uuid===injury?.user_uuid
-        );
-
-
+        const ep = episodes.find(e=>e.uuid===v.episode_uuid);
+        const injury = injuries.find(i=>i.uuid===ep?.injury_uuid);
+        const user = users.find(u=>u.uuid===injury?.user_uuid);
         v.injury = injury;
-
         v.user = user;
-
-
     });
-
-
 }
