@@ -1701,7 +1701,7 @@ async function duplicarSessio(
                         nouUuid
 
                 }));
-
+            console.log(nousTemps);
 
             if(nousTemps.length>0)
                 await insertPracticeTime(
