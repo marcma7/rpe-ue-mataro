@@ -669,15 +669,8 @@ async function guardarSessio(){
     };
 
 
-    const created =
-        await insertPractice(
-            newPractice
-        );
-
-
-
-
    const created = await insertPractice(newPractice);
+    console.log(created);
 
 if (!created.ok) {
 
