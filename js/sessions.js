@@ -677,12 +677,23 @@ async function guardarSessio(){
 
 
 
-    if(created.length === 0)
+   const created = await insertPractice(newPractice);
+
+if (!created.ok) {
+
+    if (created.status === 409 || created.error?.code === "23505") {
+
+        alert("Ja existeix una sessió per aquest equip en aquesta data.");
         return;
 
+    }
 
-    createdPracticeUuid =
-        created[0].uuid;
+    console.error(created.error);
+    alert("Error en crear la sessió.");
+    return;
+}
+
+createdPracticeUuid = created.data[0].uuid;
 
 
 
