@@ -16,17 +16,11 @@
 <body>
     <!-- LOGIN -->
     <div id="pantallaLogin" class="container">
-
         <div class="loginCard">
-
             <h1>REGISTRE RPE<br>UE MATARÓ</h1>
-
             <input id="codi" type="text" placeholder="Introdueix el codi">
-
             <button id="entrarButton">ENTRAR</button>
-
         </div>
-
     </div>
 
     <!-- RPE -->
@@ -36,14 +30,11 @@
 
             <h1 class="rpeTitle">INTRODUEIX RPE</h1>
             <div class="dataRow">
-
                 <label>Data entrenament</label>
                 <select id="selectorData"></select>
-
             </div>
 
             <div id="rpeGrid">
-
                 <button class="rpeButton rpe1" data-value="1">1</button>
                 <button class="rpeButton rpe2" data-value="2">2</button>
                 <button class="rpeButton rpe3" data-value="3">3</button>
@@ -56,317 +47,174 @@
                 <div></div>
                 <button class="rpeButton rpe10" data-value="10">10</button>
                 <div></div>
-
             </div>
 
             <div class="barraBotons">
-
                 <button id="sortirButtonRPE">TANCAR SESSIÓ</button>
-
                 <button id="confirmarRPEButton">CONFIRMAR</button>
-
             </div>
         </div>
     </div>
 
     <!-- QUESTIONARIS -->
     <div id="pantallaQuestionaris" class="container" style="display:none;">
-
         <h1 id="questionariNom"></h1>
-
         <h3 id="questionariDescripcio"></h3>
-
         <div id="questionsContainer"></div>
-
         <button id="confirmarQuestionariButton">CONFIRMAR</button>
-
     </div>
 
     <div id="nouQuestionariDialog" class="dialogOverlay" style="display:none;">
-
-    <div class="dialogCard">
-
-        <h2>NOU QÜESTIONARI</h2>
-
-        <input
-            id="nomQuestionari"
-            type="text"
-            placeholder="Nom">
-
-        <textarea
-            id="descripcioQuestionari"
-            placeholder="Descripció"></textarea>
-
-        <div class="dialogButtons">
-
-            <button id="cancelNouQuestionariButton">
-                CANCEL·LAR
-            </button>
-
-            <button id="confirmNouQuestionariButton">
-                CREAR
-            </button>
-
+        <div class="dialogCard">
+            <h2>NOU QÜESTIONARI</h2>
+            <input id="nomQuestionari" type="text" placeholder="Nom">
+            <textarea id="descripcioQuestionari" placeholder="Descripció"></textarea>
+            
+            <div class="dialogButtons">
+                <button id="cancelNouQuestionariButton">CANCEL·LAR</button>
+                <button id="confirmNouQuestionariButton">CREAR</button>
+            </div>
         </div>
-
     </div>
-
-</div>
 
     <!-- MANAGEMENT -->
     <div id="pantallaManagement" class="container" style="display:none;">
-
         <h1>GESTIÓ</h1>
-
         <button id="equipsButton">EQUIPS</button>
         <button id="dadesButton">DADES</button>
         <button id="fisioButton">GESTIÓ FISIO</button>
         <button id="questionarisButton">GESTIÓ QÜESTIONARIS</button>
         <button id="valoracionsButton">GESTIÓ VALORACIONS</button>
         <button id="botoSortir">SORTIR</button>
-
     </div>
 
     <!-- EQUIPS -->
     <div id="pantallaTeams" class="container pantallaTeams" style="display:none;">
-
         <h1>GESTIÓ D'EQUIPS</h1>
-
         <div class="teamRow">
-
             <select id="selectorTeams"></select>
-
             <button id="nouEquipButton">NOU EQUIP</button>
-
             <button id="eliminarEquipButton">ELIMINAR EQUIP</button>
         </div>
 
         <div class="addPlayerRow proporcioJugador">
-
             <input id="nomJugador" type="text" placeholder="Nom">
-
             <input id="cognomJugador" type="text" placeholder="Cognom">
-
             <select id="rolJugador">
                 <option value="JUGADOR">JUGADOR</option>
                 <option value="ENTR./PREPA/FISIO">ENTR./PREPA/FISIO</option>
-               <option value="SUPERADMIN">SUPERADMIN</option>
-
+                <option value="SUPERADMIN">SUPERADMIN</option>
             </select>
-
             <button id="afegirJugadorButton">AFEGIR</button>
         </div>
 
         <div id="llistaJugadors"></div>
-
-        <div class="sessionsButtons">
-
-            <div class="barraBotons">
-                <button id="afegirSessionsButton">AFEGIR SESSIONS</button>
-
-                <button id="modificarSessioButton">MODIFICAR SESSIONS</button>
-
-                <button id="eliminarSessionsButton">ELIMINAR SESSIONS</button>
-
-                <button id="enrereSessionsATeams">ENRERE</button>
-            </div>
-        </div>
-   </div>
+        <div class="barraBotons">
+            <button id="afegirSessionsButton">AFEGIR SESSIONS</button>
+            <button id="modificarSessioButton">MODIFICAR SESSIONS</button>
+            <button id="eliminarSessionsButton">ELIMINAR SESSIONS</button>
+            <button id="enrereSessionsATeams">ENRERE</button>
+        </div>        
+    </div>
 
     <!-- SESSIONS -->
     <div id="pantallaSessions" class="container" style="display:none;">
+        <h1 id="nomEquipSessio"></h1>
+        <h2 id="titolSessio">AFEGIR SESSIÓ</h2>
+        
+        <div id="zonaConfiguracioSessio">
+            <div class="filaSessio dataSessioFila">
+                <label>Data sessió</label>
+                <input id="dataSessio" type="date">
+            </div>
 
-    <h1 id="nomEquipSessio"></h1>
+            <div class="filaSessio">
+                <label>ENTRENAMENT</label>
+                <input id="trainTime" type="number" value="0">
+            </div>
 
-    <h2 id="titolSessio">
-        AFEGIR SESSIÓ
-    </h2>
+            <div class="filaSessio">
+                <label>PF</label>
+                <input id="pfTime" type="number" value="0">
+            </div>
 
+            <div class="filaSessio">
+                <label>PARTIT</label>
+                <input id="gameTime" type="number" value="0">
+            </div>
 
-    <div id="zonaConfiguracioSessio">
-
-
-        <div class="filaSessio dataSessioFila">
-
-            <label>
-                Data sessió
-            </label>
-
-            <input id="dataSessio" type="date">
-
+            <button id="aplicarJugadorsButton">APLICAR ALS JUGADORS</button>
         </div>
 
-
-        <div class="filaSessio">
-
-            <label>
-                ENTRENAMENT
-            </label>
-
-            <input id="trainTime" type="number" value="0">
-
+        <div id="zonaJugadorsSessio">
+            <div id="jugadorsSessio"></div>
         </div>
 
-
-        <div class="filaSessio">
-
-            <label>
-                PF
-            </label>
-
-            <input id="pfTime" type="number" value="0">
-
+        <div class="botonsFinalsSessio" >
+            <button id="tornarTeamsButton">ENRERE</button>
+            <button id="guardarSessioButton">AFEGIR DADES</button>
         </div>
-
-
-        <div class="filaSessio">
-
-            <label>
-                PARTIT
-            </label>
-
-            <input id="gameTime" type="number" value="0">
-
-        </div>
-
-
-        <button id="aplicarJugadorsButton">
-            APLICAR ALS JUGADORS
-        </button>
-
-
     </div>
-
-
-
-    <div id="zonaJugadorsSessio">
-
-        <div id="jugadorsSessio">
-        </div>
-
-
-    </div>
-
-
-
-    <div class="botonsFinalsSessio" >
-
-        <button id="tornarTeamsButton">
-            ENRERE
-        </button>
-
-        <button id="guardarSessioButton">
-            AFEGIR DADES
-        </button>
-
-    </div>
-
-
-</div>
+    
     <!-- MODIFICAR SESSIONS -->
     <div id="pantallaModifySessions" class="container" style="display:none;">
-
         <h1>MODIFICAR SESSIONS</h1>
-
         <h2 id="nomEquipModificar"></h2>
-
         <div class="modificarColumnes">
-
             <div>
-
                 <h3>SESSIONS ANTERIORS</h3>
                 <div id="llistaSessionsAnteriors"></div>
             </div>
 
             <div>
-
                 <h3>SESSIONS FUTURES</h3>
                 <div id="llistaSessionsFutures"></div>
             </div>
         </div>
-
         <hr>
-
         <div class="tempsSessio">
-
             <label>Entrenament</label>
             <input id="trainTimeMod" type="number" value="0">
-
             <label>PF</label>
             <input id="pfTimeMod" type="number" value="0">
-
             <label>Partit</label>
             <input id="gameTimeMod" type="number" value="0">
-
-            <button id="aplicarJugadorsModificarButton">
-                APLICAR ALS JUGADORS
-            </button>
-
+            <button id="aplicarJugadorsModificarButton">APLICAR ALS JUGADORS</button>
         </div>
 
         <div id="jugadorsModificar"></div>
 
         <div class="botonsFinalsSessio">
-
-            <button id="tornarModificarTeamsButton">
-        ENRERE
-    </button>
-
-            <button id="actualitzarSessioButton">
-        ACTUALITZAR SESSIÓ
-    </button>
-
-
-
-</div>
-
+            <button id="tornarModificarTeamsButton">ENRERE</button>
+            <button id="actualitzarSessioButton">ACTUALITZAR SESSIÓ</button>
+        </div>
     </div>
 
     <!-- ELIMINAR SESSIONS -->
     <div id="pantallaDeleteSessions" class="container" style="display:none;">
-
         <h1>ELIMINAR SESSIONS</h1>
-
         <h2 id="nomEquipEliminar"></h2>
-
         <div class="eliminarColumnes">
-
             <div>
-
                 <h3>SESSIONS ANTERIORS</h3>
                 <div id="llistaSessionsAnteriorsEliminar"></div>
             </div>
 
             <div>
-
                 <h3>SESSIONS FUTURES</h3>
                 <div id="llistaSessionsFuturesEliminar"></div>
             </div>
         </div>
-
         <hr>
-
         <div id="jugadorsEliminar"></div>
-
         <div class="botonsFinalsSessio">
-
-
-
-    <button id="tornarEliminarTeamsButton">
-        ENRERE
-    </button>
-            <button id="eliminarSessioButton">
-        ELIMINAR SESSIÓ
-    </button>
-
-</div>
-
+            <button id="tornarEliminarTeamsButton">ENRERE</button>
+            <button id="eliminarSessioButton">ELIMINAR SESSIÓ</button>
+        </div>
     </div>
 
     <div id="dialogOverlay" class="dialogOverlay" style="display:none;">
-
         <div class="dialogBox">
-
             <h2 id="dialogTitle"></h2>
             <p id="dialogMessage"></p>
             <div id="dialogButtons"></div>
@@ -374,710 +222,352 @@
     </div>
 
     <div id="duplicateDialog" class="dialogOverlay" style="display:none;">
-
-    <div class="dialogCard duplicateCard">
-
-        <h2>DUPLICAR SESSIÓ</h2>
-
-
-        <div class="checkRow">
-
-            <label>
-                <input type="checkbox" id="repeatDaily">
-                Diari
-            </label>
-
-
-            <label>
-                <input type="checkbox" id="repeatWeekly">
-                Setmanal
-            </label>
-
+        <div class="dialogCard duplicateCard">
+            <h2>DUPLICAR SESSIÓ</h2>
+            <div class="checkRow">
+                <label><input type="checkbox" id="repeatDaily">Diari</label>
+                <label><input type="checkbox" id="repeatWeekly">Setmanal</label>
+           </div>
+            <h3>DATA LÍMIT</h3>
+            <input type="date" id="duplicateLimitDate">
+    
+            <div class="dialogButtons">
+                <button id="confirmDuplicateButton">AFEGIR</button>
+                <button id="cancelDuplicateButton">CANCEL·LAR</button>
+            </div>
         </div>
-
-
-        <h3>DATA LÍMIT</h3>
-
-        <input
-            type="date"
-            id="duplicateLimitDate">
-
-
-        <div class="dialogButtons">
-
-            <button id="confirmDuplicateButton">
-                AFEGIR
-            </button>
-
-
-            <button id="cancelDuplicateButton">
-                CANCEL·LAR
-            </button>
-
-        </div>
-
-
     </div>
-
-</div>
 
     <!-- SELECCIONAR VALORACIÓ -->
     <div id="pantallaSeleccionValoracio" class="container" style="display:none;">
-
-    <h1>ESCULL VALORACIÓ</h1>
-
-
-    <div id="llistaValoracions"></div>
-
-
-    <button id="tornarDadesButton">
-        ENRERE
-    </button>
-
-</div>
+        <h1>ESCULL VALORACIÓ</h1>
+        <div id="llistaValoracions"></div>
+        <button id="tornarDadesButton">ENRERE</button>
+    </div>
 
     <!-- FISIO -->
     <div id="pantallaFisio" class="container" style="display:none;">
-
-    <h1>GESTIÓ FISIO</h1>
-
-
-    <button id="lesionsButton">
-        LESIONS
-    </button>
-
-
-    <button id="visitesButton">
-        VISITES
-    </button>
-
-
-    <button id="enrereFisio">
-        ENRERE
-    </button>
-
-
-</div>
+        <h1>GESTIÓ FISIO</h1>
+        <button id="lesionsButton">LESIONS</button>
+        <button id="visitesButton">VISITES</button>
+        <button id="enrereFisio">ENRERE</button>
+    </div>
 
     <div id="pantallaDades" class="container" style="display:none;">
-
-    <h1>VEURE DADES</h1>
-
-    <select id="selectorDadesTeams"></select>
-
-
-    <div id="llistaDadesJugadors"></div>
-
-
-    <button id="enrereDades">
-        TORNAR A GESTIÓ
-    </button>
-
-</div>
+        <h1>VEURE DADES</h1>
+        <select id="selectorDadesTeams"></select>
+        <div id="llistaDadesJugadors"></div>
+        <button id="enrereDades">TORNAR A GESTIÓ</button>
+    </div>
 
     <!-- PASSAR VALORACIÓ -->
     <div id="pantallaPassarValoracio" class="container" style="display:none;">
-
-    <h1 id="valoracioTitol">
-    </h1>
-
-    <h3 id="valoracioDescripcio">
-    </h3>
-
-    <h4 id="valoracioJugador">
-    </h4>
-
-
-    <div id="itemsValoracio"></div>
-
-
-    <button id="confirmarValoracioButton">
-        CONFIRMAR
-    </button>
-
-
-    <button id="tornarDadesValoracioButton">
-        ENRERE
-    </button>
-
-</div>
+        <h1 id="valoracioTitol"></h1>
+        <h3 id="valoracioDescripcio"></h3>
+        <h4 id="valoracioJugador"></h4>
+    
+        <div id="itemsValoracio"></div>
+        <button id="confirmarValoracioButton">CONFIRMAR</button>
+        <button id="tornarDadesValoracioButton">ENRERE</button>
+    </div>
 
     <!-- LESIONS FISIO -->
     <div id="pantallaLesions" class="container" style="display:none;">
+        <h1>LESIONS</h1>
+        <select id="filtreLesions">
+            <option>Totes</option>
+            <option>Sense fisio</option>
+            <option>Pendent de donar hora</option>
+            <option>Hora donada</option>
+            <option>Visita feta</option>
+        </select>
 
-    <h1>LESIONS</h1>
+        <div id="llistaLesions"></div>
 
-
-    <select id="filtreLesions">
-
-        <option>Totes</option>
-        <option>Sense fisio</option>
-        <option>Pendent de donar hora</option>
-        <option>Hora donada</option>
-        <option>Visita feta</option>
-
-    </select>
-
-
-    <div id="llistaLesions"></div>
-
-
-    <button id="tornarFisioButton">
-        ENRERE
-    </button>
-
-
-</div>
-
-    <!-- ASSIGNAR HORA FISIO -->
-<div id="pantallaAssignarHora" class="container" style="display:none;">
-
-    <h1>ASSIGNAR HORA</h1>
-
-<div class="graellaWrapper">
-    <div id="graellaFisio"></div>
-</div>
-
-    <div class="horaEscollidaFila">
-    <h3>HORA ESCOLLIDA:</h3>
-    <div id="horaSeleccionada"></div>
-</div>
-
-    <div id="visitesHoraFisio"></div>
-
-<div class="barraBotons">
- <button id="tornarLesionsButton">
-        TORNAR A LESIONS
-    </button>
-    
-<button id="confirmarHoraFisioButton">
-        CONFIRMAR
-    </button>
-
-   
-</div>
-</div>
-
-
-   
-    <!-- VISITES FISIO -->
-    <div id="pantallaVisites" class="container" style="display:none;">
-
-    <h1>VISITES</h1>
-
-
-    <div class="dataRow">
-
-        <label>Data visita</label>
-
-        <input
-            id="dataVisitaFisio"
-            type="date">
-
+        <button id="tornarFisioButton">ENRERE</button>
     </div>
 
+    <!-- ASSIGNAR HORA FISIO -->
+    <div id="pantallaAssignarHora" class="container" style="display:none;">
+        <h1>ASSIGNAR HORA</h1>
+        <div class="graellaWrapper">
+            <div id="graellaFisio"></div>
+        </div>
 
-    <div id="llistaVisitesFisio"></div>
+        <div class="horaEscollidaFila">
+            <h3>HORA ESCOLLIDA:</h3>
+            <div id="horaSeleccionada"></div>
+        </div>
 
+        <div id="visitesHoraFisio"></div>
 
-    <button id="tornarFisioVisitesButton">
-        ENRERE
-    </button>
+        <div class="barraBotons">
+            <button id="tornarLesionsButton">TORNAR A LESIONS</button>
+            <button id="confirmarHoraFisioButton">CONFIRMAR</button>
+        </div>
+    </div>
 
+    <!-- VISITES FISIO -->
+    <div id="pantallaVisites" class="container" style="display:none;">
+        <h1>VISITES</h1>
+        <div class="dataRow">
+            <label>Data visita</label>
+            <input id="dataVisitaFisio" type="date">
+        </div>
 
-</div>
+        <div id="llistaVisitesFisio"></div>
+
+        <button id="tornarFisioVisitesButton">ENRERE</button>
+    </div>
 
     <!-- AFEGIR LESIÓ JUGADOR -->
     <div id="pantallaAfegirLesio" class="container" style="display:none;">
+        <h1>LESIONS</h1>
+        <h2 id="nomJugadorLesio"></h2>
+        <div class="dataRow">
+            <label>Data lesió</label>
+            <input id="dataLesio" type="date">
+        </div>
 
-    <h1>LESIONS</h1>
+        <div class="dataRow">    
+            <label>Zona</label>
+            <select id="zonaLesio">
+                <option>Cap</option>
+                <option>Coll</option>
+                <option>Braç</option>
+                <option>Colze</option>
+                <option>Canell</option>
+                <option>Mà</option>
+                <option>Dit</option>
+                <option>Tronc</option>
+                <option>Esquena</option>
+                <option>Cama</option>
+                <option>Genoll</option>
+                <option>Turmell</option>
+                <option>Peu</option>
+                <option>Altres</option>
+            </select>
+        </div>
 
-    <h2 id="nomJugadorLesio"></h2>
+        <div class="dataRow">
+            <label>Tipus</label>
+            <select id="tipusLesio">
+                <option>Torçada/mal gest</option>
+                <option>Cop</option>
+                <option>Sobrecàrrega</option>
+                <option>Altres</option>
+            </select>
+        </div>
 
-
-    <div class="dataRow">
-
-        <label>Data lesió</label>
-
-        <input
-            id="dataLesio"
-            type="date">
-
+        <div class="dataRow">
+            <label>Gravetat</label>
+            <select id="gravetatLesio">
+                <option>Lleu</option>
+                <option>Moderada</option>
+                <option>Greu</option>
+                <option>Molt greu</option>
+            </select>
+        </div>
+    
+        <div class="dataRow">
+            <label>Demana fisio?</label>
+            <input id="needsFisio" type="checkbox">
+        </div>
+    
+        <div class="barraBotons">
+            <button id="enrereLesions">ENRERE</button>
+            <button id="afegirLesioButton">AFEGIR</button>
+        </div>
     </div>
-
-
-    <div class="dataRow">
-
-        <label>Zona</label>
-
-        <select id="zonaLesio">
-
-            <option>Cap</option>
-            <option>Coll</option>
-            <option>Braç</option>
-            <option>Colze</option>
-            <option>Canell</option>
-            <option>Mà</option>
-            <option>Dit</option>
-            <option>Tronc</option>
-            <option>Esquena</option>
-            <option>Cama</option>
-            <option>Genoll</option>
-            <option>Turmell</option>
-            <option>Peu</option>
-            <option>Altres</option>
-
-        </select>
-
-    </div>
-
-
-    <div class="dataRow">
-
-        <label>Tipus</label>
-
-        <select id="tipusLesio">
-
-            <option>Torçada/mal gest</option>
-            <option>Cop</option>
-            <option>Sobrecàrrega</option>
-            <option>Altres</option>
-
-        </select>
-
-    </div>
-
-
-    <div class="dataRow">
-
-        <label>Gravetat</label>
-
-        <select id="gravetatLesio">
-
-            <option>Lleu</option>
-            <option>Moderada</option>
-            <option>Greu</option>
-            <option>Molt greu</option>
-
-        </select>
-
-    </div>
-
-
-    <div class="dataRow">
-
-        <label>
-            Demana fisio?
-        </label>
-
-        <input
-            id="needsFisio"
-            type="checkbox">
-
-    </div>
-
-
-    <div class="barraBotons">
-
-        <button id="enrereLesions">
-            ENRERE
-        </button>
-
-
-        <button id="afegirLesioButton">
-            AFEGIR
-        </button>
-
-
-    </div>
-
-
-</div>
 
     <!-- GESTIÓ QÜESTIONARIS -->
     <div id="pantallaGestioQuestionaris" class="container" style="display:none;">
-
-    <h1>QÜESTIONARIS</h1>
-
-
-    <div id="llistaQuestionaris"></div>
-
-
-    <button id="nouQuestionariButton">
-        +
-    </button>
-
-
-    <button id="tornarGestioButton">
-        ENRERE
-    </button>
-
-</div>
+        <h1>QÜESTIONARIS</h1>
+        <div id="llistaQuestionaris"></div>
+        <button id="nouQuestionariButton">+</button>
+        <button id="tornarGestioButton">ENRERE</button>
+    </div>
 
     <div id="pantallaGestioValoracions" class="container" style="display:none;">
-
-    <h1>VALORACIONS</h1>
-
-    <div id="llistaValoracionsGest"></div>
-
-
-    <button id="novaValoracioButton">
-        +
-    </button>
-
-
-    <button id="tornarValoracioButton">
-        TORNAR A GESTIÓ
-    </button>
-
-</div>
+        <h1>VALORACIONS</h1>
+        <div id="llistaValoracionsGest"></div>
+        <button id="novaValoracioButton">+</button>
+        <button id="tornarValoracioButton">TORNAR A GESTIÓ</button>
+    </div>
+    
     <div id="pantallaSeleccionarJugadorValoracio" class="container" style="display:none;">
-
-    <h2>Selecciona jugador</h2>
-
-    <div id="llistaJugadorsValoracio"></div>
-
-</div>
+        <h2>Selecciona jugador</h2>
+        <div id="llistaJugadorsValoracio"></div>
+    </div>
 
     <div id="questions" class="container" style="display:none;">
-
-    <h1>PREGUNTES</h1>
-
-    <div id="llistaPreguntes"></div>
-
-
-    <button id="novaPreguntaButton">
-        +
-    </button>
-
-            <button id="tornarQuestionarisButton">
-        Tornar a qüestionaris
-    </button>
-
-</div>
+        <h1>PREGUNTES</h1>
+        <div id="llistaPreguntes"></div>
+        <button id="novaPreguntaButton">+</button>
+        <button id="tornarQuestionarisButton">Tornar a qüestionaris</button>
+    </div>
 
     <div id="addQuestion" class="container" style="display:none;">
-
-<h1>AFEGIR PREGUNTA</h1>
-
-
-<textarea id="preguntaText"></textarea>
-
-
-<select id="tipusPregunta"
- onchange="canviarTipusPregunta()">
-
-<option>
-ESCALA NUMÈRICA
-</option>
-
-<option>
-OPCIONS
-</option>
-
-<option>
-TEXT
-</option>
-
-</select>
+        <h1>AFEGIR PREGUNTA</h1>
+        <textarea id="preguntaText"></textarea>
+        <select id="tipusPregunta" onchange="canviarTipusPregunta()">
+            <option>ESCALA NUMÈRICA</option>
+            <option>OPCIONS</option>
+            <option>TEXT</option>
+        </select>
 
         <div id="filaEscalaPregunta">
+            <div class="campEscalaPregunta">
+                <label for="minPregunta">Mínim</label>
+                <input id="minPregunta" type="number">
+            </div>
+        
+            <div class="campEscalaPregunta">
+                <label for="maxPregunta">Màxim</label>
+                <input id="maxPregunta" type="number">
+            </div>
+        </div>
 
-    <div class="campEscalaPregunta">
-        <label for="minPregunta">Mínim</label>
-        <input id="minPregunta" type="number">
+        <div id="configOpcions">
+            <input id="novaOpcio" placeholder="Nova opció">
+            <button onclick="afegirOpcioPregunta()">AFEGIR OPCIÓ</button>
+            
+            <div id="llistaOpcions"></div>
+        </div>
+
+        <button onclick="guardarPregunta()">CONFIRMAR</button>
     </div>
-
-    <div class="campEscalaPregunta">
-        <label for="maxPregunta">Màxim</label>
-        <input id="maxPregunta" type="number">
-    </div>
-
-</div>
-
-<div id="configOpcions">
-
-    <input
-        id="novaOpcio"
-        placeholder="Nova opció">
-
-    <button onclick="afegirOpcioPregunta()">
-        AFEGIR OPCIÓ
-    </button>
-
-    <div id="llistaOpcions"></div>
-
-</div>
-
-
-
-
-<button onclick="guardarPregunta()">
-CONFIRMAR
-</button>
-
-
-</div>
 
     <!-- ENVIAR QÜESTIONARI -->
     <div id="pantallaEnviarQuestionari" class="container" style="display:none;">
-
-    <h1>ENVIAR QÜESTIONARI</h1>
-
-
-   <div class="selectorsEnviar">
-
-    <div class="selectorColumna">
-
-        <h2>EQUIPS</h2>
-
-        <div id="llistaEquipsEnviar"></div>
-
+        <h1>ENVIAR QÜESTIONARI</h1>
+        <div class="selectorsEnviar">
+            <div class="selectorColumna">
+                <h2>EQUIPS</h2>
+                <div id="llistaEquipsEnviar"></div>
+            </div>
+            <div class="selectorColumna">
+                <h2>USUARIS</h2>
+                <div id="llistaUsuarisEnviar"></div>
+            </div>
+        </div>
+    
+        <div class="botonsEnviarQuestionari">
+            <button id="tornarEnviarQuestionariButton">TORNAR A QÜESTIONARIS</button>
+            <button id="enviarQuestionariButton">ENVIAR QÜESTIONARIS</button>
+        </div>
     </div>
-
-    <div class="selectorColumna">
-
-        <h2>USUARIS</h2>
-
-        <div id="llistaUsuarisEnviar"></div>
-
-    </div>
-
-</div>
-
-   <div class="botonsEnviarQuestionari">
-
-    <button id="tornarEnviarQuestionariButton">
-        TORNAR A QÜESTIONARIS
-    </button>
-
-    <button id="enviarQuestionariButton">
-        ENVIAR QÜESTIONARIS
-    </button>
-
-</div>
-
-</div>
+    
     <div id="pantallaValoracioItems" class="container" style="display:none;">
-
-    <h1>ÍTEMS</h1>
-
-
-    <div id="llistaValoracioItems"></div>
-
-
-    <button id="nouItemValoracioButton">
-        +
-    </button>
-
-
-    <button id="tornarValoracionsButton">
-        TORNAR A VALORACIONS
-    </button>
-
-</div>
-
+        <h1>ÍTEMS</h1>
+        <div id="llistaValoracioItems"></div>
+        <button id="nouItemValoracioButton">+</button>
+        <button id="tornarValoracionsButton">TORNAR A VALORACIONS</button>
+    </div>
 
     <div id="pantallaAddValoracioItem" class="container" style="display:none;">
+        <h1>AFEGIR ÍTEM</h1>
+        <textarea id="itemValoracioText" class="inputGran"></textarea>
+        <select id="tipusItemValoracio">
+            <option>ESCALA NUMÈRICA</option>
+            <option>OPCIONS</option>
+            <option>NÚMERO LLIURE</option>
+            <option>TEXT</option>
+        </select>
 
-    <h1>AFEGIR ÍTEM</h1>
+        <div id="configEscalaValoracio">
+            <label>Mínim</label>
+            <input id="minItemValoracio" type="number">
+            
+            <label>Màxim</label>
+            <input id="maxItemValoracio" type="number">
+        </div>
 
+        <div id="configOpcionsValoracio">
+            <input id="novaOpcioValoracio">
+            <button id="afegirOpcioValoracioButton">AFEGIR</button>
+            
+            <div id="llistaOpcionsValoracio"></div>
+        </div>
 
-    <textarea
-        id="itemValoracioText"
-        class="inputGran">
-    </textarea>
-
-
-    <select id="tipusItemValoracio">
-
-        <option>ESCALA NUMÈRICA</option>
-        <option>OPCIONS</option>
-        <option>NÚMERO LLIURE</option>
-        <option>TEXT</option>
-
-    </select>
-
-
-    <div id="configEscalaValoracio">
-
-        <label>Mínim</label>
-
-        <input
-        id="minItemValoracio"
-        type="number">
-
-
-        <label>Màxim</label>
-
-        <input
-        id="maxItemValoracio"
-        type="number">
-
+        <button id="guardarItemValoracioButton">CONFIRMAR</button>
     </div>
-
-
-    <div id="configOpcionsValoracio">
-
-
-        <input
-        id="novaOpcioValoracio">
-
-
-        <button id="afegirOpcioValoracioButton">
-            AFEGIR
-        </button>
-
-
-        <div id="llistaOpcionsValoracio"></div>
-
-
-    </div>
-
-
-    <button id="guardarItemValoracioButton">
-        CONFIRMAR
-    </button>
-
-
-</div>
 
     <div id="pantallaInfoVisita" class="container" style="display:none;">
+        <h1>INFO VISITA</h1>
+        <label>Anamnesi</label>
+        <textarea id="anamnesiVisita"></textarea>
+        
+        <label>Contingut visita</label>
+        <textarea id="feinaVisita"></textarea>
 
-    <h1>INFO VISITA</h1>
+        <label>Diagnòstic i propers passos</label>
+        <textarea id="seguentsPassos"></textarea>
 
-
-    <label>Anamnesi</label>
-    <textarea id="anamnesiVisita"></textarea>
-
-
-    <label>Contingut visita</label>
-    <textarea id="feinaVisita"></textarea>
-
-
-    <label>Diagnòstic i propers passos</label>
-    <textarea id="seguentsPassos"></textarea>
-
-
-    <div class="barraBotons">
-
-        <button id="programarSessioFisioButton">
-            PROGRAMAR SESSIÓ
-        </button>
-
-
-        <button id="tancarEpisodiFisioButton">
-            TANCAR EPISODI
-        </button>
-
+        <div class="barraBotons">
+            <button id="programarSessioFisioButton">PROGRAMAR SESSIÓ</button>
+            <button id="tancarEpisodiFisioButton">TANCAR EPISODI</button>
+        </div>
     </div>
-
-</div>
 
     <div id="postCreateDialog" class="dialog" style="display:none;">
-
-    <div class="dialogCard">
-
-        <h2>SESSIÓ CREADA</h2>
-
-        <p>Què vols fer ara?</p>
-
-        <div class="dialogButtons">
-
-            <button id="addAnotherSessionButton">
-                AFEGIR MÉS SESSIONS
-            </button>
-
-            <button id="duplicateSessionButton">
-                DUPLICAR SESSIÓ
-            </button>
-
-            <button id="exitSessionButton">
-                SORTIR
-            </button>
-
+        <div class="dialogCard">
+            <h2>SESSIÓ CREADA</h2>
+            <p>Què vols fer ara?</p>
+            <div class="dialogButtons">
+                <button id="addAnotherSessionButton">AFEGIR MÉS SESSIONS</button>
+                <button id="duplicateSessionButton">DUPLICAR SESSIÓ</button>
+                <button id="exitSessionButton">SORTIR</button>
+            </div>
         </div>
-
     </div>
-
-</div>
 
     <div id="playerCard" class="dialogOverlay" style="display:none;">
+        <div class="dialogCard dadesCard">
+            <h2 id="playerCardName"></h2>
+            <h3>CÀRREGA I DISPONIBILITAT</h3>
+            <div class="dadaFila">
+                <span>ACWR</span>
+                <span id="playerACWR"></span>
+            </div>
+            <div class="dadaFila">
+                <span>Wellness</span>
+                <span id="playerWellness"></span>
+            </div>
 
-    <div class="dialogCard dadesCard">
-
-        <h2 id="playerCardName"></h2>
-
-
-        <h3>CÀRREGA I DISPONIBILITAT</h3>
-
-
-        <div class="dadaFila">
-
-            <span>ACWR</span>
-
-            <span id="playerACWR"></span>
-
+            <h3>RENDIMENT</h3>
+            <h3>SALUT I MOVIMENT</h3>
+            
+            <div class="botonsJugador">
+            <button id="passarValoracioButton">PASSAR VALORACIONS</button>
+            <button id="tancarCardButton">TANCAR</button>
         </div>
-
-
-        <div class="dadaFila">
-
-            <span>Wellness</span>
-
-            <span id="playerWellness"></span>
-
-        </div>
-
-
-        <h3>RENDIMENT</h3>
-
-
-        <h3>SALUT I MOVIMENT</h3>
-
-
-        <div class="botonsJugador">
-
-    <button id="passarValoracioButton">
-        PASSAR VALORACIONS
-    </button>
-
-
-    <button id="tancarCardButton">
-        TANCAR
-    </button>
-
-</div>
-
     </div>
-
 </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/rpe.js"></script>
-    <script src="js/questionaris.js"></script>
-    <script src="js/teams.js"></script>
-    <script src="js/dialogs.js"></script>
-    <script src="js/sessions.js"></script>
-    <script src="js/dades.js"></script>
-    <script src="js/valoracions.js"></script>
-    <script src="js/fisio.js"></script>
-    <script src="js/fisio_hours.js"></script>
-    <script src="js/fisio_visites.js"></script>
-    <script src="js/fisio_info_visita.js"></script>
-    <script src="js/lesions.js"></script>
-    <script src="js/lesions_add.js"></script>
-    <script src="js/questions.js"></script>
-    <script src="js/add_questions.js"></script>
-    <script src="js/send_questionari.js"></script>
-    <script src="js/respondre_questionaris.js"></script>
-    <script src="js/gestio_valoracions.js"></script>
-    <script src="js/add_valoracio_items.js"></script>
-    <script src="js/valoracio_items.js"></script>
-    <script src="js/app.js"></script>
-
-    </body>
-
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/rpe.js"></script>
+<script src="js/questionaris.js"></script>
+<script src="js/teams.js"></script>
+<script src="js/dialogs.js"></script>
+<script src="js/sessions.js"></script>
+<script src="js/dades.js"></script>
+<script src="js/valoracions.js"></script>
+<script src="js/fisio.js"></script>
+<script src="js/fisio_hours.js"></script>
+<script src="js/fisio_visites.js"></script>
+<script src="js/fisio_info_visita.js"></script>
+<script src="js/lesions.js"></script>
+<script src="js/lesions_add.js"></script>
+<script src="js/questions.js"></script>
+<script src="js/add_questions.js"></script>
+<script src="js/send_questionari.js"></script>
+<script src="js/respondre_questionaris.js"></script>
+<script src="js/gestio_valoracions.js"></script>
+<script src="js/add_valoracio_items.js"></script>
+<script src="js/valoracio_items.js"></script>
+<script src="js/app.js"></script>
+</body>
 </html>
