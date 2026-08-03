@@ -1,7 +1,3 @@
-/* ==========================================================
-   BASE GLOBAL
-========================================================== */
-
 *{
     box-sizing:border-box;
 }
@@ -830,21 +826,14 @@ body{
 
 #dialogButtons{
 
-    display:flex;
-
-    flex-direction:column;
-
-    gap:12px;
-
-    margin-top:24px;
+ 
 
 }
 
 
 #dialogButtons button{
 
-    width:100%;
-
+ 
 }
 
 
@@ -928,21 +917,13 @@ body{
 
 
 #horesFisio{
-    width:60px;
-    flex-shrink:0;
+   
 }
 
-
-.scrollDiesFisio{
-
-    overflow-x:auto;
-    flex:1;
-
-}
 
 
 #graellaFisio{
-    min-width:980px;
+    
 }
 
 
@@ -1091,8 +1072,7 @@ select {
 .timeInputs,
 .questionariFila {
 
-    display:flex;
-    flex-direction:column;
+   
 
 }
 
@@ -1135,7 +1115,6 @@ select {
 
 /* LLISTES */
 
-.questionariFila,
 .jugadorFila,
 .valoracioItem {
 
@@ -1155,9 +1134,7 @@ select {
 
 .questionariFila {
 
-    display:flex;
-
-    flex-direction:column;
+    
 
 }
 
@@ -1165,13 +1142,6 @@ select {
 
 /* DIALOGS */
 
-.dialogCard {
-
-    width:90%;
-
-    max-width:400px;
-
-}
 
 
 
@@ -1227,9 +1197,7 @@ button {
 
 .questionariFila {
 
-    flex-direction:row;
-
-    align-items:center;
+  
 
 }
 
@@ -1297,7 +1265,6 @@ button {
 .barraBotons,
 .questionariFila {
 
-    width:100%;
 
 }
 
@@ -1345,8 +1312,6 @@ p {
 
 #llistaJugadors,
 #llistaQuestionaris,
-#llistaValoracionsGest,
-#llistaValoracioItems,
 #itemsValoracio {
 
     width:100%;
@@ -2024,23 +1989,6 @@ p {
 }
 
 
-.botonsFinalsSessio{
-
-    display:flex;
-
-    gap:8px;
-
-    margin-top:8px;
-
-}
-
-
-.botonsFinalsSessio button{
-
-    flex:1;
-
-}
-
 
 /* ===========================
    ELIMINAR SESSIÓ
@@ -2275,73 +2223,12 @@ p {
     padding:6px;
 }
 
-.questionariFila{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    gap:8px;
-
-    padding:8px 10px;
-    margin-bottom:6px;
-
-    background:#f4f4f4;
-    border-radius:8px;
-
-    background:white;
-
-    border-radius:15px;
-
-    padding:18px;
-
-    margin-bottom:15px;
-
-    box-shadow:0 2px 8px rgba(0,0,0,.15);
-}
-
 .questionariFila span{
     flex:1;
     overflow:hidden;
     white-space:nowrap;
     text-overflow:ellipsis;
     font-size:14px;
-}
-
-#nouQuestionariButton{
-    width:52px;
-    height:52px;
-    align-self:center;
-
-    border-radius:50%;
-
-    font-size:28px;
-    padding:0;
-}
-
-#tornarGestioButton{
-    width:100%;
-}
-
-
-/* ===========================
-   PREGUNTES
-=========================== */
-
-#questions{
-    display:flex;
-    flex-direction:column;
-    height:100%;
-    gap:10px;
-}
-
-#llistaPreguntes{
-    flex:1;
-    overflow-y:auto;
-    min-height:0;
-
-    background:#f7f7f7;
-    border-radius:10px;
-    padding:6px;
 }
 
 .preguntaFila{
@@ -2354,21 +2241,6 @@ p {
     font-size:14px;
 }
 
-#novaPreguntaButton{
-    width:52px;
-    height:52px;
-
-    align-self:center;
-
-    border-radius:50%;
-
-    font-size:28px;
-    padding:0;
-}
-
-/* ===========================
-   AFEGIR PREGUNTA
-=========================== */
 
 #addQuestion{
     display:flex;
@@ -2413,36 +2285,6 @@ p {
 }
 
 
-/* ===========================
-   GESTIÓ VALORACIONS
-=========================== */
-
-#pantallaGestioValoracions{
-
-    display:flex;
-    flex-direction:column;
-
-    height:100%;
-
-    gap:10px;
-
-}
-
-#llistaValoracionsGest{
-
-    flex:1;
-
-    min-height:0;
-
-    overflow-y:auto;
-
-    background:#f7f7f7;
-
-    border-radius:10px;
-
-    padding:6px;
-
-}
 
 .valoracioFila{
 
@@ -2479,7 +2321,16 @@ p {
 }
 
 #novaValoracioButton{
+  width:60px;
+    height:60px;
 
+    border-radius:50%;
+
+    font-size:36px;
+
+    padding:0;
+
+    flex:none;
     width:52px;
 
     height:52px;
@@ -2491,45 +2342,6 @@ p {
     font-size:28px;
 
     padding:0;
-
-}
-
-#tornarValoracioButton{
-
-    width:100%;
-
-}
-
-
-/* ===========================
-   ÍTEMS VALORACIÓ
-=========================== */
-
-#pantallaValoracioItems{
-
-    display:flex;
-
-    flex-direction:column;
-
-    height:100%;
-
-    gap:10px;
-
-}
-
-#llistaValoracioItems{
-
-    flex:1;
-
-    min-height:0;
-
-    overflow-y:auto;
-
-    background:#f7f7f7;
-
-    border-radius:10px;
-
-    padding:6px;
 
 }
 
@@ -2544,43 +2356,6 @@ p {
     border-radius:8px;
 
     font-size:14px;
-
-}
-
-#nouItemValoracioButton{
-
-    width:52px;
-
-    height:52px;
-
-    align-self:center;
-
-    border-radius:50%;
-
-    font-size:28px;
-
-    padding:0;
-
-}
-
-#tornarValoracionsButton{
-
-    width:100%;
-
-}
-
-
-/* ===========================
-   AFEGIR ÍTEM VALORACIÓ
-=========================== */
-
-#pantallaAddValoracioItem{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:10px;
 
 }
 
@@ -2685,21 +2460,6 @@ p {
     padding:6px;
 
 }
-
-.lesioFila{
-
-    padding:10px;
-
-    margin-bottom:6px;
-
-    background:#f4f4f4;
-
-    border-radius:8px;
-
-    font-size:14px;
-
-}
-
 #tornarFisioButton{
 
     width:100%;
@@ -2796,79 +2556,6 @@ p {
 
 }
 
-
-/* ===========================
-   ASSIGNAR HORA
-=========================== */
-
-#pantallaAssignarHora{
-
-    display:flex;
-
-    flex-direction:column;
-
-    height:100%;
-
-    gap:10px;
-
-}
-
-.taulaFisio{
-
-    flex:1;
-
-    min-height:0;
-
-    display:flex;
-
-    border:1px solid #e5e7eb;
-
-    border-radius:10px;
-
-}
-
-#horesFisio{
-
-    width:70px;
-
-    overflow-y:auto;
-
-    background:#fafafa;
-
-}
-
-.scrollDiesFisio{
-
-    flex:1;
-
-    overflow:auto;
-
-}
-
-#graellaFisio{
-
-    min-width:900px;
-
-}
-
-#horaSeleccionada{
-
-    min-height:40px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    border-radius:8px;
-
-    background:#f4f4f4;
-
-    font-weight:600;
-
-}
-
 #visitesHoraFisio{
 
     max-height:150px;
@@ -2900,37 +2587,16 @@ p {
 }
 
 #pantallaInfoVisita label{
-
     font-weight:600;
-
 }
 
 #pantallaInfoVisita textarea{
-
     min-height:90px;
-
 }
 
 #pantallaInfoVisita .barraBotons{
-
     margin-top:auto;
-
 }
-
-
-.jugadorFila > div{
-
-    display:grid;
-
-    grid-template-columns:28px 28px;
-
-    gap:4px;
-
-    justify-content:end;
-
-}
-
-
 
 
 #pantallaManagement button,
@@ -2941,35 +2607,24 @@ p {
 #pantallaSeleccionValoracio button,
 #pantallaEnviarQuestionari button,
 #pantallaDades button{
-
     width:100%;
-
 }
 
 .jugadorFila > div{
-
     display:grid;
-
     grid-template-columns:28px 28px;
-
     gap:4px;
-
     justify-content:end;
-
     align-items:center;
-
 }
 
 .addInjuryPlaceholder{
-
     width:28px;
-
     height:28px;
-
 }
 
-
 .botonsFinalsSessio {
+    gap:8px;
     display: flex;
     width: 100%;
     gap: 20px;
@@ -2981,822 +2636,240 @@ p {
 }
 
 .filaJugadors {
-
     display:grid;
-
-    grid-template-columns:
-        2fr 1fr 2fr 1fr;
-
     align-items:center;
-
-    gap:10px;
-
-    margin-bottom:10px;
-
-}
-
-
-.nomJugador {
-
-    font-size:22px;
-
-}
-
-
-.valorJugador {
-
-    font-size:30px;
-
-    text-align:center;
-
-    padding:5px;
-
-    border-radius:8px;
-
-}
-
-#selectorDadesTeams {
-    margin-bottom: 15px;
-}
-
-.filaJugadors {
-
-    display:grid;
-
     grid-template-columns: 1fr 1fr;
-
     gap:20px;
-
     margin-bottom:15px;
-
 }
-
 
 .cardDadaJugador {
-
     text-align:center;
-
     padding:10px;
-
     border-radius:10px;
-
 }
-
 
 .nomJugador {
-
     font-size:16px;
-
     margin-bottom:5px;
-
 }
 
-
 .valorJugador {
-
+    text-align:center;
     font-size:36px;
-
     font-weight:bold;
-
     padding:10px;
-
     border-radius:10px;
-
 }
 
 .dialogCard {
-
     background:white;
-
     width:90%;
-
     max-width:380px;
-
     padding:25px;
-
     border-radius:18px;
-
     text-align:center;
-
     box-shadow:0 10px 40px rgba(0,0,0,.25);
-
 }
 
 .botonsJugador {
-
     display:grid;
-
     grid-template-columns: 2fr 1fr;
-
     gap:10px;
-
     width:100%;
-
     margin-top:20px;
-
 }
-
 
 .botonsJugador button {
-
     width:100%;
-
     padding:12px;
-
 }
-
-#enrereDades {
-
-    width:100%;
-
-    margin-top:20px;
-
-    padding:15px;
-
-    font-size:18px;
-
-}
-
-
-#pantallaDades {
-
-    height:100vh;
-
-    display:flex;
-
-    flex-direction:column;
-
-}
-
 
 #selectorDadesTeams {
-
     flex-shrink:0;
-
     margin-bottom:15px;
-
 }
-
-
-#llistaDadesJugadors {
-
-    flex:1;
-
-    overflow-y:auto;
-
-    min-height:0;
-
-}
-
 
 #enrereDades {
-
     flex-shrink:0;
-
     width:100%;
-
     margin-top:15px;
-
     padding:15px;
-
     font-size:18px;
-
 }
-
 
 #pantallaDades {
-
     height:100dvh; /* millor que 100vh en mòbil */
-
     display:flex;
-
     flex-direction:column;
-
     overflow:hidden;
-
 }
-
 
 #llistaDadesJugadors {
-
     flex:1;
-
     overflow-y:auto;
-
     min-height:0;
-
 }
 
-
 #tornarGestioButton {
-
     flex-shrink:0;
-
     width:100%;
-
     padding:15px;
-
     margin-top:10px;
-
 }
 
 #llistaLesions .jugadorFila {
-
     width: 100%;
     max-width: none;
     box-sizing: border-box;
-
 }
-
-
-.lesioFila {
-
-    width:100%;
-    padding:12px;
-    margin-bottom:10px;
-
-    box-sizing:border-box;
-
-    border-radius:10px;
-
-}
-
-
-#dialogMessage {
-
-    white-space: pre-line;
-
-    line-height: 1.25;
-
-}
-
-
 
 #dialogButtons {
-
-    display:flex;
-
-    gap:10px;
-
-    width:100%;
-
-}
-
-
-#dialogButtons button {
-
-    width:50%;
-
-}
-
-
-#dialogButtons {
-
+    flex-direction:column;
+    margin-top:24px;
     display: flex;
-
     gap: 10px;
-
     width: 100%;
-
 }
-
 
 #dialogButtons button {
-
-    flex: 1;
-
+   width:50%;
+   flex: 1;
 }
-
 
 #dialogMessage {
     white-space: pre-line;
     line-height:1.6;
 }
 
-
 .lesioFila {
-
+    background:#f4f4f4;
+    font-size:14px;
     width:100%;
-
     box-sizing:border-box;
-
     padding:12px;
-
     margin-bottom:10px;
-
     border-radius:10px;
-
     text-align:left;
-
 }
-
-
-.taulaFisio{
-    display:flex;
-    width:100%;
-    height:55vh;
-}
-
-
-/* columna hores */
-#horesFisio{
-
-    width:80px;
-    flex-shrink:0;
-
-}
-
-
-/* espai buit superior */
-#horesFisio > div:first-child{
-
-    height:40px!important;
-
-}
-
-
-/* hores */
-#horesFisio div{
-
-    height:40px!important;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:14px;
-
-}
-
-
-/* scroll dies */
-.scrollDiesFisio{
-
-    flex:1;
-    overflow:auto;
-
-}
-
-
-
-/* contenidor graella */
-
-.contenidorGraellaFisio{
-
-    width:max-content;
-
-}
-
-
-
-/* dies */
-
-.headerDiesFisio{
-
-    display:flex;
-
-}
-
-
-.headerDiesFisio div{
-
-    width:90px;
-    height:40px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-weight:bold;
-
-}
-
-
-
-/* files */
 
 .filaHoraFisio{
-
-    display:flex;
-
+   height:45px;
+   display:flex;
 }
-
-
-
-
-/* columna hores */
-
-#horesFisio{
-
-    width:80px;
-    flex-shrink:0;
-
-}
-
-
-
-/* capçalera buida */
-
-#horesFisio > div:first-child{
-
-    height:40px !important;
-
-}
-
-
-
-/* hores */
 
 #horesFisio div{
-
-    height:40px !important;
-
-    box-sizing:border-box;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:14px;
-
-}
-
-
-
-/* zona dies */
-
-.scrollDiesFisio{
-
-    flex:1;
-
-    overflow:auto;
-
-}
-
-
-
-/* contenidor graella */
-
-.contenidorGraellaFisio{
-
-    width:max-content;
-
-}
-
-
-
-/* capçalera dies */
-
-.headerDiesFisio{
-
-    display:flex;
-
-}
-
-
-
-.headerDiesFisio div{
-
-    width:90px;
-
     height:40px;
-
+    font-size:14px;
     box-sizing:border-box;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    font-weight:bold;
-
-}
-
-
-
-/* files */
-
-.filaHoraFisio{
-
-    display:flex;
-
-}
-
-
-
-
-/* columna esquerra hores */
-
-#horesFisio{
-
-    width:90px;
-    flex:none;
-
-}
-
-
-
-#horesFisio div{
-
-    height:45px;
-
-    box-sizing:border-box;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     font-weight:bold;
-
 }
-
-
-
-/* espai superior igual que dies */
 
 #horesFisio div:first-child{
-
-    height:45px;
-
+    height:40px;
 }
-
-
-
-/* zona dreta */
-
-.scrollDiesFisio{
-
-    flex:1;
-
-    overflow-x:auto;
-    overflow-y:hidden;
-
-}
-
-
-
-/* graella sencera */
 
 .contenidorGraellaFisio{
-
     width:max-content;
-
 }
-
-
-
-/* dies */
-
-.headerDiesFisio{
-
-    display:flex;
-
-}
-
-
-
-.headerDiesFisio div{
-
-    width:90px;
-    height:45px;
-
-    box-sizing:border-box;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-weight:bold;
-
-}
-
-
-
-/* files */
-
-.filaHoraFisio{
-
-    display:flex;
-
-}
-
-
-
-
-.taulaFisio{
-
-    display:flex;
-    width:100%;
-    height:55vh;
-
-}
-
-
-/* hores */
 
 #horesFisio{
-
+    overflow-y:auto;
+    background:#fafafa;
+    flex-shrink:0;
     width:90px;
     flex:none;
-
 }
-
 
 .horaBuitFisio{
-
     width:90px;
     height:45px;
-
 }
-
-
 
 .targetaHoraFisio{
-
     width:90px;
     height:45px;
-
     box-sizing:border-box;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     border:1px solid #ddd;
-
     background:white;
-
     font-weight:bold;
-
 }
-
-
-
-/* scroll horitzontal */
 
 .scrollDiesFisio{
-
-    flex:1;
-
-    overflow-x:auto;
-    overflow-y:hidden;
-
+   flex:1;
+   overflow:auto;
+   overflow-x:auto;
+   overflow-y:hidden;
 }
-
-
 
 .scrollInternFisio{
-
     width:max-content;
-
 }
-
-
-
-/* dies */
 
 .headerDiesFisio{
-
     display:flex;
-
 }
 
-
-
 .headerDiesFisio div{
-
     width:90px;
     height:45px;
-
     box-sizing:border-box;
-
     display:flex;
     justify-content:center;
     align-items:center;
-
     font-weight:bold;
-
 }
-
-
-
-/* files */
 
 .filaHoraFisio{
-
-    display:flex;
-
-    height:45px;
-
+   
 }
 
-
-
-
-
 .questionariFila{
-
+    border-radius:12px;
+   width:100%;
+    justify-content:space-between;
     display:flex;
     flex-direction:column;
     align-items:stretch;
-
     gap:15px;
-
     background:white;
-
     border-radius:15px;
-
     padding:18px;
-
     margin-bottom:15px;
-
     box-shadow:0 2px 8px rgba(0,0,0,.15);
-
-}
-
-.nomValoracio,
-.nomQuestionari{
-
-    font-size:22px;
-
-    font-weight:bold;
-
-    text-align:center;
 
 }
 
 .infoValoracio,
 .infoQuestionari{
-
-    text-align:center;
-
-    color:#666;
-
-    margin:8px 0 18px;
-
-}
-
-.botonsValoracio,
-.botonsQuestionari{
-
-    display:flex;
-
-    gap:10px;
-
+   text-align:center;
+   color:#666;
+   margin:8px 0 18px;
 }
 
 .botonsValoracio button,
-.botonsQuestionari button{
-
-    flex:1;
-
-}
-
-#novaValoracioButton,
-#nouQuestionariButton{
-
-    width:60px;
-    height:60px;
-
-    border-radius:50%;
-
-    font-size:36px;
-
-    padding:0;
-
-    flex:none;
-
-}
-
 .nomQuestionari{
-
-    font-size:22px;
-
-    font-weight:bold;
-
-    text-align:center;
-
+   font-size:22px;
+   font-weight:bold;
+   text-align:center;
 }
 
 .botonsQuestionari{
-
-    display:flex;
-
-    flex-direction:row;
-
-    gap:10px;
-
-    width:100%;
-
+   display:flex;
+   flex-direction:row;
+   gap:10px;
+   width:100%;
 }
 
 .botonsQuestionari button{
-
     flex:1;
-
     margin:0;
-
 }
 
 #pantallaGestioValoracions button:not(#novaValoracioButton),
@@ -3804,222 +2877,119 @@ p {
     width:100%;
 }
 
-#novaValoracioButton,
 #nouQuestionariButton{
-
-    width:60px !important;
-    height:60px !important;
-
-    min-width:60px;
-    min-height:60px;
-
-    border-radius:50%;
-
-    font-size:34px;
-
-    padding:0;
-
-    align-self:center;
-
-    flex:none;
-
-    margin:0 auto;
-
+   width:60px;
+   height:60px;
+   min-width:60px;
+   min-height:60px;
+   border-radius:50%;
+   font-size:34px;
+   padding:0;
+   align-self:center;
+   flex:none;
+   margin:0 auto;
 }
 
-
 .escalaPregunta{
-
     display:flex;
-
     gap:15px;
-
     align-items:flex-end;
-
 }
 
 .escalaPregunta > div{
-
     flex:1;
-
     display:flex;
-
     flex-direction:column;
-
 }
 
 .escalaPregunta label{
-
     margin-bottom:6px;
-
     font-weight:bold;
-
 }
 
 #configEscala{
-
-    display:flex;
-
-    flex-direction:row ;
-
-    gap:15px;
-
-    align-items:flex-end;
-
+   display:flex;
+   flex-direction:row;
+   gap:15px;
+   align-items:flex-end;
+   width:100%;
 }
 
 #configEscala > div{
-
-    flex:1;
-
-    display:flex;
-
-    flex-direction:column;
-
-}
-
-#configEscala{
-    display:flex;
-    gap:15px;
-    align-items:flex-end;
-}
-
-#configEscala > div{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-}
-
-
-#configEscala{
-
-    display:flex;
-    flex-direction:row;
-    gap:15px;
-    align-items:flex-end;
-    width:100%;
-
-}
-
-#configEscala > div{
-
-    flex:1 1 0;
-    display:flex;
-    flex-direction:column;
-
+   flex:1 1 0;
+   display:flex;
+   flex-direction:column;
 }
 
 #configEscala label{
-
     margin-bottom:6px;
-
 }
 
 #configEscala input{
-
     width:100%;
     box-sizing:border-box;
-
-}
-
-#filaEscalaPregunta{
-
-    display:flex;
-
-    flex-direction:row;
-
-    justify-content:space-between;
-
-    align-items:flex-start;
-
-    gap:20px;
-
-    width:100%;
-
 }
 
 .campEscalaPregunta{
-
     display:flex;
-
     flex-direction:column;
-
     flex:1;
-
 }
 
 .campEscalaPregunta label{
-
     font-weight:bold;
-
     text-align:center;
-
     margin-bottom:8px;
-
 }
 
 .campEscalaPregunta input{
-
     width:100%;
-
     box-sizing:border-box;
-
 }
 
 #filaEscalaPregunta{
-
-    display:flex;
-
-    flex-direction:row !important;
-
-    gap:20px;
-
+   justify-content:space-between;
+   align-items:flex-start;
+   width:100%;
+   display:flex;
+   flex-direction:row;
+   gap:20px;
 }
 
 #filaEscalaPregunta > .columnaEscalaPregunta{
-
     flex:1;
-
     display:flex;
-
     flex-direction:column;
-
 }
 
 #configOpcions{
-
     display:flex;
-
     flex-direction:column;
-
     gap:12px;
-
     width:100%;
-
 }
 
 #configOpcions #novaOpcio{
-
     width:100%;
-
     box-sizing:border-box;
-
 }
 
 #configOpcions button{
-
     width:100%;
-
 }
 
-
 #questions{
-    display:flex;
-    flex-direction:column;
-    height:100vh;
+   gap:10px;
+   display:flex;
+   flex-direction:column;
+   height:100vh;
 }
 
 #llistaPreguntes{
+    min-height:0;
+    background:#f7f7f7;
+    border-radius:10px;
+    padding:6px;
     flex:1;
     overflow-y:auto;
     display:flex;
@@ -4049,9 +3019,14 @@ p {
 }
 
 #novaPreguntaButton{
-    flex-shrink:0;
-    margin-top:15px;
-    align-self:center;
+   width:52px;
+   height:52px;
+   border-radius:50%;
+   font-size:28px;
+   padding:0;
+   flex-shrink:0;
+   margin-top:15px;
+   align-self:center;
 }
 
 #tornarQuestionarisButton{
@@ -4094,35 +3069,8 @@ p {
     box-sizing:border-box;
 }
 
-#enviarQuestionariButton,
-#tornarEnviarQuestionariButton{
-    flex-shrink:0;
-    margin-top:12px;
-}
-
-
 .filaEnviar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:8px 10px;
-    border-bottom:1px solid #eee;
     gap:12px;
-}
-
-.filaEnviar input[type="checkbox"]{
-    width:18px;
-    height:18px;
-    margin:0;
-    flex-shrink:0;
-}
-
-.filaEnviar span{
-    flex:1;
-}
-
-
-.filaEnviar{
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -4151,27 +3099,43 @@ p {
 
 #tornarEnviarQuestionariButton,
 #enviarQuestionariButton{
+    flex-shrink:0;
+    margin-top:12px;
     flex:1;
     margin:0;
 }
 
 #pantallaGestioValoracions{
-    display:flex;
-    flex-direction:column;
-    height:100vh;
+   gap:10px;
+   display:flex;
+   flex-direction:column;
+   height:100vh;
 }
-
 
 #llistaValoracionsGest{
-    flex:1;
-    overflow-y:auto;
+   width:100%;
+   min-height:0;
+   overflow-y:auto;
+   background:#f7f7f7;
+   border-radius:10px;
+   padding:6px;
+   flex:1;
+   overflow-y:auto;
 }
-
 
 #novaValoracioButton{
-    flex-shrink:0;
+   width:60px;
+   height:60px;
+   min-width:60px;
+   min-height:60px;
+   border-radius:50%;
+   font-size:34px;
+   padding:0;
+   align-self:center;
+   flex:none;
+   margin:0 auto;
+   flex-shrink:0;
 }
-
 
 #tornarValoracioButton{
     width:100%;
@@ -4180,91 +3144,59 @@ p {
 }
 
 #pantallaValoracioItems{
+    gap:10px;
     display:flex;
     flex-direction:column;
     height:100vh;
 }
 
-
 #llistaValoracioItems{
-
+    width:100%;
+    min-height:0;
+    background:#f7f7f7;
+    border-radius:10px;
+    padding:6px;
     flex:1;
-
     overflow-y:auto;
-
     display:flex;
     flex-direction:column;
-
     gap:12px;
-
 }
-
 
 #nouItemValoracioButton{
-
-    width:60px;
-    height:60px;
-
-    border-radius:50%;
-
-    align-self:center;
-
-    flex-shrink:0;
-
-    margin-top:12px;
-
+   font-size:28px;
+   padding:0;
+   width:60px;
+   height:60px;
+   border-radius:50%;
+   align-self:center;
+   flex-shrink:0;
+   margin-top:12px;
 }
 
-
 #tornarValoracionsButton{
-
-    width:100%;
-
-    flex-shrink:0;
-
-    margin-top:12px;
-
+   width:100%;
+   flex-shrink:0;
+   margin-top:12px;
 }
 
 #pantallaAddValoracioItem{
-
-    display:flex;
-    flex-direction:column;
-
-    gap:15px;
-
+   display:flex;
+   flex-direction:column;
+   gap:15px;
 }
-
 
 .inputGran{
-
     width:100%;
-
     min-height:120px;
-
     box-sizing:border-box;
-
 }
-
 
 #graellaFisio{
-    height:100%;
-    overflow:auto;
-    border-radius:10px;
-}
-
-.taulaFisio{
-    display:grid;
-    grid-auto-rows:48px;
-    width:max-content;
-}
-
-.cella{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border:1px solid #ddd;
-    box-sizing:border-box;
+   min-width:900px;
+   height:100%;
+   overflow:auto;
+   border-radius:10px;
 }
 
 .header{
@@ -4295,25 +3227,6 @@ p {
     width:80px;
 }
 
-
-
-.cella{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.casellaFisio{
-    width:60px;
-    height:15px;
-    padding:0;
-    margin:0;
-    border:2px solid black;
-    border-radius:6px;
-    box-sizing:border-box;
-}
-
-
 .horaEscollidaFila{
     display:flex;
     align-items:center;
@@ -4326,44 +3239,45 @@ p {
 }
 
 #horaSeleccionada{
-    font-size:22px;
-    font-weight:bold;
-}
-
-.graellaWrapper{
-
-    flex:1;
-    min-height:0;
-
-    overflow:auto;
-
-    border:1px solid #ccc;
-    border-radius:10px;
-
-    max-width:100%;
+   min-height:40px;
+   display:flex;
+   align-items:center;
+   justify-content:center;
+   border-radius:8px;
+   background:#f4f4f4;
+   font-weight:600;
+   font-size:22px;
+   font-weight:bold;
 }
 
 .taulaFisio{
-
+    flex:1;
+    min-height:0;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    height:55vh;
+    grid-auto-rows:48px;
+    width:max-content;
     display:grid;
-
     min-width:max-content;
 }
 
-
 .cella{
-
+    border:1px solid #ddd;
+    box-sizing:border-box;
     width:70px;
     height:55px;
-
     display:flex;
     justify-content:center;
     align-items:center;
 }
 
-
 .casellaFisio{
-
+    padding:0;
+    margin:0;
+    border:2px solid black;
+    border-radius:6px;
+    box-sizing:border-box;
     width:60px;
     height:40px;
 }
@@ -4373,137 +3287,80 @@ p {
     flex-direction:column;
     height:100%;
     min-height:0;
-}
-
-.graellaWrapper{
-    flex:1;
-    min-height:0;
-    overflow:auto;
-}
-
-#pantallaAssignarHora{
-
-    display:flex;
-    flex-direction:column;
-
-    height:100%;
-    min-height:0;
-
     gap:10px;
 }
 
 .graellaWrapper{
-
-    flex:1;
-
+    border-radius:10px;
+    max-width:100%;
     min-height:0;
-
-    overflow:auto;
-
+    flex:1;
+    min-height:0;
     border:1px solid #ccc;
-}
-.graellaWrapper{
-
     max-height:45vh;
-
     overflow:auto;
 }
-
 
 .visitaHoraCard{
-
     background:#fff;
-
     border-radius:12px;
-
     padding:14px;
-
     border-left:6px solid #3b82f6;
-
     box-shadow:0 2px 8px rgba(0,0,0,.08);
-
     display:flex;
     flex-direction:column;
-
     gap:10px;
-
     margin-bottom:10px;
-
     transition:.2s;
 }
 
 .visitaHoraCard:hover{
-
     transform:translateY(-2px);
-
     box-shadow:0 6px 16px rgba(0,0,0,.12);
 }
 
 .visitaNom{
-
     font-size:18px;
-
     font-weight:700;
-
     color:#1f2937;
 }
 
 .visitaInfo{
-
     display:grid;
-
     grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-
     gap:8px;
-
     font-size:14px;
-
     color:#4b5563;
 }
 
 .visitaInfo span{
-
     background:#f5f7fa;
-
     padding:8px;
-
     border-radius:8px;
 }
 
 .dataRow{
-
     display:grid;
-
     grid-template-columns:180px 300px;
-
     align-items:center;
-
     gap:20px;
-
     margin-bottom:18px;
-
     justify-content:center;
 }
 
 .dataRow label{
-
     margin:0;
-
     text-align:right;
-
     font-weight:600;
 }
 
 .dataRow input:not([type="checkbox"]),
 .dataRow select{
-
     width:300px;
 }
 
 .dataRow input[type="checkbox"]{
-
     width:22px;
     height:22px;
-
     justify-self:start;
 }
