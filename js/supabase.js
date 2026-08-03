@@ -696,6 +696,8 @@ async function getPracticesByTeam(teamUuid) {
 
 async function insertPractice(practice){
 
+    console.log("NOVA insertPractice");
+
     const response = await fetch(
 
         `${SUPABASE_URL}/rest/v1/practices`,
