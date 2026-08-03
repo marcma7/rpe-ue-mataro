@@ -606,8 +606,6 @@ function aplicarTempsSessio(){
 
 
     pintarJugadorsSessio();
-mostrarPantalla("teams");
-
 }
 
 
@@ -762,6 +760,8 @@ async function guardarSessio(){
 
 
     }
+
+    console.log(ptpt);
 
 
     if(ptpt.length > 0){
