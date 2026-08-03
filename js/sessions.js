@@ -4,21 +4,13 @@ let addSessionPlayers = [];
 let createdPracticeUuid = null;
 let createdPractice = null;
 
-
-document
-    .getElementById("aplicarJugadorsModificarButton")
-    .addEventListener("click", aplicarTempsModificar);
-
+document.getElementById("aplicarJugadorsModificarButton").addEventListener("click", aplicarTempsModificar);
 
 async function loadModifySessions() {
 
-    if (!window.teamSeleccionat)
-        return;
+    if (!window.teamSeleccionat) return;
 
-    modifyPractices =
-        await getPracticesByTeam(
-            window.teamSeleccionat.uuid
-        );
+    modifyPractices = await getPracticesByTeam(window.teamSeleccionat.uuid);
 
     pastOrToday = [];
     future = [];
@@ -27,319 +19,145 @@ async function loadModifySessions() {
     avui.setHours(0, 0, 0, 0);
 
     for (const practice of modifyPractices) {
-
-        const [d, m, y] =
-            practice.practice_date.split("-");
-
-        const data =
-            new Date(y, m - 1, d);
-
+        const [d, m, y] = practice.practice_date.split("-");
+        const data = new Date(y, m - 1, d);
         data.setHours(0, 0, 0, 0);
 
-        if (data <= avui)
-            pastOrToday.push(practice.practice_date);
-        else
-            future.push(practice.practice_date);
-
+        if (data <= avui) pastOrToday.push(practice.practice_date);
+        else future.push(practice.practice_date);
     }
 
     pastOrToday.reverse();
-
     pintarLlistesModificar();
-
 }
+
 
 async function loadDeleteSessions(){
 
-    if(!window.teamSeleccionat){
+    if(!window.teamSeleccionat) return;
 
-        return;
-
-    }
-
-
-    const practices =
-        await getPracticesByTeam(
-            window.teamSeleccionat.uuid
-        );
-
+    const practices = await getPracticesByTeam(window.teamSeleccionat.uuid);
 
     const anteriors = [];
     const futures = [];
 
-
-    const avui =
-        new Date();
-
+    const avui = new Date();
     avui.setHours(0,0,0,0);
 
-
     practices.forEach(practice=>{
-
-
-        const [d,m,y] =
-            practice.practice_date.split("-");
-
-
-        const data =
-            new Date(
-                y,
-                m-1,
-                d
-            );
-
-
+        const [d,m,y] = practice.practice_date.split("-");
+        const data = new Date(y, m-1, d);
         data.setHours(0,0,0,0);
 
-
-        if(data <= avui)
-            anteriors.push(practice);
-
-        else
-            futures.push(practice);
-
-
+        if(data <= avui) anteriors.push(practice);
+        else futures.push(practice);
     });
-
 
     anteriors.reverse();
 
-
-    pintarLlistesEliminar(
-        anteriors,
-        futures
-    );
-
+    pintarLlistesEliminar(anteriors, futures);
 }
+
 
 function pintarLlistesModificar() {
 
-    const anteriors =
-        document.getElementById("llistaSessionsAnteriors");
-
-    const futures =
-        document.getElementById("llistaSessionsFutures");
-
+    const anteriors = document.getElementById("llistaSessionsAnteriors");
+    const futures = document.getElementById("llistaSessionsFutures");
 
     anteriors.innerHTML = "";
     futures.innerHTML = "";
 
-
     function crearFila(data) {
 
-        const boto =
-            document.createElement("button");
-
-
+        const boto = document.createElement("button");
         boto.className = "sessioModificarFila";
-
         boto.textContent = data;
-
-
-        boto.addEventListener(
-            "click",
+        boto.addEventListener("click",
             async () => {
-
                 await loadModifyPractice(data);
-
             }
         );
 
-
         return boto;
-
     }
 
-
     pastOrToday.forEach(data => {
-
-        anteriors.appendChild(
-            crearFila(data)
-        );
-
+        anteriors.appendChild(crearFila(data));
     });
-
 
     future.forEach(data => {
-
-        futures.appendChild(
-            crearFila(data)
-        );
-
+        futures.appendChild(crearFila(data));
     });
-
 }
+
 
 function pintarLlistesEliminar(anteriors, futures){
 
-    const divAnteriors =
-        document.getElementById(
-            "llistaSessionsAnteriorsEliminar"
-        );
-
-
-    const divFutures =
-        document.getElementById(
-            "llistaSessionsFuturesEliminar"
-        );
-
+    const divAnteriors = document.getElementById("llistaSessionsAnteriorsEliminar");
+    const divFutures = document.getElementById("llistaSessionsFuturesEliminar");
 
     divAnteriors.innerHTML="";
     divFutures.innerHTML="";
 
-
     function crearFila(practice){
-
-
-        const boto =
-            document.createElement("button");
-
-
-        boto.className =
-            "sessioEliminarFila";
-
-
-        boto.textContent =
-            practice.practice_date;
-
-
-        boto.dataset.uuid =
-            practice.uuid;
-
-
+        const boto = document.createElement("button");
+        boto.className = "sessioEliminarFila";
+        boto.textContent = practice.practice_date;
+        boto.dataset.uuid = practice.uuid;
         boto.onclick = ()=>{
-
-
-           document
-.querySelectorAll(
-    "#pantallaDeleteSessions .sessioEliminarFila"
-)
+           document.querySelectorAll("#pantallaDeleteSessions .sessioEliminarFila")
             .forEach(b=>{
-
-                b.classList.remove(
-                    "seleccionat"
-                );
-
+                b.classList.remove("seleccionat");
             });
 
+            boto.classList.add("seleccionat");
 
-            boto.classList.add(
-                "seleccionat"
-            );
-
-
-            document
-            .getElementById(
-                "eliminarSessioButton"
-            )
-            .dataset.uuid =
-                practice.uuid;
-
-
+            document.getElementById("eliminarSessioButton").dataset.uuid = practice.uuid;
         };
 
-
         return boto;
-
     }
 
-
-    anteriors.forEach(p=>{
-
-        divAnteriors.appendChild(
-            crearFila(p)
-        );
-
+    anteriors.forEach(p=>{ 
+        divAnteriors.appendChild(crearFila(p));
     });
-
 
     futures.forEach(p=>{
-
-        divFutures.appendChild(
-            crearFila(p)
-        );
-
+        divFutures.appendChild(crearFila(p));
     });
-
 }
 
 
 async function loadModifyPractice(practiceDate) {
 
-    selectedPracticeDate =
-        practiceDate;
+    selectedPracticeDate = practiceDate;
+    const practice = modifyPractices.find(x => x.practice_date === practiceDate);
 
-    const practice =
-        modifyPractices.find(
-            x => x.practice_date === practiceDate
-        );
+    if (!practice) return;
 
-    if (!practice)
-        return;
+    selectedPracticeUuid = practice.uuid;
 
-    selectedPracticeUuid =
-        practice.uuid;
-
-    const userTeams =
-        await getPlayersByTeam(
-            window.teamSeleccionat.uuid
-        );
-
-    const users =
-        await getUsersByUserTeam(
-            userTeams.map(x => x.user_uuid)
-        );
-
-    const practiceTimes =
-        await getPTPTByPractice(
-            [practice.uuid]
-        );
+    const userTeams = await getPlayersByTeam(window.teamSeleccionat.uuid);
+    const users = await getUsersByUserTeam(userTeams.map(x => x.user_uuid));
+    const practiceTimes = await getPTPTByPractice([practice.uuid]);
 
     modifyUsersAndPractice = [];
 
     for (const user of users) {
+        if (user.role !== "JUGADOR") continue;
 
-        if (user.role !== "JUGADOR")
-            continue;
-
-        const userTeam =
-            userTeams.find(
-                x => x.user_uuid === user.uuid
-            );
-
-        const meusTemps =
-            practiceTimes.filter(
-                x => x.player_team_uuid === userTeam.uuid
-            );
-
+        const userTeam = userTeams.find(x => x.user_uuid === user.uuid);
+        const meusTemps = practiceTimes.filter(x => x.player_team_uuid === userTeam.uuid);
         modifyUsersAndPractice.push({
-
             ...user,
-
-            user_team_uuid:
-                userTeam.uuid,
-
-            train:
-                meusTemps
-                    .filter(x => x.practice_type === "train")
-                    .reduce((s, x) => s + x.time, 0),
-
-            pf:
-                meusTemps
-                    .filter(x => x.practice_type === "prepfis")
-                    .reduce((s, x) => s + x.time, 0),
-
-            game:
-                meusTemps
-                    .filter(x => x.practice_type === "game")
-                    .reduce((s, x) => s + x.time, 0)
-
+            user_team_uuid: userTeam.uuid,
+            train: meusTemps.filter(x => x.practice_type === "train").reduce((s, x) => s + x.time, 0),
+            pf: meusTemps.filter(x => x.practice_type === "prepfis").reduce((s, x) => s + x.time, 0),
+            game: meusTemps.filter(x => x.practice_type === "game").reduce((s, x) => s + x.time, 0)
         });
-
     }
 
     pintarJugadorsModificar();
-
 }
 
 
@@ -1301,143 +1119,66 @@ async function updateSession() {
             userTeams.map(x => x.uuid)
         );
 
-    playerUuid =
-        [...new Set(playerUuid)];
+    playerUuid = [...new Set(playerUuid)];
 
     if (playerUuid.length > 0)
-        await actualitzarRPE(
-            playerUuid,
-            userTeams
+        await actualitzarRPE(playerUuid, userTeams
         );
 
     alert("SESSIÓ ACTUALITZADA CORRECTAMENT");
-
     await loadModifySessions();
 
 }
 
 
 
-function actualitzarTipus(
-    tipus,
-    valor,
-    player,
-    ptpts,
-    ptptUps,
-    ptptDel,
-    playerUuid,
-    practiceUuid
-){
+function actualitzarTipus(tipus, valor, player, ptpts, ptptUps, ptptDel, playerUuid, practiceUuid){
 
-    const actual =
-        ptpts.filter(
-            x =>
-                x.practice_type === tipus &&
-                x.player_team_uuid === player.user_team_uuid
-        );
+    const actual = ptpts.filter(x => x.practice_type === tipus && x.player_team_uuid === player.user_team_uuid);
 
-    if(
-        valor > 0 &&
-        (
-            actual.length === 0 ||
-            actual[0].time !== valor
-        )
-    ){
-
+    if(valor > 0 && (actual.length === 0 || actual[0].time !== valor)){
         ptptUps.push({
-
             time: valor,
             practice_type: tipus,
             player_team_uuid: player.user_team_uuid,
             practice_uuid: practiceUuid
-
         });
-
+        
         playerUuid.push(player.uuid);
-
-    }
-    else if(
-        valor === 0 &&
-        actual.length > 0
-    ){
-
+    } else if(valor === 0 && actual.length > 0){
         ptptDel.push(actual[0].uuid);
-
         playerUuid.push(player.uuid);
-
     }
-
 }
+
 
 document
 .getElementById("eliminarSessioButton")
 .addEventListener(
 "click",
 async ()=>{
-
-
-    const uuid =
-        document
-        .getElementById(
-            "eliminarSessioButton"
-        )
-        .dataset.uuid;
-
+    const uuid = document.getElementById("eliminarSessioButton").dataset.uuid;
 
     if(!uuid){
-
-        alert(
-            "Selecciona una sessió"
-        );
-
+        alert("Selecciona una sessió");
         return;
-
     }
 
 
-    const practices =
-        await getPracticesByTeam(
-            window.teamSeleccionat.uuid
-        );
+    const practices = await getPracticesByTeam(window.teamSeleccionat.uuid);
+    const practice = practices.find(x=>x.uuid===uuid);
 
+    if(!practice) return;
 
-    const practice =
-        practices.find(
-            x=>x.uuid===uuid
-        );
+    if(!confirm(`Eliminar la sessió del ${practice.practice_date}?`)) return;
 
-
-    if(!practice)
-        return;
-
-
-
-    if(
-        !confirm(
-            `Eliminar la sessió del ${practice.practice_date}?`
-        )
-    )
-        return;
-
-
-
-    await eliminarSessio(
-        practice
-    );
-
-
+    await eliminarSessio(practice);
     await loadDeleteSessions();
-
-
 });
 
 
 function obrirDuplicateDialog(){
-
-    document
-    .getElementById("duplicateDialog")
-    .style.display="flex";
-
+    document.getElementById("duplicateDialog").style.display="flex";
 }
 
 
@@ -1460,62 +1201,25 @@ document
 .addEventListener(
 "click",
 async ()=>{
-
-    const daily =
-        document.getElementById(
-            "repeatDaily"
-        ).checked;
-
-
-    const weekly =
-        document.getElementById(
-            "repeatWeekly"
-        ).checked;
-
-
-    const limit =
-        document.getElementById(
-            "duplicateLimitDate"
-        ).value;
+    const daily = document.getElementById("repeatDaily").checked;
+    const weekly = document.getElementById("repeatWeekly").checked;
+    const limit = document.getElementById("duplicateLimitDate").value;
 
 
     if(!limit){
-
-        alert(
-            "Selecciona una data límit"
-        );
-
+        alert("Selecciona una data límit");
         return;
-
     }
-
 
     if(!daily && !weekly){
-
-        alert(
-            "Selecciona una opció de repetició"
-        );
-
+        alert("Selecciona una opció de repetició");
         return;
-
     }
 
+    await duplicarSessio(createdPracticeUuid, daily, weekly, limit);
 
-    await duplicarSessio(
-        createdPracticeUuid,
-        daily,
-        weekly,
-        limit
-    );
-
-
-    document
-.getElementById("duplicateDialog")
-.style.display="none";
-
-
-mostrarPantalla("teams");
-
+    document.getElementById("duplicateDialog").style.display="none";
+    mostrarPantalla("teams");
 });
 
 
@@ -1524,176 +1228,83 @@ document
 .addEventListener(
 "click",
 ()=>{
-
-    document
-    .getElementById("duplicateDialog")
-    .style.display="none";
-
-mostrarPantalla("teams");
-
+    document.getElementById("duplicateDialog").style.display="none";
+    mostrarPantalla("teams");
 });
 
 
-async function duplicarSessio(
-    practiceUuid,
-    daily,
-    weekly,
-    limit
-){
+async function duplicarSessio(practiceUuid, daily, weekly, limit){
 
-    const original =
-        await getPracticesByTeam(
-            window.teamSeleccionat.uuid
-        );
+    const original = await getPracticesByTeam(window.teamSeleccionat.uuid);
+    const practice = original.find(x=>x.uuid===practiceUuid);
 
+    if(!practice) return;
 
-    const practice =
-        original.find(
-            x=>x.uuid===practiceUuid
-        );
+    const temps = await getPTPTByPractice([practiceUuid]);
+    let data = convertirData(practice.practice_date);
+    const dataLimit = new Date(limit);
 
-
-    if(!practice)
-        return;
-
-
-
-    const temps =
-        await getPTPTByPractice(
-            [practiceUuid]
-        );
-
-
-    let data =
-        convertirData(practice.practice_date);
-
-
-    const dataLimit =
-        new Date(limit);
-
-
-    data.setDate(
-        data.getDate()+(
-            daily ? 1 : 7
-        )
-    );
-
+    data.setDate(data.getDate()+(daily ? 1 : 7));
 
     while(data <= dataLimit){
+        const novaData = formatData(data);
 
-
-        const novaData =
-            formatData(data);
-
-
-
-        const novaPractice =
-            await insertPractice({
-
-                practice_date:novaData,
-
-                team_uuid:
-                    practice.team_uuid
-
+        try {
+            const novaPractice = await insertPractice({
+                practice_date: novaData,
+                team_uuid: practice.team_uuid
             });
 
+            const nouUuid = novaPractice[0].uuid;
+            const nousTemps = temps.map(x => ({
+                time: x.time,
+                practice_type: x.practice_type,
+                player_team_uuid: x.player_team_uuid,
+                practice_uuid: nouUuid
+            }));
 
-
-        if(novaPractice.length>0){
-
-
-            const nouUuid =
-                novaPractice[0].uuid;
-
-
-
-            const nousTemps =
-                temps.map(x=>({
-
-                    time:x.time,
-
-                    practice_type:
-                        x.practice_type,
-
-                    player_team_uuid:
-                        x.player_team_uuid,
-
-                    practice_uuid:
-                        nouUuid
-
-                }));
-            console.log(nousTemps);
-
-            if(nousTemps.length>0)
-                await insertPracticeTime(
-                    nousTemps
-                );
-
+            if (nousTemps.length > 0) await insertPracticeTime(nousTemps);
+        } catch (error) {
+            // Si la sessió ja existeix, simplement la saltem
+            if (error.code === "23505" || error.status === 409) {
+                // no fem res
+            } else {
+                console.error(error);
+                alert("Error en duplicar una sessió.");
+                return;
+            }
         }
 
-
-
-        if(daily)
-            data.setDate(
-                data.getDate()+1
-            );
-        else
-            data.setDate(
-                data.getDate()+7
-            );
-
+        if(daily) data.setDate(data.getDate()+1);
+        else data.setDate(data.getDate()+7);
     }
 
+    alert("SESSIONS DUPLICADES CORRECTAMENT");
 
-    alert(
-        "SESSIONS DUPLICADES CORRECTAMENT"
-    );
-
-await loadAddSession();
-
+    await loadAddSession();
 }
 
 
 function convertirData(data){
 
-    const [d,m,y] =
-        data.split("-");
+    const [d,m,y] = data.split("-");
 
-    return new Date(
-        y,
-        m-1,
-        d
-    );
-
+    return new Date(y, m-1, d);
 }
 
 
 function formatData(data){
 
-    const d =
-        String(data.getDate())
-        .padStart(2,"0");
-
-
-    const m =
-        String(data.getMonth()+1)
-        .padStart(2,"0");
-
-
-    const y =
-        data.getFullYear();
-
+    const d = String(data.getDate()).padStart(2,"0");
+    const m = String(data.getMonth()+1).padStart(2,"0");
+    const y = data.getFullYear();
 
     return `${d}-${m}-${y}`;
-
 }
 
+
 function obrirPostCreateDialog(){
-
-    document
-    .getElementById("postCreateDialog")
-    .style.display="flex";
-
+    document.getElementById("postCreateDialog").style.display="flex";
 }
 
 
@@ -1748,18 +1359,7 @@ document
 
 
 function reiniciarPantallaSessio(){
-
-    document
-    .getElementById("zonaConfiguracioSessio")
-    .style.display="block";
-
-
-    document
-    .getElementById("zonaJugadorsSessio")
-    .style.display="none";
-
-    document
-    .getElementById("botonsSessioFinal")
-    .style.display="none";
-
+    document.getElementById("zonaConfiguracioSessio").style.display="block";
+    document.getElementById("zonaJugadorsSessio").style.display="none";
+    document.getElementById("botonsSessioFinal").style.display="none";
 }
