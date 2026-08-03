@@ -20,10 +20,6 @@ document
 ()=>{
 
 
-    document
-    .getElementById("zonaConfiguracioSessio")
-    .style.display="none";
-
 
     document
     .getElementById("botonsSessioFinal")
