@@ -702,22 +702,29 @@ async function insertPractice(practice){
 
         {
 
-            method:"POST",
+            method: "POST",
 
-            headers:{
-                "Content-Type":"application/json",
-                "Prefer":"return=representation",
-                "apikey":SUPABASE_API_KEY,
-                "Authorization":"Bearer " + SUPABASE_API_KEY
+            headers: {
+                "Content-Type": "application/json",
+                "Prefer": "return=representation",
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY
             },
 
-            body:JSON.stringify(practice)
+            body: JSON.stringify(practice)
 
         }
 
     );
 
-    return await response.json();
+    const result = await response.json();
+
+    return {
+        ok: response.ok,
+        status: response.status,
+        data: response.ok ? result : null,
+        error: response.ok ? null : result
+    };
 
 }
 
