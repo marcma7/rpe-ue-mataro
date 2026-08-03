@@ -659,154 +659,75 @@ async function guardarSessio(){
     // Crear sessió
 
     const newPractice = {
-
-        practice_date:
-            practiceDate,
-
-        team_uuid:
-            window.teamSeleccionat.uuid
-
+        practice_date: practiceDate,
+        team_uuid: window.teamSeleccionat.uuid
     };
 
+   let created;
 
-   const created = await insertPractice(newPractice);
-    console.log(created);
+    try {
+        created = await insertPractice(newPractice);
+    } catch (error) {
+        if (error.code === "23505" || error.status === 409) {
+            alert("Ja existeix una sessió per aquest equip en aquesta data.");
+            return;
+        }
 
-if (!created.ok) {
-
-    if (created.status === 409 || created.error?.code === "23505") {
-
-        alert("Ja existeix una sessió per aquest equip en aquesta data.");
+        console.error(error);
+        alert("S'ha produït un error en crear la sessió.");
         return;
-
     }
 
-    console.error(created.error);
-    alert("Error en crear la sessió.");
-    return;
-}
-
-createdPracticeUuid = created.data[0].uuid;
-
-
+    createdPracticeUuid = created[0].uuid;
 
     // Preparar dades jugadors
 
     const ptpt = [];
-
-
     for(const player of addSessionPlayers){
-
-
         if(player.train > 0){
-
             ptpt.push({
-
-                time:
-                    player.train,
-
-                practice_type:
-                    "train",
-
-                player_team_uuid:
-                    player.user_team_uuid,
-
-                practice_uuid:
-                    createdPracticeUuid
-
+                time: player.train,
+                practice_type: "train",
+                player_team_uuid: player.user_team_uuid,
+                practice_uuid: createdPracticeUuid
             });
-
         }
-
-
 
         if(player.pf > 0){
-
             ptpt.push({
-
-                time:
-                    player.pf,
-
-                practice_type:
-                    "prepfis",
-
-                player_team_uuid:
-                    player.user_team_uuid,
-
-                practice_uuid:
-                    createdPracticeUuid
-
+                time: player.pf,
+                practice_type: "prepfis",
+                player_team_uuid: player.user_team_uuid,
+                practice_uuid: createdPracticeUuid
             });
-
         }
-
-
 
         if(player.game > 0){
-
             ptpt.push({
-
-                time:
-                    player.game,
-
-                practice_type:
-                    "game",
-
-                player_team_uuid:
-                    player.user_team_uuid,
-
-                practice_uuid:
-                    createdPracticeUuid
-
+                time: player.game,
+                practice_type: "game",
+                player_team_uuid: player.user_team_uuid,
+                practice_uuid: createdPracticeUuid
             });
-
         }
-
-
     }
-
-    console.log(ptpt);
-
 
     if(ptpt.length > 0){
-
-        await insertPracticeTime(
-            ptpt
-        );
-
+        await insertPracticeTime(ptpt);
     }
 
-
     // netegem per poder afegir-ne una altra
-
-    document.getElementById(
-        "dataSessio"
-    ).value = "";
-
-
-    document.getElementById(
-        "trainTime"
-    ).value = 0;
-
-
-    document.getElementById(
-        "pfTime"
-    ).value = 0;
-
-
-    document.getElementById(
-        "gameTime"
-    ).value = 0;
-
+    document.getElementById("dataSessio").value = "";
+    document.getElementById("trainTime").value = 0;
+    document.getElementById("pfTime").value = 0;
+    document.getElementById("gameTime").value = 0;
 
     createdPractice = {
-    uuid: createdPracticeUuid,
-    date: practiceDate
-};
+        uuid: createdPracticeUuid,
+        date: practiceDate
+    };
 
-
-obrirPostCreateDialog();
-
+    obrirPostCreateDialog();
 }
 
 
