@@ -80,9 +80,9 @@ async function mourePreguntaAmunt(index){
 
     if(index===0) return;
 
-    const aux = questions[index-1];
-    questions[index-1] = questions[index];
-    questions[index] = aux;
+    const aux = questions[index];
+    questions[index] = questions[index-1];
+    questions[index-1] = aux;
 
     await guardarOrdrePreguntes();
     pintarQuestions();
@@ -93,9 +93,9 @@ async function mourePreguntaAvall(index){
 
     if(index === questions.length-1) return;
 
-    const aux = questions[index+1];
-    questions[index+1] = questions[index];
-    questions[index] = aux;
+    const aux = questions[index];
+    questions[index] = questions[index +1];
+    questions[index+1] = aux;
 
     await guardarOrdrePreguntes();
     pintarQuestions();
@@ -107,7 +107,7 @@ async function guardarOrdrePreguntes(){
     const updates = questions.map((q,index)=>{
         return {
             uuid:q.uuid,
-            num_pregunta:index
+            num_pregunta:index + 1
         };
     });
 
