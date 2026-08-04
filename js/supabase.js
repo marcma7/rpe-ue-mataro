@@ -489,25 +489,6 @@ async function insertPracticeTime(data){
 }
 
 
-async function getPTPTByPractice(uuids){
-    if(uuids.length===0) return [];
-
-    const joined = uuids.join(",");
-    const response =
-        await fetch(
-            `${SUPABASE_URL}/rest/v1/player_team_practice_time?practice_uuid=in.(${joined})`,
-            {
-                headers:{
-                    "Accept":"application/json",
-                    "apikey":SUPABASE_API_KEY,
-                    "Authorization":"Bearer " + SUPABASE_API_KEY
-                }
-            }
-        );
-    return await response.json();
-}
-
-
 async function upsertPracticeTime(data){
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/player_team_practice_time?on_conflict=player_team_uuid,practice_type,practice_uuid`,

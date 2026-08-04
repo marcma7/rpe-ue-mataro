@@ -150,6 +150,7 @@ async function afegirJugador() {
                 user_uuid: existingUser.uuid,
                 team_uuid: teamUuid
             });
+            await assignarSessionsExistents(existingUser.uuid, teamUuid);
             await pickPlayers(teamUuid);
         }
         return;
@@ -170,6 +171,7 @@ async function afegirJugador() {
         user_uuid: createdUser[0].uuid,
         team_uuid: teamUuid
     });
+    await assignarSessionsExistents(createdUser[0].uuid, teamUuid);
     await pickPlayers(teamUuid);
 
     document.getElementById("nomJugador").value = "";
@@ -231,4 +233,68 @@ async function obrirSessions(){
     document.getElementById("nomEquipSessio").textContent = teamName;
     mostrarPantalla("sessions");
     await loadAddSession();
+}
+
+
+function moda(valors){
+
+    const comptador = {};
+
+    for(const valor of valors){
+        comptador[valor] = (comptador[valor] || 0) + 1;
+    }
+
+    let millorValor = null;
+    let millorComptador = -1;
+
+    for(const [valor, vegades] of Object.entries(comptador)){
+        if(vegades > millorComptador){
+            millorComptador = vegades;
+            millorValor = Number(valor);
+        }
+    }
+
+    return millorValor;
+
+}
+
+
+async function assignarSessionsExistents(userUuid, teamUuid){
+
+    const practices = await getPracticesByTeam(teamUuid);
+
+    if(practices.length === 0) return;
+
+    if(!confirm("Aquest equip ja té sessions creades.\n\nVols assignar-les també a aquest jugador?")){
+        return;
+    }
+
+    const ptpt = await getPTPTByPractice(
+        practices.map(p => p.uuid)
+    );
+
+    const perSessio = {};
+
+    for(const fila of ptpt){
+
+        if(!perSessio[fila.practice_uuid]){
+            perSessio[fila.practice_uuid] = [];
+        }
+
+        perSessio[fila.practice_uuid].push(fila);
+
+    }
+
+    for(const [practiceUuid, files] of Object.entries(perSessio)){
+
+        await insertPracticeTime({
+            practice_uuid: practiceUuid,
+            player_uuid: userUuid,
+            train: moda(files.map(f => f.train)),
+            pf: moda(files.map(f => f.pf)),
+            game: moda(files.map(f => f.game))
+        });
+
+    }
+
 }
