@@ -253,7 +253,7 @@ function pintarJugadorsSessio(){
         fila.innerHTML=`
             <div>${capitalize(player.name)} ${capitalize(player.surname)}</div>
             <input class="train" type="number" value="${player.train}">
-            <input class="pf" type="number" v="${player.pf}">
+            <input class="pf" type="number" value="${player.pf}">
             <input class="game" type="number" value="${player.game}">
         `;
 
@@ -746,5 +746,4 @@ document.getElementById("exitSessionButton").addEventListener("click", ()=>{
 function reiniciarPantallaSessio(){
     document.getElementById("zonaConfiguracioSessio").style.display="block";
     document.getElementById("zonaJugadorsSessio").style.display="none";
-    document.getElementById("botonsSessioFinal").style.display="none";
 }

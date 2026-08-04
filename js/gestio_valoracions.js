@@ -28,9 +28,9 @@ function pintarGestValoracions(){
         const fila = document.createElement("div");
         fila.className = "questionariFila";
         fila.innerHTML = `
-            <div class="nomValoracio">${v.name}</div>
-            <div class="infoValoracio">${v.nItems} ítems</div>
-            <div class="botonsValoracio">
+            <div class="nomQuestionari">${v.name}</div>
+            <div class="infoQuestionari">${v.nItems} ítems</div>
+            <div class="botonsQuestionari">
                 <button class="editar">✎ Modificar</button>
                 <button class="eliminar">✕ Eliminar</button>
             </div>

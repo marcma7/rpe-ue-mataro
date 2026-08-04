@@ -7,8 +7,7 @@ document.getElementById("valoracionsButton").onclick = async ()=>{
 };
 
 document.getElementById("aplicarJugadorsButton").addEventListener("click", ()=>{
-    document.getElementById("botonsSessioFinal").style.display="block";
-    document.getElementById("zonaJugadorsSessio").style.display="block";
+    document.getElementById("zonaJugadorsSessio").style.display="flex";
 });
 
 document.getElementById("tornarValoracionsButton").onclick = () => {
