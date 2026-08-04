@@ -20,17 +20,41 @@ async function loadModifySessions() {
     avui.setHours(0, 0, 0, 0);
 
     for (const practice of modifyPractices) {
+
         const [d, m, y] = practice.practice_date.split("-");
         const data = new Date(y, m - 1, d);
         data.setHours(0, 0, 0, 0);
 
-        if (data <= avui) pastOrToday.push(practice.practice_date);
-        else future.push(practice.practice_date);
+        if (data <= avui) pastOrToday.push(practice);
+        else future.push(practice);
     }
 
-    pastOrToday.reverse();
+    pastOrToday.sort(ordenarPerData);
+
+    future.sort((a,b)=>{
+        const [da, ma, ya] = a.practice_date.split("-");
+        const [db, mb, yb] = b.practice_date.split("-");
+
+        const dataA = new Date(ya, ma - 1, da);
+        const dataB = new Date(yb, mb - 1, db);
+
+        return dataA - dataB;   // més propera primer
+    });
     pintarLlistesModificar();
 }
+
+
+
+function ordenarPerData(a, b){
+    const [da, ma, ya] = a.practice_date.split("-");
+    const [db, mb, yb] = b.practice_date.split("-");
+
+    const dataA = new Date(ya, ma - 1, da);
+    const dataB = new Date(yb, mb - 1, db);
+
+    return dataB - dataA;   // més recent primer
+}
+
 
 
 async function loadDeleteSessions(){
@@ -54,7 +78,17 @@ async function loadDeleteSessions(){
         else futures.push(practice);
     });
 
-    anteriors.reverse();
+    anteriors.sort(ordenarPerData);
+
+    futures.sort((a,b)=>{
+        const [da, ma, ya] = a.practice_date.split("-");
+        const [db, mb, yb] = b.practice_date.split("-");
+
+        const dataA = new Date(ya, ma - 1, da);
+        const dataB = new Date(yb, mb - 1, db);
+
+        return dataA - dataB;   // més propera primer
+    });
 
     pintarLlistesEliminar(anteriors, futures);
 }
@@ -68,24 +102,25 @@ function pintarLlistesModificar() {
     anteriors.innerHTML = "";
     futures.innerHTML = "";
 
-    function crearFila(data) {
+    function crearFila(practice) {
 
         const boto = document.createElement("button");
         boto.className = "sessioModificarFila";
-        boto.textContent = data;
+        boto.textContent = practice.practice_date;
+
         boto.addEventListener("click", async () => {
-            await loadModifyPractice(data);
+            await loadModifyPractice(practice.practice_date);
         });
 
         return boto;
     }
 
-    pastOrToday.forEach(data => {
-        anteriors.appendChild(crearFila(data));
+    pastOrToday.forEach(practice => {
+        anteriors.appendChild(crearFila(practice));
     });
 
-    future.forEach(data => {
-        futures.appendChild(crearFila(data));
+    future.forEach(practice => {
+        futures.appendChild(crearFila(practice));
     });
 }
 
@@ -288,6 +323,8 @@ async function guardarSessio(){
 
     if(!window.teamSeleccionat) return;
 
+    llegirJugadorsSessio();
+
     const dataInput = document.getElementById("dataSessio").value;
     if(!dataInput){
         alert("Selecciona una data");
@@ -349,6 +386,7 @@ async function guardarSessio(){
                 practice_uuid: createdPracticeUuid
             });
         }
+        console.log(ptpt);
     }
 
     if(ptpt.length > 0){
@@ -727,23 +765,37 @@ function obrirPostCreateDialog(){
 }
 
 
-document.getElementById("addAnotherSessionButton").addEventListener("click", ()=>{
-    document.getElementById("postCreateDialog").style.display="none";
-    reiniciarPantallaSessio();
-});
-
 document.getElementById("duplicateSessionButton").addEventListener("click", ()=>{
     document.getElementById("postCreateDialog").style.display="none";
     obrirDuplicateDialog();
 });
 
-document.getElementById("exitSessionButton").addEventListener("click", ()=>{
-    document.getElementById("postCreateDialog").style.display="none";
-    reiniciarPantallaSessio();
+document.getElementById("addAnotherSessionButton").addEventListener("click", async ()=>{
+    document.getElementById("postCreateDialog").style.display = "none";
+    await obrirSessions();
+});
+
+document.getElementById("exitSessionButton").addEventListener("click", async ()=>{
+    document.getElementById("postCreateDialog").style.display = "none";
+    mostrarPantalla("teams");
 });
 
 
-function reiniciarPantallaSessio(){
-    document.getElementById("zonaConfiguracioSessio").style.display="block";
-    document.getElementById("zonaJugadorsSessio").style.display="none";
+function llegirJugadorsSessio(){
+
+    const files = document.querySelectorAll("#jugadorsSessio .sessioFila");
+
+    files.forEach((fila,index)=>{
+
+        addSessionPlayers[index].train =
+            Number(fila.querySelector(".train").value);
+
+        addSessionPlayers[index].pf =
+            Number(fila.querySelector(".pf").value);
+
+        addSessionPlayers[index].game =
+            Number(fila.querySelector(".game").value);
+
+    });
+
 }
