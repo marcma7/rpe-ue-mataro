@@ -150,6 +150,7 @@ async function afegirJugador() {
                 user_uuid: existingUser.uuid,
                 team_uuid: teamUuid
             });
+            const userTeam = await getUserTeamByTeamUuidAndUserUuid(teamUuid, existingUser.uuid);
             await assignarSessionsExistents(existingUser.uuid, teamUuid);
             await pickPlayers(teamUuid);
         }
@@ -171,6 +172,7 @@ async function afegirJugador() {
         user_uuid: createdUser[0].uuid,
         team_uuid: teamUuid
     });
+    const userTeam = await getUserTeamByTeamUuidAndUserUuid(teamUuid, createdUser[0].uuid);
     await assignarSessionsExistents(createdUser[0].uuid, teamUuid);
     await pickPlayers(teamUuid);
 
@@ -254,13 +256,14 @@ function moda(valors){
         }
     }
 
-    return millorValor;
+    return millorValor ? millorValor : 0;
 
 }
 
 
 async function assignarSessionsExistents(userUuid, teamUuid){
 
+    const userTeam = await getUserTeamByTeamUuidAndUserUuid(teamUuid, userUuid);
     const practices = await getPracticesByTeam(teamUuid);
 
     if(practices.length === 0) return;
@@ -286,15 +289,35 @@ async function assignarSessionsExistents(userUuid, teamUuid){
     }
 
     for(const [practiceUuid, files] of Object.entries(perSessio)){
+        const train = moda(files.filter(f => f.practice_type === "train").map(f => f.time));
+        const pf = moda(files.filter(f => f.practice_type === "prepfis").map(f => f.time));
+        const game = moda(files.filter(f => f.practice_type === "game").map(f => f.time));
 
-        await insertPracticeTime({
-            practice_uuid: practiceUuid,
-            player_uuid: userUuid,
-            train: moda(files.map(f => f.train)),
-            pf: moda(files.map(f => f.pf)),
-            game: moda(files.map(f => f.game))
-        });
+        if(train > 0) {
+            await insertPracticeTime({
+                practice_uuid: practiceUuid,
+                player_team_uuid: userTeam[0].uuid,
+                practice_type: "train",
+                time: train
+            });
+        }
 
+        if(pf > 0) {
+            await insertPracticeTime({
+                practice_uuid: practiceUuid,
+                player_team_uuid: userTeam[0].uuid,
+                practice_type: "prepfis",
+                time: pf
+            });
+        }
+
+        if(game > 0) {
+            await insertPracticeTime({
+                practice_uuid: practiceUuid,
+                player_team_uuid: userTeam[0].uuid,
+                practice_type: "game",
+                time: game
+            });
+        }
     }
-
 }
