@@ -155,3 +155,17 @@ async function enviarQuestionaris(){
         alert("Error enviant qüestionari");
     }
 }
+
+
+function toggleUsuariEnviar(uuid){
+
+    if(usuarisSeleccionats.includes(uuid)){
+        usuarisSeleccionats =
+            usuarisSeleccionats.filter(u => u !== uuid);
+    }else{
+        usuarisSeleccionats.push(uuid);
+    }
+
+    pintarUsuarisEnviar();
+
+}
