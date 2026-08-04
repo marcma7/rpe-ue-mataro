@@ -55,9 +55,9 @@ function pintarValoracioItems(){
 async function moureItemAmunt(index){
     if(index===0) return;
 
-    const aux = valoracioItems[index-1];
-    valoracioItems[index-1] = valoracioItems[index];
-    valoracioItems[index] = aux;
+    const aux = valoracioItems[index];
+    valoracioItems[index] = valoracioItems[index-1];
+    valoracioItems[index-1] = aux;
     await guardarOrdreItems();
     pintarValoracioItems();
 }
@@ -66,9 +66,9 @@ async function moureItemAmunt(index){
 async function moureItemAvall(index){
     if(index===valoracioItems.length-1) return;
 
-    const aux = valoracioItems[index+1];
-    valoracioItems[index+1] = valoracioItems[index];
-    valoracioItems[index] = aux;
+    const aux = valoracioItems[index];
+    valoracioItems[index] = valoracioItems[index+1];
+    valoracioItems[index+1] = aux;
     await guardarOrdreItems();
     pintarValoracioItems();
 }
@@ -77,7 +77,7 @@ async function moureItemAvall(index){
 async function guardarOrdreItems(){
     const updates = valoracioItems.map((item,index)=>({
         uuid:item.uuid,
-        num_item:index
+        num_item:index + 1
     }));
 
     await upsertValoracioItemOrder(updates);
