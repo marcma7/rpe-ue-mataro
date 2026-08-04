@@ -33,6 +33,7 @@ async function acabarLoadRPE(user) {
     dates.sort((a, b) => sortKey(b).localeCompare(sortKey(a)));
     if (dates.length === 0) {
         isFinished = true;
+        actualitzarEstatRPE();
         alert("No tens sessions pendents");
         return;
     }
