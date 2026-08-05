@@ -3,6 +3,7 @@ let dadesTeams = [];
 
 document.getElementById("passarValoracioButton").addEventListener("click", async()=>{
     equipValoracio = equipActualUuid;
+    document.getElementById("playerCard").style.display="none";
     await obrirSelectorValoracions();
 });
 
@@ -14,7 +15,18 @@ async function obrirDades(){
 
 
 async function obrirSelectorValoracions(){
-    mostrarPantalla("seleccionValoracio");
+    mostrarPantalla("SeleccionValoracio");
+    const div = document.getElementById("llistaValoracions");
+    div.innerHTML="";
+    const valoracions = await getAllValoracions();
+    valoracions.forEach(valoracio=>{
+        const button = document.createElement("button");
+        button.textContent = valoracio.name;
+        button.onclick = async()=>{
+            await obrirValoracio(valoracio.uuid);
+        };
+        div.appendChild(button);
+    });
 }
 
 
