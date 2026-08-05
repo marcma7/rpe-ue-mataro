@@ -355,6 +355,8 @@ button {
     padding:20px;
     width:100%;
     max-width:100%;
+    max-height:90vh;
+    overflow-y:auto;
 }
 
 h1 {
@@ -1725,8 +1727,8 @@ p {
 .playerHeader{
     display:flex;
     justify-content:space-between;
-    align-items:flex-start;
     margin-bottom:20px;
+    align-items:center;
 }
 
 .playerStatus{
@@ -1765,4 +1767,8 @@ p {
 .lastSession{
     padding:10px 0;
     border-bottom:1px solid #ddd;
+}
+
+.playerHeader h2{
+    margin:0;
 }
