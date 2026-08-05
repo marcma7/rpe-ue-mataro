@@ -99,11 +99,6 @@ function calcularACWR(users,rpes){
 
             const acwr = load28===0 ? 0 : load7/(load28/4);
 
-            console.log(rpes[0]);
-console.log(rpeJugador);
-console.log(setmanaRPE);
-console.log(mesRPE);
-
             return {
                 uuid:user.uuid,
                 nom: capitalize(user.name) + " " + capitalize(user.surname),
@@ -238,7 +233,7 @@ async function calcularWellness(userUuid){
     const respostes = await getAnswersByQuestionari(questionarisUser.map(q=>q.uuid));
     const dates = questionarisUser.map(q=>({
         uuid:q.uuid,
-        date:convertirData(q.data_resposta)
+        date:q.data_resposta ? convertirData(q.data_resposta) : "-"
     }));
 
     if(dates.length===0) return 0;
