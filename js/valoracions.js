@@ -22,8 +22,7 @@ function pintarValoracio(){
 
     document.getElementById("valoracioTitol").textContent = valoracioActual.name;
     document.getElementById("valoracioDescripcio").textContent = valoracioActual.description;
-    document.getElementById("valoracioJugador").textContent =
-        `${jugadorValoracio.name} ${jugadorValoracio.surname}`;
+    document.getElementById("valoracioJugador").textContent = `${jugadorValoracio.name} ${jugadorValoracio.surname}`;
 
     const container = document.getElementById("itemsValoracio");
 
@@ -37,14 +36,10 @@ function pintarValoracio(){
         const bloc = document.createElement("div");
         bloc.className = "questionBloc";
 
-
         const titol = document.createElement("h3");
-
-        // posa aquí el camp correcte quan vegis el console.log
-        titol.textContent = item.name ?? item.text ?? item.description ?? "Sense títol";
+        titol.textContent = item.item;
 
         bloc.appendChild(titol);
-
 
         switch(item.tipus_item){
 
@@ -64,13 +59,13 @@ function pintarValoracio(){
                 crearTextLliure(bloc,item);
         }
 
-
         container.appendChild(bloc);
     });
 }
 
 
 async function enviarValoracio(){
+    console.log(valoracioItems);
     for(const item of valoracioItems){
         if(respostesValoracio[item.uuid] === undefined || respostesValoracio[item.uuid] === ""){
             alert("Falta respondre algunes preguntes");
