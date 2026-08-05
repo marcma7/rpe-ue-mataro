@@ -521,23 +521,49 @@
 
     <div id="playerCard" class="dialogOverlay" style="display:none;">
         <div class="dialogCard dadesCard">
-            <h2 id="playerCardName"></h2>
-            <h3>CÀRREGA I DISPONIBILITAT</h3>
-            <div class="dadaFila">
-                <span>ACWR</span>
-                <span id="playerACWR"></span>
+            <div class="playerHeader">
+                <div>
+                    <h2 id="playerCardName"></h2>
+                    <div id="playerStatus" class="status available">Disponible</div>
+                </div>
+                <div class="playerNumber" id="playerPosition">BASE</div>
             </div>
-            <div class="dadaFila">
-                <span>Wellness</span>
-                <span id="playerWellness"></span>
+    
+            <h3>CÀRREGA</h3>
+            <div class="metricsGrid">
+                <div class="metric">
+                    <span>ACWR</span>
+                    <strong id="playerACWR"></strong>
+                </div>
+    
+                <div class="metric">
+                    <span>7 dies</span>
+                    <strong id="playerLoad7"></strong>
+                </div>
+    
+                <div class="metric">
+                    <span>28 dies</span>
+                    <strong id="playerLoad28"></strong>
+                </div>
+    
+                <div class="metric">
+                    <span>Variació</span>
+                    <strong id="playerLoadVariation"></strong>
+                </div>
             </div>
-
-            <h3>RENDIMENT</h3>
-            <h3>SALUT I MOVIMENT</h3>
-            
+    
+            <h3>WELLNESS</h3>
+            <div id="wellnessContainer"></div>
+    
+            <h3>ÚLTIMES SESSIONS</h3>
+            <div id="playerSessions"></div>
+    
+            <h3>ALERTES</h3>
+            <div id="playerAlerts"></div>
             <div class="botonsJugador">
-            <button id="passarValoracioButton">PASSAR VALORACIONS</button>
-            <button id="tancarCardButton">TANCAR</button>
+                <button id="passarValoracioButton">PASSAR VALORACIONS</button>
+                <button id="tancarCardButton">TANCAR</button>
+            </div>
         </div>
     </div>
 </div>
