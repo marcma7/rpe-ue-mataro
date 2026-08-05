@@ -151,30 +151,26 @@ function pintarDades(jugadors){
 
 
 async function mostrarCardJugador(jugador){
+
+    console.log("INICI");
+
     jugadorActual = jugador;
-    console.log(jugador);
-    document.getElementById("playerCardName").textContent = jugador.nom;
 
-    const estat = calcularEstatJugador(jugador);
-    const status = document.getElementById("playerStatus");
-    status.textContent = estat.text;
-    status.className = "playerStatus " + estat.class;
+    console.log("ACWR", jugador.acwr);
 
-    const acwrElement = document.getElementById("playerACWR");
-    acwrElement.textContent = jugador.acwr.toFixed(2);
-    acwrElement.style.background = colorACWR(jugador.acwr);
+    document.getElementById("playerACWR").textContent =
+        jugador.acwr.toFixed(2);
 
-    document.getElementById("playerLoad7").textContent = jugador.load7.toFixed(0) + " AU";
+    console.log("LOAD7", jugador.load7);
 
-    const variacio = calcularVariacioCarrega(jugador);
-    const variacioElement = document.getElementById("playerVariation");
-    variacioElement.textContent = (variacio>=0 ? "+" : "") + variacio.toFixed(0) + "%";
-    document.getElementById("playerSessions").textContent = jugador.sessions7;
-    document.getElementById("playerLastPractice").textContent = jugador.lastPractice ?? "-";
-    
-    const wellness = await calcularWellness(jugador.uuid);
-    document.getElementById("playerWellness").textContent = wellness.toFixed(0);
-    document.getElementById("playerCard").style.display="flex";
+    document.getElementById("playerLoad7").textContent =
+        jugador.load7.toFixed(0) + " AU";
+
+    console.log("SESSIONS", jugador.sessions7);
+
+    document.getElementById("playerSessions").textContent =
+        jugador.sessions7;
+
 }
 
 
