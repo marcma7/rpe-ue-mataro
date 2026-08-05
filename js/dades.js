@@ -338,25 +338,6 @@ function calcularVariacioCarrega(jugador){
 }
 
 
-async function carregarUltimesSessions(userUuid){
-
-    const div = document.getElementById("playerLastSessions");
-    div.innerHTML="";
-    
-    const sessions = await getRPEByUsers([userUuid]);
-
-    console.log("DADES RPE JUGADOR:", sessions);
-    const ultimes = sessions.sort((a,b)=>{return convertirDataRPE(b.date_practice) - convertirDataRPE(a.date_practice);}).slice(0,5);
-
-    ultimes.forEach(s=>{
-        const fila=document.createElement("div");
-        fila.className="lastSession";
-        fila.textContent = `${s.date_practice} - ${s.weighted_register} AU`;
-        div.appendChild(fila);
-    });
-}
-
-
 async function comprovarLesioActiva(userUuid){
     const lesions = await getInjuriesByUuid([userUuid]);
     console.log("LESIONS:",lesions);
