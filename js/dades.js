@@ -496,54 +496,81 @@ function pintarHistorialLesions(lesions){
 }
 
 
+function pintarWellness(w){
 
-function pintarWellness(wellness){
+    const globalValue = document.getElementById("wellnessGlobalValue");
+    const globalDot = document.getElementById("wellnessGlobalDot");
+    const variables = document.getElementById("wellnessVariables");
 
-    const div = document.getElementById("playerWellness");
-
-
-    if(!wellness){
-
-        div.innerHTML="-";
+    if(!w){
+        globalValue.textContent = "- / 5";
+        globalDot.style.background = "#bbb";
+        variables.innerHTML = "";
         return;
-
     }
 
+    globalValue.textContent = w.global.toFixed(1) + " / 5";
+    globalDot.style.background = colorGlobalWellness(w.global);
 
-    div.innerHTML = `
+    const dades = [
+        {
+            nom:"Estrès",
+            valor:w.estres
+        },
+        {
+            nom:"Fatiga",
+            valor:w.fatiga
+        },
+        {
+            nom:"Dolor",
+            valor:w.dolor
+        },
+        {
+            nom:"Ànim",
+            valor:w.anim
+        }
+    ];
 
-        <div class="wellnessMain">
-            ${wellness.mitjana.toFixed(1)} / 5
-            <br>
-            ${wellness.estat}
+    variables.innerHTML = dades.map(x => `
+        <div class="wellnessVariable">
+
+            <span>${x.nom}</span>
+
+            <span class="wellnessVariableValue">
+
+                <span
+                    class="dotWellness"
+                    style="background:${colorWellness(x.nom,x.valor)}">
+                </span>
+
+                ${x.valor ?? "-"}
+
+            </span>
+
         </div>
+    `).join("");
+}
 
 
-        <div class="wellnessDetail">
+function colorWellness(tipus, valor){
 
-            <div>
-                Estrès:
-                <b>${wellness.estres}/5</b>
-            </div>
+    if(valor == null) return "#bbb";
 
+    if(tipus === "Ànim"){
+        if(valor >= 4) return "#006400";
+        if(valor === 3) return "#FCB714";
+        return "#D90808";
+    }
 
-            <div>
-                Fatiga:
-                <b>${wellness.fatiga}/5</b>
-            </div>
-
-
-            <div>
-                Dolor muscular:
-                <b>${wellness.dolor}/5</b>
-            </div>
+    if(valor <= 2) return "#006400";
+    if(valor === 3) return "#FCB714";
+    return "#D90808";
+}
 
 
-            <div>
-                Estat d'ànim:
-                <b>${wellness.anim}/5</b>
-            </div>
+function colorGlobalWellness(valor){
 
-        </div>
-    `;
+    if(valor >= 4) return "#006400";
+    if(valor >= 3) return "#FCB714";
+    return "#D90808";
 }
