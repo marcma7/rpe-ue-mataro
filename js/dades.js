@@ -17,6 +17,7 @@ async function obrirDades(){
 async function obrirSelectorValoracions(){
     mostrarPantalla("seleccionValoracio");
     const div = document.getElementById("llistaValoracions");
+    div.innerHTML="<button style='background:red'>PROVA</button>";
     div.innerHTML="";
     const valoracions = await getAllValoracions();
     console.log(valoracions);
