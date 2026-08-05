@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=31">
+    <link rel="stylesheet" href="css/styles.css?v=32">
 </head>
 
 <body>
@@ -544,9 +544,16 @@
                 </div>
         
                 <h3>WELLNESS</h3>
-                <div class="dadaFila">
-                    <span>Puntuació</span>
-                    <span id="playerWellness"></span>
+                <div class="playerSection">
+                    <div class="wellnessGlobal">
+                        <span>Global</span>
+                        <div class="wellnessGlobalValue">
+                            <span id="wellnessGlobalDot" class="dotWellness"></span>
+                            <span id="wellnessGlobalValue">- / 5</span>
+                        </div>
+                    </div>
+
+                    <div id="wellnessVariables" class="wellnessVariables"></div>
                 </div>
         
                 <h3>ACTIVITAT</h3>
@@ -601,7 +608,7 @@
 <script src="js/teams.js"></script>
 <script src="js/dialogs.js"></script>
 <script src="js/sessions.js"></script>
-<script src="js/dades.js?v=14"></script>
+<script src="js/dades.js?v=15"></script>
 <script src="js/valoracions.js?v=5"></script>
 <script src="js/fisio.js"></script>
 <script src="js/fisio_hours.js"></script>
