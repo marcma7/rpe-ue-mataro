@@ -509,6 +509,7 @@ function pintarWellness(w){
         return;
     }
 
+    console.log(w);
     globalValue.textContent = w.global.toFixed(1) + " / 5";
     globalDot.style.background = colorGlobalWellness(w.global);
 
