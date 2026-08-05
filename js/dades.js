@@ -158,8 +158,11 @@ async function mostrarCardJugador(jugador){
 
     console.log("ACWR", jugador.acwr);
 
-    document.getElementById("playerACWR").textContent =
-        jugador.acwr.toFixed(2);
+const test = document.getElementById("playerACWR");
+
+test.textContent = "PROVA 123";
+test.style.color = "black";
+test.style.background = "red";
 
     console.log("LOAD7", jugador.load7);
 
