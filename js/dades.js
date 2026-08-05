@@ -288,3 +288,30 @@ async function carregarUltimesSessions(userUuid){
         div.appendChild(fila);
     });
 }
+
+
+function generarAlertes(jugador){
+
+    const div=document.getElementById("playerAlerts");
+
+    div.innerHTML="";
+
+    const alertes=[];
+    if(jugador.acwr>1.5) alertes.push("🔴 ACWR elevat");
+    if(jugador.acwr<0.8) alertes.push("🟡 Càrrega baixa");
+    if(jugador.sessions7===0) alertes.push("🟡 Sense entrenaments últims 7 dies");
+    if(jugador.load7===0) alertes.push("🔴 Sense càrrega registrada");
+
+    if(alertes.length===0){
+        div.innerHTML =
+        `<div class="alertPlayer">🟢 Sense alertes</div>`;
+        return;
+    }
+
+    alertes.forEach(a=>{
+        const e=document.createElement("div");
+        e.className="alertPlayer";
+        e.textContent=a;
+        div.appendChild(e);
+    });
+}
