@@ -85,10 +85,6 @@ document.getElementById("equipsButton").addEventListener("click", async () => {
 
 document.getElementById("dadesButton").addEventListener("click", obrirDades);
 
-document.getElementById("passarValoracioButton").addEventListener("click", async()=>{
-    await obrirSelectorValoracions();
-});
-
 document.getElementById("nouEquipButton").addEventListener("click", crearEquip);
 
 
