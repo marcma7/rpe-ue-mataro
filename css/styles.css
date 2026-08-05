@@ -1774,3 +1774,56 @@ p {
 .playerHeader h2{
     margin:0;
 }
+
+#pantallaPassarValoracio{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    min-height:0;
+    overflow:hidden;
+}
+
+#pantallaPassarValoracio > h1,
+#pantallaPassarValoracio > h3,
+#pantallaPassarValoracio > h4{
+    flex-shrink:0;
+}
+
+#itemsValoracio{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    width:100%;
+    padding:5px;
+}
+
+#itemsValoracio .questionBloc{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    gap:20px;
+    padding:12px;
+}
+
+#itemsValoracio .questionBloc h3{
+    flex:1;
+    margin:0;
+}
+
+#itemsValoracio .questionBloc textarea,
+#itemsValoracio .questionBloc input,
+#itemsValoracio .questionBloc select,
+#itemsValoracio .questionBloc .escalaGrid{
+    flex:1;
+    margin:0;
+}
+
+#itemsValoracio .escalaGrid{
+    margin-top:0;
+}
+
+#pantallaPassarValoracio .barraBotons{
+    flex-shrink:0;
+    background:#f5f5f5;
+    padding-top:10px;
+}
