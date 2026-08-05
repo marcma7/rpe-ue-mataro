@@ -1333,20 +1333,6 @@ async function addQuestion(question) {
 }
 
 
-async function getAllValoracions(){
-    const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/valoracions?select=*`,
-        {
-            headers:{
-                apikey:SUPABASE_API_KEY,
-                Authorization:`Bearer ${SUPABASE_API_KEY}`
-            }
-        }
-    );
-    return await response.json();
-}
-
-
 async function getValoracio(uuid){
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/valoracions?uuid=eq.${uuid}&select=*`,
