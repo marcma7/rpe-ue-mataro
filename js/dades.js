@@ -13,6 +13,11 @@ async function obrirDades(){
 }
 
 
+async function obrirSelectorValoracions(){
+    mostrarPantalla("seleccionValoracio");
+}
+
+
 async function carregarDadesTeams(){
     dadesTeams = await getAllTeams();
 
