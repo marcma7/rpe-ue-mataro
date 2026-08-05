@@ -152,6 +152,7 @@ function pintarDades(jugadors){
 
 async function mostrarCardJugador(jugador){
     jugadorActual = jugador;
+    console.log(jugador);
     document.getElementById("playerCardName").textContent = jugador.nom;
 
     const estat = calcularEstatJugador(jugador);
