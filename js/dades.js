@@ -78,15 +78,14 @@ function calcularACWR(users,rpes){
     const mes = new Date(avui);
     mes.setDate(avui.getDate()-28);
 
-
     return users.filter(u=>u.role==="JUGADOR").map(user=>{
             const rpeJugador = rpes
                 .filter(r=>r.player_uuid===user.uuid)
                 .map(r=>{
                     return {
                         ...r,
-                        data: r.date_practice ? convertirData(r.date_practice) : "-",
-                        dataSort: r.date_practice ? new Date(r.date_practice) : new Date(0),
+                        data: r.date_practice ? convertirDataRPE(r.date_practice) : null,
+                        dataSort: r.date_practice ? convertirDataRPE(r.date_practice) : new Date(0),
                         load: Number(r.weighted_register)
                     };
                 })
@@ -99,6 +98,11 @@ function calcularACWR(users,rpes){
             const load28 = mesRPE.reduce((sum,r)=>sum+r.load,0);
 
             const acwr = load28===0 ? 0 : load7/(load28/4);
+
+            console.log(rpes[0]);
+console.log(rpeJugador);
+console.log(setmanaRPE);
+console.log(mesRPE);
 
             return {
                 uuid:user.uuid,
