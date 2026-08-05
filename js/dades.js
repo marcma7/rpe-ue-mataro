@@ -151,13 +151,26 @@ function pintarDades(jugadors){
 
 
 async function mostrarCardJugador(jugador){
-    console.log(jugador);
     jugadorActual = jugador;
     document.getElementById("playerCardName").textContent = jugador.nom;
-    const acwr = jugador.acwr;
+
+    const estat = calcularEstatJugador(jugador);
+    const status = document.getElementById("playerStatus");
+    status.textContent = estat.text;
+    status.className = "playerStatus " + estat.class;
+
     const acwrElement = document.getElementById("playerACWR");
-    acwrElement.textContent = acwr.toFixed(2);
-    acwrElement.style.background = colorACWR(acwr);
+    acwrElement.textContent = jugador.acwr.toFixed(2);
+    acwrElement.style.background = colorACWR(jugador.acwr);
+
+    document.getElementById("playerLoad7").textContent = jugador.load7.toFixed(0) + " AU";
+
+    const variacio = calcularVariacioCarrega(jugador);
+    const variacioElement = document.getElementById("playerVariation");
+    variacioElement.textContent = (variacio>=0 ? "+" : "") + variacio.toFixed(0) + "%";
+    document.getElementById("playerSessions").textContent = jugador.sessions7;
+    document.getElementById("playerLastPractice").textContent = jugador.lastPractice ?? "-";
+    
     const wellness = await calcularWellness(jugador.uuid);
     document.getElementById("playerWellness").textContent = wellness.toFixed(0);
     document.getElementById("playerCard").style.display="flex";
@@ -210,48 +223,23 @@ async function calcularWellness(userUuid){
 function calcularEstatJugador(player){
 
     let score = 100;
+    if(player.acwr > 1.5) score -= 30;
+    if(player.acwr < 0.8) score -= 10;
 
-    if(player.acwr > 1.5)
-        score -= 30;
+    if(score >=75) return {text:"🟢 Disponible", class:"available"};
+    if(score >=50) return {text:"🟡 Vigilància", class:"warning"};
+    
+    return {text:"🔴 Risc", class:"danger"};
+}
 
-    if(player.acwr < 0.8)
-        score -= 10;
 
-    if(player.wellness != null){
+function calcularVariacioCarrega(jugador){
 
-        if(player.wellness < 15)
-            score -= 25;
+    if(jugador.load28===0) return 0;
+    
+    const setmanaAnterior = (jugador.load28 - jugador.load7) / 3;
+    if(setmanaAnterior===0) return 0;
 
-        else if(player.wellness < 20)
-            score -= 10;
-
-    }
-
-    if(player.dolor != null)
-        score -= player.dolor * 5;
-
-    if(score >= 75){
-
-        return{
-            text:"Disponible",
-            class:"available"
-        };
-
-    }
-
-    if(score >= 50){
-
-        return{
-            text:"Vigilància",
-            class:"warning"
-        };
-
-    }
-
-    return{
-        text:"Risc",
-        class:"danger"
-    };
-
+    return ((jugador.load7 - setmanaAnterior) / setmanaAnterior) * 100;
 }
 
