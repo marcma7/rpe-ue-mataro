@@ -20,11 +20,9 @@ async function obrirSelectorValoracions(){
     div.innerHTML="";
     const valoracions = await getAllValoracions();
     valoracions.forEach(valoracio=>{
-        console.log("a");
         const button = document.createElement("button");
         button.textContent = valoracio.name;
         button.onclick = async()=>{
-            console.log(valoracio);
             await obrirValoracio(jugadorActual.uuid, valoracio.uuid);
         };
         div.appendChild(button);
