@@ -236,19 +236,8 @@ test.style.background = "red";
 
 
    
-    //document.getElementById("playerCard").style.display="flex";
-const card = document.getElementById("playerCard");
+    document.getElementById("playerCard").style.display="flex";
 
-card.style.display = "flex";
-card.style.position = "fixed";
-card.style.top = "0";
-card.style.left = "0";
-card.style.width = "100%";
-card.style.height = "100%";
-card.style.zIndex = "999999";
-card.style.background = "rgba(255,0,0,.5)";
-
-console.log(card);
 }
 
 
