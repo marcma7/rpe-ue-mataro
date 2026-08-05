@@ -1869,3 +1869,49 @@ p {
     min-height:0;
     overflow-y:auto;
 }
+
+.wellnessGlobal{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:8px;
+    font-size:15px;
+    font-weight:bold;
+}
+
+.wellnessGlobalValue{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.wellnessVariables{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:8px;
+    margin-top:12px;
+}
+
+.wellnessVariable{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    font-size:12px;
+    white-space:nowrap;
+}
+
+.wellnessVariableValue{
+    display:flex;
+    align-items:center;
+    gap:3px;
+    font-weight:bold;
+}
+
+.dotWellness{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    display:inline-block;
+    flex-shrink:0;
+}
