@@ -296,19 +296,19 @@ async function calcularWellnessDetallat(userUuid){
 
     if(wellness.mitjana <= 2){
 
-        wellness.estat="🟢 Bon estat";
+        wellness.estat="🟢";
         wellness.class="available";
 
     }
     else if(wellness.mitjana <= 3.5){
 
-        wellness.estat="🟡 Vigilància";
+        wellness.estat="🟡";
         wellness.class="warning";
 
     }
     else{
 
-        wellness.estat="🔴 Fatiga elevada";
+        wellness.estat="🔴";
         wellness.class="danger";
 
     }
@@ -510,8 +510,8 @@ function pintarWellness(w){
     }
 
     console.log(w);
-    globalValue.textContent = w.global.toFixed(1) + " / 5";
-    globalDot.style.background = colorGlobalWellness(w.global);
+    globalValue.textContent = w.mitjana.toFixed(1) + " / 5";
+    globalDot.style.background = colorGlobalWellness(w.mitjana);
 
     const dades = [
         {
