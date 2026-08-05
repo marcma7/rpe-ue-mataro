@@ -194,8 +194,9 @@ async function mostrarCardJugador(jugador){
     const diesRPE = await calcularDiesSenseRPE(jugador.uuid);
     document.getElementById("playerDaysWithoutRPE").textContent = diesRPE === null ? "-" : diesRPE;
 
-    const wellness= await calcularWellness(jugador.uuid);
-    document.getElementById("playerWellness").textContent=wellness.toFixed(0);
+    const wellness = await calcularWellnessDetallat(jugador.uuid);
+    jugador.wellness = wellness;
+    pintarWellness(wellness);
 
     const lesio=await comprovarLesioActiva(jugador.uuid);
     jugador.lesionActiva=lesio.activa;
@@ -232,26 +233,88 @@ function convertirDataRPE(data){
 }
 
 
-async function calcularWellness(userUuid){
+async function calcularWellnessDetallat(userUuid){
+
     const questionaris = await getQuestionarisByCodeWord("WELLNESS");
-    if(questionaris.length===0) return 0;
+
+    if(questionaris.length===0) return null;
+
 
     const qUuids = questionaris.map(q=>q.uuid);
 
-    const questionarisUser = await getQuestionarisUser(qUuids, [userUuid]);
-    if(questionarisUser.length===0) return 0;
 
-    const respostes = await getAnswersByQuestionari(questionarisUser.map(q=>q.uuid));
+    const questionarisUser = await getQuestionarisUser(
+        qUuids,
+        [userUuid]
+    );
+
+
+    if(questionarisUser.length===0) return null;
+
+
     const dates = questionarisUser.map(q=>({
         uuid:q.uuid,
-        date:q.data_resposta ? convertirData(q.data_resposta) : "-"
+        date:q.data_resposta ? convertirData(q.data_resposta) : new Date(0)
     }));
 
-    if(dates.length===0) return 0;
 
-    const ultimaData = dates.sort((a,b)=>b.date-a.date)[0];
-    const ultimaSessio = ultimaData.uuid;
-    return respostes.filter(r=>r.questionari_user_uuid===ultimaSessio).map(r=>Number(r.resposta)).reduce((a,b)=>a+b, 0);
+    const ultima = dates.sort((a,b)=>b.date-a.date)[0];
+
+
+    const respostes = await getAnswersByQuestionari([
+        ultima.uuid
+    ]);
+
+
+    const valors = respostes
+        .map(r=>Number(r.resposta));
+
+
+    const wellness = {
+
+        estres: valors[0] ?? 0,
+
+        fatiga: valors[1] ?? 0,
+
+        dolor: valors[2] ?? 0,
+
+        anim: valors[3] ?? 0
+
+    };
+
+
+    wellness.total =
+        wellness.estres +
+        wellness.fatiga +
+        wellness.dolor +
+        wellness.anim;
+
+
+    wellness.mitjana =
+        wellness.total / 4;
+
+
+    if(wellness.mitjana <= 2){
+
+        wellness.estat="🟢 Bon estat";
+        wellness.class="available";
+
+    }
+    else if(wellness.mitjana <= 3.5){
+
+        wellness.estat="🟡 Vigilància";
+        wellness.class="warning";
+
+    }
+    else{
+
+        wellness.estat="🔴 Fatiga elevada";
+        wellness.class="danger";
+
+    }
+
+
+    return wellness;
 }
 
 
@@ -430,4 +493,57 @@ function pintarHistorialLesions(lesions){
         `;
         div.appendChild(fila);
     });
+}
+
+
+
+function pintarWellness(wellness){
+
+    const div = document.getElementById("playerWellness");
+
+
+    if(!wellness){
+
+        div.innerHTML="-";
+        return;
+
+    }
+
+
+    div.innerHTML = `
+
+        <div class="wellnessMain">
+            ${wellness.mitjana.toFixed(1)} / 5
+            <br>
+            ${wellness.estat}
+        </div>
+
+
+        <div class="wellnessDetail">
+
+            <div>
+                Estrès:
+                <b>${wellness.estres}/5</b>
+            </div>
+
+
+            <div>
+                Fatiga:
+                <b>${wellness.fatiga}/5</b>
+            </div>
+
+
+            <div>
+                Dolor muscular:
+                <b>${wellness.dolor}/5</b>
+            </div>
+
+
+            <div>
+                Estat d'ànim:
+                <b>${wellness.anim}/5</b>
+            </div>
+
+        </div>
+    `;
 }
