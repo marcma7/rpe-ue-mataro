@@ -13,6 +13,7 @@ async function obrirValoracio(valoracioUuid, userUuid){
     valoracioItems.sort((a,b) => a.num_item-b.num_item);
 
     respostesValoracio = {};
+    respostes = respostesValoracio;
     mostrarPantalla("passValoracio");
     pintarValoracio();
 }
@@ -30,9 +31,6 @@ function pintarValoracio(){
     container.innerHTML = "";
 
     valoracioItems.forEach(item => {
-
-        console.log(item); // IMPORTANT
-
         const bloc = document.createElement("div");
         bloc.className = "questionBloc";
 
@@ -65,7 +63,7 @@ function pintarValoracio(){
 
 
 async function enviarValoracio(){
-    console.log(valoracioItems);
+    console.log(respostesValoracio);
     for(const item of valoracioItems){
         if(respostesValoracio[item.uuid] === undefined || respostesValoracio[item.uuid] === ""){
             alert("Falta respondre algunes preguntes");
