@@ -13,8 +13,19 @@ async function obrirDades(){
     await carregarDadesTeams();
 }
 
-
 async function obrirSelectorValoracions(){
+
+    // mostrarPantalla("seleccionValoracio");
+
+    document.getElementById("pantallaSeleccionValoracio").style.display="flex";
+
+    const div = document.getElementById("llistaValoracions");
+
+    div.innerHTML="<button style='background:red'>PROVA</button>";
+
+}
+
+/*async function obrirSelectorValoracions(){
     mostrarPantalla("seleccionValoracio");
     const div = document.getElementById("llistaValoracions");
     div.innerHTML="<button style='background:red'>PROVA</button>";
@@ -29,7 +40,7 @@ async function obrirSelectorValoracions(){
         };
         div.appendChild(button);
     });
-}
+}*/
 
 
 async function carregarDadesTeams(){
