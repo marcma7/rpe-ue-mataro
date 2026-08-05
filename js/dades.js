@@ -172,11 +172,12 @@ function pintarDades(jugadors){
 
 
 async function mostrarCardJugador(jugador){
+
     jugadorActual = jugador;
 
     document.getElementById("playerCardName").textContent = jugador.nom;
-
     const estat = calcularEstatJugador(jugador);
+
     const status = document.getElementById("playerStatus");
     status.textContent = estat.text;
     status.className = "playerStatus " + estat.class;
@@ -188,14 +189,16 @@ async function mostrarCardJugador(jugador){
     document.getElementById("playerLoad7").textContent = jugador.load7.toFixed(0) + " AU";
 
     const variacio = calcularVariacioCarrega(jugador);
-    const variacioElement = document.getElementById("playerVariation");
-    variacioElement.textContent = (variacio>=0 ? "+" : "") + variacio.toFixed(0) + "%";
-
+    document.getElementById("playerVariation").textContent = (variacio>=0 ? "+" : "") + variacio.toFixed(0) + "%";
     document.getElementById("playerSessions").textContent = jugador.sessions7;
     document.getElementById("playerLastPractice").textContent = jugador.lastPractice ?? "-";
+    document.getElementById("playerAverageLoad").textContent = jugador.sessions7>0 ? (jugador.load7/jugador.sessions7).toFixed(0)+" AU" : "-";
 
     const wellness = await calcularWellness(jugador.uuid);
     document.getElementById("playerWellness").textContent = wellness.toFixed(0);
+
+    await carregarUltimesSessions(jugador.uuid);
+    generarAlertes(jugador);
 
     document.getElementById("playerCard").style.display="flex";
 }
@@ -267,3 +270,21 @@ function calcularVariacioCarrega(jugador){
     return ((jugador.load7 - setmanaAnterior) / setmanaAnterior) * 100;
 }
 
+
+async function carregarUltimesSessions(userUuid){
+
+    const div = document.getElementById("playerLastSessions");
+    div.innerHTML="";
+    
+    const sessions = await getRPEByUsers([userUuid]);
+
+    console.log("DADES RPE JUGADOR:", sessions);
+    const ultimes = sessions.sort((a,b)=>{return convertirDataRPE(b.date_practice) - convertirDataRPE(a.date_practice);}).slice(0,5);
+
+    ultimes.forEach(s=>{
+        const fila=document.createElement("div");
+        fila.className="lastSession";
+        fila.textContent = `${s.date_practice} - ${s.weighted_register} AU`;
+        div.appendChild(fila);
+    });
+}
