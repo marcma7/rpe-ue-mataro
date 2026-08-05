@@ -22,26 +22,42 @@ function pintarValoracio(){
 
     document.getElementById("valoracioTitol").textContent = valoracioActual.name;
     document.getElementById("valoracioDescripcio").textContent = valoracioActual.description;
-    document.getElementById("valoracioJugador").textContent = `${jugadorValoracio.name} ${jugadorValoracio.surname}`;
+    document.getElementById("valoracioJugador").textContent =
+        `${jugadorValoracio.name} ${jugadorValoracio.surname}`;
 
     const container = document.getElementById("itemsValoracio");
     container.className = "questionBloc";
-    container.innerHTML="";
+    container.innerHTML = "";
 
-    valoracioItems.forEach(item=>{
+    valoracioItems.forEach(item => {
+
+        const bloc = document.createElement("div");
+        bloc.className = "questionBloc";
+
+        const titol = document.createElement("h3");
+        titol.textContent = item.nom_item;
+        bloc.appendChild(titol);
+
+
         switch(item.tipus_item){
+
             case "ESCALA NUMÈRICA":
-                container.innerHTML += crearEscala(container,item);
+                crearEscala(bloc,item);
                 break;
+
             case "OPCIONS":
-                container.innerHTML += crearOpcions(container,item);
+                crearOpcions(bloc,item);
                 break;
+
             case "NÚMERO LLIURE":
-                container.innerHTML += crearNumero(container,item);
+                crearNumero(bloc,item);
                 break;
+
             default:
-                container.innerHTML += crearText(container,item);
+                crearTextLliure(bloc,item);
         }
+
+        container.appendChild(bloc);
     });
 }
 
