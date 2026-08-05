@@ -26,16 +26,23 @@ function pintarValoracio(){
         `${jugadorValoracio.name} ${jugadorValoracio.surname}`;
 
     const container = document.getElementById("itemsValoracio");
-    container.className = "questionBloc";
+
+    container.className = "";
     container.innerHTML = "";
 
     valoracioItems.forEach(item => {
 
+        console.log(item); // IMPORTANT
+
         const bloc = document.createElement("div");
         bloc.className = "questionBloc";
 
+
         const titol = document.createElement("h3");
-        titol.textContent = item.nom_item;
+
+        // posa aquí el camp correcte quan vegis el console.log
+        titol.textContent = item.name ?? item.text ?? item.description ?? "Sense títol";
+
         bloc.appendChild(titol);
 
 
@@ -56,6 +63,7 @@ function pintarValoracio(){
             default:
                 crearTextLliure(bloc,item);
         }
+
 
         container.appendChild(bloc);
     });
