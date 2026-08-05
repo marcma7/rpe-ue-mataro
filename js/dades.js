@@ -110,9 +110,9 @@ function calcularACWR(users,rpes){
         })
         .sort((a,b)=>{
             function priority(value){
-                if(value>=0.8 && value<=1.3) return 0;
-                if(value<0.8) return 1;
-                return 2;
+                if(value>=0.8 && value<=1.3) return 3;
+                if(value<0.8) return 2;
+                return 1;
             }
 
             const pa=priority(a.acwr);
