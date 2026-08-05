@@ -23,7 +23,7 @@ async function obrirSelectorValoracions(){
         const button = document.createElement("button");
         button.textContent = valoracio.name;
         button.onclick = async()=>{
-            await obrirValoracio(jugadorActual.uuid, valoracio.uuid);
+            await obrirValoracio(valoracio.uuid, jugadorActual.uuid);
         };
         div.appendChild(button);
     });
