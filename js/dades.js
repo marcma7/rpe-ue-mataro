@@ -15,10 +15,7 @@ async function obrirDades(){
 
 async function obrirSelectorValoracions(){
 
-    // mostrarPantalla("seleccionValoracio");
-
-    document.getElementById("pantallaSeleccionValoracio").style.display="flex";
-
+    mostrarPantalla("seleccionValoracio");
     const div = document.getElementById("llistaValoracions");
 
     div.innerHTML="<button style='background:red'>PROVA</button>";
