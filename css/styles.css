@@ -1828,26 +1828,36 @@ p {
     padding-top:10px;
 }
 
+.alertPlayer{
+    padding:10px;
+    border-radius:8px;
+    margin-bottom:6px;
+    background:#fff3cd;
+}
+
 .playerCard{
     width:500px;
     max-width:90vw;
 }
+
 
 #playerLastSessions{
     max-height:180px;
     overflow-y:auto;
 }
 
+
 .lastSession{
     padding:8px;
+    margin-bottom:6px;
     background:#f4f4f4;
     border-radius:8px;
-    margin-bottom:6px;
 }
+
 
 .alertPlayer{
     padding:10px;
     border-radius:8px;
-    margin-bottom:6px;
     background:#fff3cd;
+    margin-bottom:6px;
 }
