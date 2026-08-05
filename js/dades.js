@@ -19,6 +19,7 @@ async function obrirSelectorValoracions(){
     const div = document.getElementById("llistaValoracions");
     div.innerHTML="";
     const valoracions = await getAllValoracions();
+    console.log(valoracions);
     valoracions.forEach(valoracio=>{
         const button = document.createElement("button");
         button.textContent = valoracio.name;
