@@ -151,93 +151,32 @@ function pintarDades(jugadors){
 
 
 async function mostrarCardJugador(jugador){
-
     jugadorActual = jugador;
-
-
-    // NOM
 
     document.getElementById("playerCardName").textContent = jugador.nom;
 
-
-
-    // ESTAT
-
     const estat = calcularEstatJugador(jugador);
-
     const status = document.getElementById("playerStatus");
-
     status.textContent = estat.text;
-
     status.className = "playerStatus " + estat.class;
 
+    const acwrElement = document.getElementById("playerACWR");
+    acwrElement.textContent = jugador.acwr.toFixed(2);
+    acwrElement.style.background = colorACWR(jugador.acwr);
 
-
-    // ACWR
-
-    //const acwrElement = document.getElementById("playerACWR");
-
-    //acwrElement.textContent = jugador.acwr.toFixed(2);
-
-    //acwrElement.style.background = colorACWR(jugador.acwr);
-const test = document.getElementById("playerACWR");
-
-test.textContent = "PROVA 123";
-test.style.color = "black";
-test.style.background = "red";
-    
-
-
-
-    // CÀRREGA
-
-    document.getElementById("playerLoad7").textContent =
-        jugador.load7.toFixed(0) + " AU";
-
-
-
-    // VARIACIÓ
+    document.getElementById("playerLoad7").textContent = jugador.load7.toFixed(0) + " AU";
 
     const variacio = calcularVariacioCarrega(jugador);
+    const variacioElement = document.getElementById("playerVariation");
+    variacioElement.textContent = (variacio>=0 ? "+" : "") + variacio.toFixed(0) + "%";
 
-    const variacioElement =
-        document.getElementById("playerVariation");
-
-
-    variacioElement.textContent =
-        (variacio>=0 ? "+" : "") +
-        variacio.toFixed(0) +
-        "%";
-
-
-
-    // SESSIONS
-
-    document.getElementById("playerSessions").textContent =
-        jugador.sessions7;
-
-
-
-    // ÚLTIMA SESSIÓ
-
-    document.getElementById("playerLastPractice").textContent =
-        jugador.lastPractice ?? "-";
-
-
-
-    // WELLNESS
+    document.getElementById("playerSessions").textContent = jugador.sessions7;
+    document.getElementById("playerLastPractice").textContent = jugador.lastPractice ?? "-";
 
     const wellness = await calcularWellness(jugador.uuid);
+    document.getElementById("playerWellness").textContent = wellness.toFixed(0);
 
-
-    document.getElementById("playerWellness").textContent =
-        wellness.toFixed(0);
-
-
-
-   
     document.getElementById("playerCard").style.display="flex";
-
 }
 
 
