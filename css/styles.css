@@ -1721,3 +1721,48 @@ p {
     height:22px;
     justify-self:start;
 }
+
+.playerHeader{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:20px;
+}
+
+.playerStatus{
+    margin-top:8px;
+    padding:6px 14px;
+    border-radius:20px;
+    display:inline-block;
+    font-weight:bold;
+    color:white;
+}
+
+.playerStatus.available{
+    background:#1E8E3E;
+}
+
+.playerStatus.warning{
+    background:#F9A825;
+}
+
+.playerStatus.danger{
+    background:#D32F2F;
+}
+
+#playerAlerts{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.alertPlayer{
+    padding:10px;
+    border-radius:8px;
+    background:#fff3cd;
+}
+
+.lastSession{
+    padding:10px 0;
+    border-bottom:1px solid #ddd;
+}
