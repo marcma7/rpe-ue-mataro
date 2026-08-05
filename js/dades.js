@@ -78,23 +78,26 @@ function calcularACWR(users,rpes){
     const mes = new Date(avui);
     mes.setDate(avui.getDate()-28);
 
+
     return users.filter(u=>u.role==="JUGADOR").map(user=>{
-            const rpeJugador = rpes.filter(r=>r.player_uuid===user.uuid)
+            const rpeJugador = rpes
+                .filter(r=>r.player_uuid===user.uuid)
                 .map(r=>{
                     return {
                         ...r,
-                        data: convertirData(r.date_practice),
+                        data: r.date_practice ? convertirData(r.date_practice) : "-",
+                        dataSort: r.date_practice ? new Date(r.date_practice) : new Date(0),
                         load: Number(r.weighted_register)
                     };
                 })
-                .sort((a,b)=>b.data-a.data);
-            
-            const setmanaRPE = rpeJugador.filter(r=>r.data>=setmana);
-            const mesRPE = rpeJugador.filter(r=>r.data>=mes);
+                .sort((a,b)=>b.dataSort-a.dataSort);
+
+            const setmanaRPE = rpeJugador.filter(r=>r.dataSort>=setmana);
+            const mesRPE = rpeJugador.filter(r=>r.dataSort>=mes);
+
             const load7 = setmanaRPE.reduce((sum,r)=>sum+r.load,0);
             const load28 = mesRPE.reduce((sum,r)=>sum+r.load,0);
 
-            // ACWR = càrrega 7 dies / mitjana setmanal dels últims 28 dies
             const acwr = load28===0 ? 0 : load7/(load28/4);
 
             return {
@@ -114,16 +117,18 @@ function calcularACWR(users,rpes){
                 if(value<0.8) return 2;
                 return 1;
             }
-
             const pa=priority(a.acwr);
             const pb=priority(b.acwr);
-            
+
             if(pa!==pb) return pa-pb;
+
             return b.acwr-a.acwr;
         });
 }
 
+
 function convertirData(data){
+    
     const parts=data.split("-");
     return new Date(Number(parts[2]), Number(parts[1])-1, Number(parts[0]));
 }
