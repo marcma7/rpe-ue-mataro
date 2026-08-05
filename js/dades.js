@@ -358,7 +358,7 @@ async function carregarUltimesSessions(userUuid){
 
 
 async function comprovarLesioActiva(userUuid){
-    const lesions = await getInjuriesByUser(userUuid);
+    const lesions = await getInjuriesByUuid(userUuid);
     console.log("LESIONS:",lesions);
 
     for(const lesio of lesions){
