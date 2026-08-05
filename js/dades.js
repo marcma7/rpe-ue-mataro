@@ -51,6 +51,7 @@ async function carregarDadesEquip(teamUuid){
 
 
 function calcularACWR(users,rpes){
+
     const avui = new Date();
     avui.setHours(0,0,0,0);
 
@@ -60,49 +61,50 @@ function calcularACWR(users,rpes){
     const mes = new Date(avui);
     mes.setDate(avui.getDate()-28);
 
-    const setmanaRPE = rpes.filter(r=>{
-        const data = convertirData(r.date_practice);
-        return data>=setmana;
-    });
-
-    const mesRPE = rpes.filter(r=>{
-        const data = convertirData(r.date_practice);
-        return data>=mes;
-    });
-
     return users.filter(u=>u.role==="JUGADOR").map(user=>{
-        const setmanaValors = setmanaRPE.filter(r=>r.player_uuid===user.uuid).map(r=>Number(r.weighted_register));
-        const mesValors = mesRPE.filter(r=>r.player_uuid===user.uuid).map(r=>Number(r.weighted_register));
+            const rpeJugador = rpes.filter(r=>r.player_uuid===user.uuid)
+                .map(r=>{
+                    return {
+                        ...r,
+                        data: convertirData(r.date_practice),
+                        load: Number(r.weighted_register)
+                    };
+                })
+                .sort((a,b)=>b.data-a.data);
+            
+            const setmanaRPE = rpeJugador.filter(r=>r.data>=setmana);
+            const mesRPE = rpeJugador.filter(r=>r.data>=mes);
+            const load7 = setmanaRPE.reduce((sum,r)=>sum+r.load,0);
+            const load28 = mesRPE.reduce((sum,r)=>sum+r.load,0);
 
-        const load7 = setmanaValors.reduce((a,b)=>a+b,0);
-        const load28 = mesValors.reduce((a,b)=>a+b,0);
-        
-        const setmanaMitjana = setmanaValors.length===0 ? 0 : setmanaValors.reduce((a,b)=>a+b,0) / setmanaValors.length;
-        const mesMitjana = mesValors.length===0 ? 0 : mesValors.reduce((a,b)=>a+b,0) / mesValors.length;
+            // ACWR = càrrega 7 dies / mitjana setmanal dels últims 28 dies
+            const acwr = load28===0 ? 0 : load7/(load28/4);
 
-        return {
-            uuid:user.uuid,
-            load7,
-            load28,
-            sessions7:setmanaValors.length,
-            sessions28:mesValors.length,
-            nom: capitalize(user.name) +" "+ capitalize(user.surname),
-            acwr: mesMitjana===0 ? 0 : setmanaMitjana/mesMitjana
-        };
-    }).sort((a,b)=>{
-        function priority(value){
-            if(value>=0.8 && value<=1.3) return 0;
-            if(value<0.8) return 1;
-            return 2;
-        }
+            return {
+                uuid:user.uuid,
+                nom: capitalize(user.name) + " " + capitalize(user.surname),
+                acwr,
+                load7,
+                load28,
+                sessions7:setmanaRPE.length,
+                sessions28:mesRPE.length,
+                lastPractice: rpeJugador.length>0 ? rpeJugador[0].date_practice : null
+            };
+        })
+        .sort((a,b)=>{
+            function priority(value){
+                if(value>=0.8 && value<=1.3) return 0;
+                if(value<0.8) return 1;
+                return 2;
+            }
 
-        const pa=priority(a.value);
-        const pb=priority(b.value);
-        if(pa!==pb) return -pa+pb;
-        return b.value-a.value;
-    });
+            const pa=priority(a.acwr);
+            const pb=priority(b.acwr);
+            
+            if(pa!==pb) return pa-pb;
+            return b.acwr-a.acwr;
+        });
 }
-
 
 function convertirData(data){
     const parts=data.split("-");
@@ -149,6 +151,7 @@ function pintarDades(jugadors){
 
 
 async function mostrarCardJugador(jugador){
+    console.log(jugador);
     jugadorActual = jugador;
     document.getElementById("playerCardName").textContent = jugador.nom;
     const acwr = jugador.acwr;
