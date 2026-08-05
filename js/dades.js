@@ -100,14 +100,16 @@ function calcularACWR(users,rpes){
             const acwr = load28===0 ? 0 : load7/(load28/4);
 
             return {
-                uuid:user.uuid,
+                uuid: user.uuid,
                 nom: capitalize(user.name) + " " + capitalize(user.surname),
                 acwr,
                 load7,
                 load28,
-                sessions7:setmanaRPE.length,
-                sessions28:mesRPE.length,
-                lastPractice: rpeJugador.length>0 ? rpeJugador[0].date_practice : null
+                sessions7: setmanaRPE.length,
+                sessions28: mesRPE.length,
+                lastPractice: rpeJugador.length>0 ? rpeJugador[0].date_practice : null,
+                averageLoad: setmanaRPE.length>0 ? load7/setmanaRPE.length : 0,
+                daysWithoutTraining: rpeJugador.length>0 ? Math.floor((new Date()-rpeJugador[0].dataSort)/(1000*60*60*24)) : null
             };
         })
         .sort((a,b)=>{
@@ -173,32 +175,97 @@ function pintarDades(jugadors){
 
 async function mostrarCardJugador(jugador){
 
-    jugadorActual = jugador;
+    jugadorActual=jugador;
 
-    document.getElementById("playerCardName").textContent = jugador.nom;
-    const estat = calcularEstatJugador(jugador);
 
-    const status = document.getElementById("playerStatus");
-    status.textContent = estat.text;
-    status.className = "playerStatus " + estat.class;
+    document.getElementById("playerCardName").textContent=
+        jugador.nom;
 
-    const acwrElement = document.getElementById("playerACWR");
-    acwrElement.textContent = jugador.acwr.toFixed(2);
-    acwrElement.style.background = colorACWR(jugador.acwr);
 
-    document.getElementById("playerLoad7").textContent = jugador.load7.toFixed(0) + " AU";
 
-    const variacio = calcularVariacioCarrega(jugador);
-    document.getElementById("playerVariation").textContent = (variacio>=0 ? "+" : "") + variacio.toFixed(0) + "%";
-    document.getElementById("playerSessions").textContent = jugador.sessions7;
-    document.getElementById("playerLastPractice").textContent = jugador.lastPractice ?? "-";
-    document.getElementById("playerAverageLoad").textContent = jugador.sessions7>0 ? (jugador.load7/jugador.sessions7).toFixed(0)+" AU" : "-";
+    const estat=calcularEstatJugador(jugador);
 
-    const wellness = await calcularWellness(jugador.uuid);
-    document.getElementById("playerWellness").textContent = wellness.toFixed(0);
+
+    const status=document.getElementById("playerStatus");
+
+    status.textContent=estat.text;
+
+    status.className=
+        "playerStatus "
+        +estat.class;
+
+
+
+    document.getElementById("playerACWR").textContent=
+        jugador.acwr.toFixed(2);
+
+
+
+    document.getElementById("playerLoad7").textContent=
+        jugador.load7.toFixed(0)
+        +" AU";
+
+
+
+    const variacio=
+        calcularVariacioCarrega(jugador);
+
+
+    document.getElementById("playerVariation").textContent=
+        (variacio>=0?"+":"")
+        +variacio.toFixed(0)
+        +"%";
+
+
+
+    document.getElementById("playerSessions").textContent=
+        jugador.sessions7;
+
+
+
+    document.getElementById("playerLastPractice").textContent=
+        jugador.lastPractice ?? "-";
+
+
+
+    document.getElementById("playerAverageLoad").textContent=
+        jugador.averageLoad.toFixed(0)
+        +" AU";
+
+
+
+    document.getElementById("playerDaysWithoutTraining").textContent=
+        jugador.daysWithoutTraining ?? "-";
+
+
+
+    const wellness=
+        await calcularWellness(jugador.uuid);
+
+
+    document.getElementById("playerWellness").textContent=
+        wellness.toFixed(0);
+
+
+
+    const lesio=
+        await comprovarLesioActiva(jugador.uuid);
+
+
+    jugador.lesionActiva=
+        lesio.activa;
+
+
+    pintarEstatLesio(lesio);
+
+
 
     await carregarUltimesSessions(jugador.uuid);
+
+
     generarAlertes(jugador);
+
+
 
     document.getElementById("playerCard").style.display="flex";
 }
@@ -290,21 +357,83 @@ async function carregarUltimesSessions(userUuid){
 }
 
 
+async function comprovarLesioActiva(userUuid){
+    const lesions = await getInjuriesByUser(userUuid);
+    console.log("LESIONS:",lesions);
+
+    for(const lesio of lesions){
+        const episodis = await getPhysioEpisodesByInjury(lesio.uuid);
+        console.log("EPISODIS:",episodis);
+
+        const actiu = episodis.find(e=>e.closed===0);
+        if(actiu){
+            return {
+                activa:true,
+                injury:lesio,
+                episode:actiu
+            };
+        }
+    }
+
+    return {activa:false};
+}
+
+
+function pintarEstatLesio(data){
+    const div = document.getElementById("playerInjury");
+    if(!data.activa){
+        div.innerHTML = `
+            <div class="alertPlayer">🟢 Sense lesions actives</div>
+        `;
+        return;
+    }
+
+    div.innerHTML = `
+        <div class="alertPlayer">
+            🔴 LESIÓ ACTIVA
+            <br><br>
+            Zona: ${data.injury.zona}
+            <br>
+            Tipus: ${data.injury.tipus}
+            <br>
+            Gravetat: ${data.injury.gravetat}
+        </div>
+    `;
+}
+
+
+async function carregarUltimesSessions(userUuid){
+    const div = document.getElementById("playerLastSessions");
+    div.innerHTML="";
+
+    const sessions = await getRPEByUsers([userUuid]);
+    console.log("RPE:",sessions);
+
+    sessions.sort((a,b)=> convertirDataRPE(b.date_practice) - convertirDataRPE(a.date_practice)).slice(0,5)
+        .forEach(s=>{
+            const fila = document.createElement("div");
+            fila.className = "lastSession";
+            fila.textContent = `${s.date_practice} - ${s.register} RPE - ${s.weighted_register} AU`;
+            div.appendChild(fila);
+        });
+}
+
+
 function generarAlertes(jugador){
-
-    const div=document.getElementById("playerAlerts");
-
+    const div = document.getElementById("playerAlerts");
     div.innerHTML="";
 
     const alertes=[];
+
+    if(jugador.lesionActiva) alertes.push("🔴 Lesió activa");
     if(jugador.acwr>1.5) alertes.push("🔴 ACWR elevat");
-    if(jugador.acwr<0.8) alertes.push("🟡 Càrrega baixa");
+    if(jugador.acwr<0.8) alertes.push("🟡 ACWR baix");
     if(jugador.sessions7===0) alertes.push("🟡 Sense entrenaments últims 7 dies");
-    if(jugador.load7===0) alertes.push("🔴 Sense càrrega registrada");
 
     if(alertes.length===0){
-        div.innerHTML =
-        `<div class="alertPlayer">🟢 Sense alertes</div>`;
+        div.innerHTML= `
+            <div class="alertPlayer">🟢 Sense alertes</div>
+        `;
         return;
     }
 
