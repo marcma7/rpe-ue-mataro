@@ -176,96 +176,37 @@ function pintarDades(jugadors){
 async function mostrarCardJugador(jugador){
 
     jugadorActual=jugador;
-
-
-    document.getElementById("playerCardName").textContent=
-        jugador.nom;
-
-
+    document.getElementById("playerCardName").textContent = jugador.nom;
 
     const estat=calcularEstatJugador(jugador);
-
-
     const status=document.getElementById("playerStatus");
-
     status.textContent=estat.text;
+    status.className= "playerStatus "+estat.class;
 
-    status.className=
-        "playerStatus "
-        +estat.class;
+    document.getElementById("playerACWR").textContent=jugador.acwr.toFixed(2);
+    document.getElementById("playerLoad7").textContent=jugador.load7.toFixed(0)+" AU";
+    const variacio=calcularVariacioCarrega(jugador);
+    document.getElementById("playerVariation").textContent=(variacio>=0?"+":"")+variacio.toFixed(0)+"%";
+    document.getElementById("playerSessions").textContent=jugador.sessions7;
+    document.getElementById("playerLastPractice").textContent=jugador.lastPractice ?? "-";
+    document.getElementById("playerAverageLoad").textContent=jugador.averageLoad.toFixed(0)+" AU";
+    document.getElementById("playerDaysWithoutTraining").textContent=jugador.daysWithoutTraining ?? "-";
+    const diesRPE = await calcularDiesSenseRPE(jugador.uuid);
+    document.getElementById("playerDaysWithoutRPE").textContent = diesRPE === null ? "-" : diesRPE + " dies";
 
+    const wellness= await calcularWellness(jugador.uuid);
+    document.getElementById("playerWellness").textContent=wellness.toFixed(0);
 
-
-    document.getElementById("playerACWR").textContent=
-        jugador.acwr.toFixed(2);
-
-
-
-    document.getElementById("playerLoad7").textContent=
-        jugador.load7.toFixed(0)
-        +" AU";
-
-
-
-    const variacio=
-        calcularVariacioCarrega(jugador);
-
-
-    document.getElementById("playerVariation").textContent=
-        (variacio>=0?"+":"")
-        +variacio.toFixed(0)
-        +"%";
-
-
-
-    document.getElementById("playerSessions").textContent=
-        jugador.sessions7;
-
-
-
-    document.getElementById("playerLastPractice").textContent=
-        jugador.lastPractice ?? "-";
-
-
-
-    document.getElementById("playerAverageLoad").textContent=
-        jugador.averageLoad.toFixed(0)
-        +" AU";
-
-
-
-    document.getElementById("playerDaysWithoutTraining").textContent=
-        jugador.daysWithoutTraining ?? "-";
-
-
-
-    const wellness=
-        await calcularWellness(jugador.uuid);
-
-
-    document.getElementById("playerWellness").textContent=
-        wellness.toFixed(0);
-
-
-
-    const lesio=
-        await comprovarLesioActiva(jugador.uuid);
-
-
-    jugador.lesionActiva=
-        lesio.activa;
-
-
+    const lesio=await comprovarLesioActiva(jugador.uuid);
+    jugador.lesionActiva=lesio.activa;
     pintarEstatLesio(lesio);
 
-
+    const historialLesions = await obtenirHistorialLesions(jugador.uuid);
+    pintarHistorialLesions(historialLesions);
 
     await carregarUltimesSessions(jugador.uuid);
 
-
     generarAlertes(jugador);
-
-
 
     document.getElementById("playerCard").style.display="flex";
 }
@@ -423,5 +364,102 @@ function generarAlertes(jugador){
         e.className="alertPlayer";
         e.textContent=a;
         div.appendChild(e);
+    });
+}
+
+
+async function calcularDiesSenseRPE(userUuid){
+
+    const rpes = await getRPEByUsers([userUuid]);
+
+    if(rpes.length===0){
+        return null;
+    }
+
+    rpes.sort((a,b)=>{
+        return convertirDataRPE(b.date_practice) - convertirDataRPE(a.date_practice);
+    });
+
+    const ultima = convertirDataRPE(rpes[0].date_practice);
+
+    const avui = new Date();
+    avui.setHours(0,0,0,0);
+
+    return Math.floor(
+        (avui-ultima)/(1000*60*60*24)
+    );
+}
+
+
+async function obtenirHistorialLesions(userUuid){
+
+    const lesions = await getInjuriesByUuid([userUuid]);
+
+    if(lesions.length===0){
+        return [];
+    }
+
+
+    const resultat=[];
+
+
+    for(const lesio of lesions){
+
+        const episodis = await getEpisodesByInjury([lesio.uuid]);
+
+        episodis.forEach(e=>{
+            resultat.push({
+                zona: lesio.zona,
+                tipus: lesio.tipus,
+                gravetat: lesio.gravetat,
+                inici: e.start_date,
+                final: e.end_date,
+                activa: e.closed===0
+            });
+        });
+    }
+
+
+    return resultat.sort((a,b)=>{
+        return new Date(b.inici)-new Date(a.inici);
+    });
+}
+
+
+
+function pintarHistorialLesions(lesions){
+
+    const div = document.getElementById("playerInjuryHistory");
+
+    div.innerHTML="";
+
+
+    if(lesions.length===0){
+
+        div.innerHTML=`
+            <div class="alertPlayer">
+                🟢 Sense historial de lesions
+            </div>
+        `;
+
+        return;
+    }
+
+
+    lesions.slice(0,5).forEach(l=>{
+
+        const fila=document.createElement("div");
+
+        fila.className="lastSession";
+
+        fila.innerHTML=`
+            ${l.activa ? "🔴" : "⚪"}
+            ${l.zona} - ${l.tipus}
+            <br>
+            ${l.inici ?? "-"} 
+            ${l.final ? " → "+l.final : ""}
+        `;
+
+        div.appendChild(fila);
     });
 }
