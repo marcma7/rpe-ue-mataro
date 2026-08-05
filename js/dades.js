@@ -74,13 +74,20 @@ function calcularACWR(users,rpes){
         const setmanaValors = setmanaRPE.filter(r=>r.player_uuid===user.uuid).map(r=>Number(r.weighted_register));
         const mesValors = mesRPE.filter(r=>r.player_uuid===user.uuid).map(r=>Number(r.weighted_register));
 
+        const load7 = setmanaValors.reduce((a,b)=>a+b,0);
+        const load28 = mesValors.reduce((a,b)=>a+b,0);
+        
         const setmanaMitjana = setmanaValors.length===0 ? 0 : setmanaValors.reduce((a,b)=>a+b,0) / setmanaValors.length;
         const mesMitjana = mesValors.length===0 ? 0 : mesValors.reduce((a,b)=>a+b,0) / mesValors.length;
 
         return {
             uuid:user.uuid,
+            load7,
+            load28,
+            sessions7:setmanaValors.length,
+            sessions28:mesValors.length,
             nom: capitalize(user.name) +" "+ capitalize(user.surname),
-            value: mesMitjana===0 ? 0 : setmanaMitjana/mesMitjana
+            acwr: mesMitjana===0 ? 0 : setmanaMitjana/mesMitjana
         };
     }).sort((a,b)=>{
         function priority(value){
@@ -118,13 +125,13 @@ function pintarDades(jugadors){
         fila.innerHTML = `
             <div class="cardDadaJugador">
                 <div class="nomJugador">${jugador1.nom}</div>
-                <div class="valorJugador" style="background:${colorACWR(jugador1.value)}">${jugador1.value.toFixed(2)}</div>
+                <div class="valorJugador" style="background:${colorACWR(jugador1.acwr)}">${jugador1.acwr.toFixed(2)}</div>
             </div>
 
             ${jugador2 ? `
                 <div class="cardDadaJugador">
                     <div class="nomJugador">${jugador2.nom}</div>
-                    <div class="valorJugador" style="background:${colorACWR(jugador2.value)}">${jugador2.value.toFixed(2)}</div>
+                    <div class="valorJugador" style="background:${colorACWR(jugador2.acwr)}">${jugador2.acwr.toFixed(2)}</div>
                 </div>
                 ` : `
                 <div></div>
@@ -144,7 +151,7 @@ function pintarDades(jugadors){
 async function mostrarCardJugador(jugador){
     jugadorActual = jugador;
     document.getElementById("playerCardName").textContent = jugador.nom;
-    const acwr = jugador.value;
+    const acwr = jugador.acwr;
     const acwrElement = document.getElementById("playerACWR");
     acwrElement.textContent = acwr.toFixed(2);
     acwrElement.style.background = colorACWR(acwr);
@@ -195,3 +202,53 @@ async function calcularWellness(userUuid){
     const ultimaSessio = ultimaData.uuid;
     return respostes.filter(r=>r.questionari_user_uuid===ultimaSessio).map(r=>Number(r.resposta)).reduce((a,b)=>a+b, 0);
 }
+
+
+function calcularEstatJugador(player){
+
+    let score = 100;
+
+    if(player.acwr > 1.5)
+        score -= 30;
+
+    if(player.acwr < 0.8)
+        score -= 10;
+
+    if(player.wellness != null){
+
+        if(player.wellness < 15)
+            score -= 25;
+
+        else if(player.wellness < 20)
+            score -= 10;
+
+    }
+
+    if(player.dolor != null)
+        score -= player.dolor * 5;
+
+    if(score >= 75){
+
+        return{
+            text:"Disponible",
+            class:"available"
+        };
+
+    }
+
+    if(score >= 50){
+
+        return{
+            text:"Vigilància",
+            class:"warning"
+        };
+
+    }
+
+    return{
+        text:"Risc",
+        class:"danger"
+    };
+
+}
+
