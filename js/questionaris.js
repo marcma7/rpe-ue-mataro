@@ -160,6 +160,21 @@ function crearTextLliure(bloc, question) {
 }
 
 
+function crearNumero(bloc, question) {
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.inputMode = "numeric";
+    input.placeholder = "Introdueix un valor";
+
+    input.addEventListener("input", () => {
+        respostes[question.uuid] = input.value;
+    });
+
+    bloc.appendChild(input);
+}
+
+
 async function confirmarQuestionari() {
 
     const answers = [];
