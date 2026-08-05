@@ -17,14 +17,13 @@ async function obrirDades(){
 async function obrirSelectorValoracions(){
     mostrarPantalla("seleccionValoracio");
     const div = document.getElementById("llistaValoracions");
-    div.innerHTML="<button style='background:red'>PROVA</button>";
     div.innerHTML="";
     const valoracions = await getAllValoracions();
-    console.log(valoracions);
     valoracions.forEach(valoracio=>{
         const button = document.createElement("button");
         button.textContent = valoracio.name;
         button.onclick = async()=>{
+            console.log(valoracio);
             await obrirValoracio(valoracio.uuid);
         };
         div.appendChild(button);
