@@ -527,6 +527,18 @@ p {
     font-size:22px;
 }
 
+.assessmentButton {
+    width:28px !important;
+    height:28px !important;
+    min-width:28px !important;
+    min-height:28px !important;
+    margin:0 !important;
+    padding:0 !important;
+    background:transparent !important;
+    color:#ef4444 !important;
+    font-size:22px;
+}
+
 .deletePlayerButton{
     display:flex;
     justify-content:center;
