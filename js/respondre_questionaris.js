@@ -15,6 +15,17 @@ async function loadGestQuestionaris(){
 }
 
 
+async function loadPantallaQuestionarisJugador(user) {
+    const qs = await getAllQuestionaris();
+    questionaris = qs.map(q=>{
+        q.questions = allQuestions.filter(x => x.questionari_uuid === q.uuid);
+        return q;
+    });
+
+    pintarQuestionarisJugador(user);
+}
+
+
 function pintarQuestionaris(){
 
     const div = document.getElementById("llistaQuestionaris");
@@ -44,6 +55,30 @@ function pintarQuestionaris(){
 
         fila.querySelector(".eliminar").onclick=()=>{
             eliminarQuestionari(q.uuid);
+        };
+
+        div.appendChild(fila);
+    });
+}
+
+
+function pintarQuestionarisJugador(user){
+
+    const div = document.getElementById("llistaQuestionarisJugador");
+    div.innerHTML="";
+    questionaris.forEach(q=>{
+        const fila = document.createElement("div");
+        fila.className = "questionariFila";
+        fila.innerHTML = `
+            <div class="nomQuestionari">${q.name}</div>
+            <div class="botonsQuestionari">
+                <button class="enviar">➤ Enviar</button>
+            </div>
+        `;
+
+        fila.querySelector(".enviar").onclick=()=>{
+            questionariSeleccionat=q;
+            obrirEnviarJugador(q);
         };
 
         div.appendChild(fila);
