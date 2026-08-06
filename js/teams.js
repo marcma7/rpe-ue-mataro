@@ -84,9 +84,17 @@ function pintarJugadors(users) {
         fila.className = "jugadorFila";
         fila.innerHTML = `
             <span>${capitalize(user.name)} ${capitalize(user.surname)} - ${user.code}</span>
-            <div>
-                ${user.role === "JUGADOR" ? ` <button class="addInjuryButton" data-uuid="${user.uuid}">+</button>` : `<div class="addInjuryPlaceholder"></div>`}
-                <button class="deletePlayerButton" data-uuid="${user.uuid}">✕</button>
+            <div class="playerActions">
+                ${user.role === "JUGADOR" ? `
+                    <button class="addInjuryButton" data-uuid="${user.uuid}" title="Afegir lesió">+</button>
+                    <button class="questionnaireButton" data-uuid="${user.uuid}" title="Qüestionaris">❓</button>
+                    <button class="assessmentButton" data-uuid="${user.uuid}" title="Valoracions">📋</button>
+                ` : `
+                    <div class="addInjuryPlaceholder"></div>
+                    <div class="addInjuryPlaceholder"></div>
+                    <div class="addInjuryPlaceholder"></div>
+                `}
+                <button class="deletePlayerButton" data-uuid="${user.uuid}" title="Eliminar jugador">✕</button>
             </div>
         `;
         llista.appendChild(fila);
@@ -102,7 +110,30 @@ function pintarJugadors(users) {
                 obrirAfegirLesio(user);
             });
         }
+
+        const questionnaireButton = fila.querySelector(".questionnaireButton");
+        if (questionnaireButton) {
+            questionnaireButton.addEventListener("click", () => {
+                obrirQuestionaris(user);
+            });
+        }
+
+        const assessmentButton = fila.querySelector(".assessmentButton");
+        if (assessmentButton) {
+            assessmentButton.addEventListener("click", () => {
+                obrirValoracions(user);
+            });
+        }
     }
+}
+
+
+function obrirQuestionaris(user){
+    console.log("Qüestionaris", user);
+}
+
+function obrirValoracions(user){
+    console.log("Valoracions", user);
 }
 
 
