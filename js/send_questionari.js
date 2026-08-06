@@ -22,6 +22,15 @@ function obrirEnviar(q){
 }
 
 
+function obrirEnviarJugador(user, q){
+
+    questionariEnviar = q;
+    usuarisSeleccionats = [user];
+
+    enviarQuestionaris();
+}
+
+
 async function carregarEnviarQuestionari(){
 
     const usersResponse = await fetch(
