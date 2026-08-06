@@ -177,8 +177,10 @@ function mostrarPantalla(pantalla) {
     document.getElementById("pantallaGestioValoracions").style.display="none";
     document.getElementById("pantallaValoracioItems").style.display="none";
     document.getElementById("pantallaAddValoracioItem").style.display="none";
+    document.getElementById("pantallaEnviarQuestionarisJugador").style.display="none";
 
     if (pantalla === "login") document.getElementById("pantallaLogin").style.display = "flex";
+    if (pantalla === "questionariJugadors") document.getElementById("pantallaEnviarQuestionarisJugador").style.display = "flex";
     if (pantalla === "rpe") document.getElementById("pantallaRPE").style.display = "flex";
     if (pantalla === "questionaris") document.getElementById("pantallaQuestionaris").style.display = "flex";
     if (pantalla === "management") document.getElementById("pantallaManagement").style.display = "flex";
