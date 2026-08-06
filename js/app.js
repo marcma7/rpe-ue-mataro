@@ -63,6 +63,10 @@ document.getElementById("enrereDades").addEventListener("click", ()=>{
     mostrarPantalla("management");
 });
 
+document.getElementById("tornarDadesValoracioButton").addEventListener("click", ()=>{
+    mostrarPantalla("teams");
+});
+
 window.addEventListener("load", iniciarAplicacio);
 
 const botoConfirmar = document.getElementById("confirmarRPEButton");
@@ -81,6 +85,14 @@ document.getElementById("confirmarQuestionariButton").addEventListener("click", 
 document.getElementById("equipsButton").addEventListener("click", async () => {
     mostrarPantalla("teams");
     await loadTeams();
+});
+
+document.getElementById("pantallaEnviarQuestionarisJugador").addEventListener("click", async () => {
+    mostrarPantalla("teams");
+});
+
+document.getElementById("pantallaEnviarValoracionsJugador").addEventListener("click", async () => {
+    mostrarPantalla("teams");
 });
 
 document.getElementById("dadesButton").addEventListener("click", obrirDades);
@@ -178,9 +190,11 @@ function mostrarPantalla(pantalla) {
     document.getElementById("pantallaValoracioItems").style.display="none";
     document.getElementById("pantallaAddValoracioItem").style.display="none";
     document.getElementById("pantallaEnviarQuestionarisJugador").style.display="none";
+    document.getElementById("pantallaEnviarValoracionsJugador").style.display="none";
 
     if (pantalla === "login") document.getElementById("pantallaLogin").style.display = "flex";
     if (pantalla === "questionariJugadors") document.getElementById("pantallaEnviarQuestionarisJugador").style.display = "flex";
+    if (pantalla === "valoracioJugadors") document.getElementById("pantallaEnviarValoracionsJugador").style.display = "flex";
     if (pantalla === "rpe") document.getElementById("pantallaRPE").style.display = "flex";
     if (pantalla === "questionaris") document.getElementById("pantallaQuestionaris").style.display = "flex";
     if (pantalla === "management") document.getElementById("pantallaManagement").style.display = "flex";

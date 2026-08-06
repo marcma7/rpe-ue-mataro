@@ -129,12 +129,14 @@ function pintarJugadors(users) {
 
 
 function obrirQuestionaris(user){
-    mostrarPantalla("questionariJugador");
+    mostrarPantalla("questionariJugadors");
     loadPantallaQuestionarisJugador(user);
 }
 
+
 function obrirValoracions(user){
-    console.log("Valoracions", user);
+    mostrarPantalla("valoracioJugadors");
+    loadPantallaValoracionsJugador(user);
 }
 
 

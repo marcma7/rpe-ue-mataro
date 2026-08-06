@@ -1168,7 +1168,7 @@ p {
 
 .jugadorFila > div{
     display:grid;
-    grid-template-columns:28px 28px;
+    grid-template-columns:28px 28px 28px 28px;
     gap:4px;
     justify-content:end;
     align-items:center;
@@ -1266,7 +1266,8 @@ p {
     width:100%;
 }
 
-#tornarGestioButton {
+#tornarGestioButton,
+#tornarQuestionarisJugadorButton{
     flex-shrink:0;
     width:100%;
     padding:15px;

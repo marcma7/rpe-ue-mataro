@@ -31,6 +31,12 @@ function obrirEnviarJugador(user, q){
 }
 
 
+function obrirEnviarValoracionsJugador(user, q){
+
+    obrirValoracio(q.uuid, user.uuid);
+}
+
+
 async function carregarEnviarQuestionari(){
 
     const usersResponse = await fetch(
