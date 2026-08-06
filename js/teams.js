@@ -129,7 +129,8 @@ function pintarJugadors(users) {
 
 
 function obrirQuestionaris(user){
-    console.log("Qüestionaris", user);
+    mostrarPantalla("questionariJugador");
+    loadPantallaQuestionarisJugador(user);
 }
 
 function obrirValoracions(user){
