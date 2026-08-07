@@ -480,13 +480,12 @@ p {
 }
 
 .jugadorFila{
-    display:flex;
     align-items:center;
     justify-content:space-between;
     box-sizing:border-box;
     width:100%;
     display:grid;
-    grid-template-columns:1fr 32px 32px 32px 32px;
+    grid-template-columns:1fr auto;
     align-items:center;
     gap:6px;
     min-height:34px;
@@ -501,6 +500,7 @@ p {
     white-space:nowrap;
     text-overflow:ellipsis;
     font-size:14px;
+    min-width:0;
 }
 
 .addInjuryButton {
@@ -1168,7 +1168,7 @@ p {
 
 .jugadorFila > div{
     display:grid;
-    grid-template-columns:28px 28px 28px 28px;
+    grid-template-columns:repeat(4, 28px);
     gap:4px;
     justify-content:end;
     align-items:center;
