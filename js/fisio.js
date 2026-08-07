@@ -10,6 +10,7 @@ document.getElementById("lesionsButton").addEventListener("click", async()=>{
 
 
 async function obrirLesionsFisio(){
+    document.getElementById("filtreLesions").value = "Totes";
     mostrarPantalla("lesions");
     await carregarLesions();
 }
@@ -51,15 +52,10 @@ async function carregarLesions(){
         lesio.visites = physioVisits.filter(v => v.episode_uuid === lesio.episode?.uuid);
 
         // Comprovar si té hora assignada
-        const visitaAmbHora = lesio.visites.find(v => v.date != null && v.hour != null);
-    
-        if(visitaAmbHora) lesio.te_hora = 1;
-        else lesio.te_hora = 0;
-
-        const visitaFeta = lesio.visites.find(v => v.visita_feta = 1);
-        
-        if(visitaFeta) lesio.visites_fetes = 1;
-        else lesio.visites_fetes = 0;
+        if(lesio.visites.length > 0) {
+            lesio.te_hora = lesio.visites.filter(v => v.date != null && v.hour != null).length;
+            lesio.visites_fetes = lesio.visites.filter(v => v.visita_feta == 1).length;
+        }
         lesio.showText = (lesio.user?.name ?? "") + " " + (lesio.user?.surname ?? "") + " - " + lesio.data_lesio;
     });
 
@@ -83,6 +79,8 @@ function pintarLesions(){
     div.innerHTML = "";
 
     injuriesShowing.forEach(lesio=>{
+        const ultimaVisita = [...lesio.visites].reverse().find(v => v.date && v.hour);
+
         const fila = document.createElement("div");
         fila.className = "lesioFila";
         fila.innerHTML = `
@@ -92,10 +90,11 @@ function pintarLesions(){
             <br>    
             Gravetat: ${lesio.gravetat ?? "-"}
             <br>
-            ${lesio.te_hora === 1 ? 
-              "🟢 Hora: " + (lesio.visites.find(v => v.date && v.hour)?.date ?? "") + " " + (lesio.visites.find(v => v.date && v.hour)?.hour ?? "")
+            ${lesio.demana_fisio > 0 ? (lesio.te_hora > 0 ?
+              "🟢 Hora: " + (ultimaVisita?.date ?? "") + " " + (ultimaVisita ?.hour ?? "")
             :
               "🔴 Pendent d'assignar hora"
+            ) : "No necessita fisio"
             }
         `;
 
@@ -158,10 +157,10 @@ document.getElementById("filtreLesions").addEventListener("change", ()=>{
 function filtrarLesions(){
     const filtre = document.getElementById("filtreLesions").value;
     if(filtre === "Totes") injuriesShowing = injuries;
-    else if(filtre === "Sense fisio") injuriesShowing = injuries.filter(l => l.demana_fisio == 0);
-    else if(filtre === "Pendent de donar hora") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora == 0);
-    else if(filtre === "Hora donada") injuriesShowing = injuries.filter(l => l.te_hora == 1);
-    else if(filtre === "Visita feta") injuriesShowing = injuries.filter(l => l.visita_feta);
+    else if(filtre === "Sense hora de fisio") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora == 0);
+    else if(filtre === "Pendent de primera visita") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora > 0 && l.visites_fetes == 0);
+    else if(filtre === "En tractament") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora > 0 && l.visites_fetes > 0 && l.te_hora > l.visites_fetes);
+    else if(filtre === "Tancades") injuriesShowing = injuries.filter(l => l.demana_fisio == 0 || l.te_hora == l.visites_fetes);
     
     pintarLesions();
 }

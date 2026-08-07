@@ -1077,7 +1077,7 @@ async function closeEpisode(data){
         headers:{
             "Content-Type":"application/json",
             "Accept":"application/json",
-            "Prefer":"return=representation",
+            "Prefer": "resolution=merge-duplicates,return=representation",
             "apikey":SUPABASE_API_KEY,
             "Authorization":
             "Bearer "+SUPABASE_API_KEY
