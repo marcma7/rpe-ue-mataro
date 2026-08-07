@@ -136,7 +136,7 @@ function obrirQuestionaris(user){
 
 function obrirValoracions(user){
     mostrarPantalla("valoracioJugadors");
-    loadPantallaValoracionsJugador(user);
+    loadPantallaValoracionsJugador(user, document.getElementById("selectorTeams").value);
 }
 
 

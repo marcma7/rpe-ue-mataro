@@ -31,9 +31,8 @@ function obrirEnviarJugador(user, q){
 }
 
 
-function obrirEnviarValoracionsJugador(user, q){
-
-    obrirValoracio(q.uuid, user.uuid);
+function obrirEnviarValoracionsJugador(user, q, teamUuid){
+    obrirValoracio(q.uuid, user.uuid, teamUuid);
 }
 
 

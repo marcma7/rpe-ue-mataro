@@ -21,9 +21,9 @@ async function loadPantallaQuestionarisJugador(user) {
 }
 
 
-async function loadPantallaValoracionsJugador(user) {
+async function loadPantallaValoracionsJugador(user, teamUuid) {
     const qs = await getAllValoracions();
-    pintarValoracionsJugador(user, qs);
+    pintarValoracionsJugador(user, qs, teamUuid);
 }
 
 
@@ -86,7 +86,7 @@ function pintarQuestionarisJugador(user, questionaris){
 }
 
 
-function pintarValoracionsJugador(user, questionaris){
+function pintarValoracionsJugador(user, questionaris, teamUuid){
 
     const div = document.getElementById("llistaValoracionsJugador");
     div.innerHTML="";
@@ -101,7 +101,7 @@ function pintarValoracionsJugador(user, questionaris){
         `;
 
         fila.querySelector(".enviar").onclick=()=>{
-            obrirEnviarValoracionsJugador(user, q);
+            obrirEnviarValoracionsJugador(user, q, teamUuid);
         };
 
         div.appendChild(fila);

@@ -1,7 +1,9 @@
 let equipValoracio = null;
+let equipValoracioOrigen = null;
 
 
-async function obrirValoracio(valoracioUuid, userUuid){
+async function obrirValoracio(valoracioUuid, userUuid, teamUuid = null){
+    equipValoracioOrigen = teamUuid;
     jugadorValoracio = await getUser(userUuid);
     if(!jugadorValoracio){
         alert("No s'ha trobat el jugador");
@@ -63,7 +65,6 @@ function pintarValoracio(){
 
 
 async function enviarValoracio(){
-    console.log(respostesValoracio);
     for(const item of valoracioItems){
         if(respostesValoracio[item.uuid] === undefined || respostesValoracio[item.uuid] === ""){
             alert("Falta respondre algunes preguntes");
@@ -85,6 +86,8 @@ async function enviarValoracio(){
     if(equipValoracio){
         await carregarDadesEquip(equipValoracio);
         mostrarPantalla("dades");
+    }else if(equipValoracioOrigen){
+        mostrarPantalla("teams");
     }else{
         mostrarPantalla("gestioValoracions");
     }
