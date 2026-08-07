@@ -470,7 +470,6 @@ p {
 }
 
 #llistaJugadors{
-    max-width:700px;
     margin-top:25px;
     width:100%;
     flex:1;
