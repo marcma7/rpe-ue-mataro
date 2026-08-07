@@ -6,6 +6,7 @@ let isFinished = false;
 
 
 async function loadRPE(user) {
+    isFinished = false;
 
     const userTeams = await getUserTeamByUserUuid(user.uuid);
     const teamUuids = userTeams.map(x => x.uuid);
