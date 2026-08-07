@@ -472,7 +472,6 @@ async function insertPractice(practice) {
 
 
 async function insertPracticeTime(data){
-    console.log(data);
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/player_team_practice_time`,
         {

@@ -386,7 +386,6 @@ async function guardarSessio(){
                 practice_uuid: createdPracticeUuid
             });
         }
-        console.log(ptpt);
     }
 
     if(ptpt.length > 0){

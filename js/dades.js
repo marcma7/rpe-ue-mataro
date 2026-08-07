@@ -344,11 +344,9 @@ function calcularVariacioCarrega(jugador){
 
 async function comprovarLesioActiva(userUuid){
     const lesions = await getInjuriesByUuid([userUuid]);
-    console.log("LESIONS:",lesions);
 
     for(const lesio of lesions){
         const episodis = await getPhysioEpisodesByInjury(lesio.uuid);
-        console.log("EPISODIS:",episodis);
 
         const actiu = episodis.find(e=>e.closed===0);
         if(actiu){
@@ -392,7 +390,6 @@ async function carregarUltimesSessions(userUuid){
     div.innerHTML="";
 
     const sessions = await getRPEByUsers([userUuid]);
-    console.log("RPE:",sessions);
 
     sessions.sort((a,b)=> convertirDataRPE(b.date_practice) - convertirDataRPE(a.date_practice)).slice(0,5)
         .forEach(s=>{
@@ -509,7 +506,6 @@ function pintarWellness(w){
         return;
     }
 
-    console.log(w);
     globalValue.textContent = w.mitjana.toFixed(1) + " / 5";
     globalDot.style.background = colorGlobalWellness(w.mitjana);
 
