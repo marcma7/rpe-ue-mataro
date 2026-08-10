@@ -235,6 +235,7 @@ async function mostrarCardJugador(jugador) {
         jugador.daysWithoutRPE = diesRPE;
 
         const risc = calcularRiscJugador(jugador, wellness, lesionsPreparades, episodis);
+        console.log(risc);
         jugador.risc = risc;
 
         const estat = calcularEstatJugador(risc);
