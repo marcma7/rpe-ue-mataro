@@ -961,37 +961,8 @@ function ordenarPerDataDesc(array, camp) {
 
 async function carregarQuestionarisJugador(userUuid) {
 
-    const { data, error } = await supabase
-        .from("questionaris_contestar")
-        .select(`
-            uuid,
-            user_uuid,
-            questionari_uuid,
-            data_enviament,
-            data_resposta,
-            contestat,
-            questionaris (
-                uuid,
-                name,
-                description
-            )
-        `)
-        .eq("user_uuid", userUuid);
-
-    if (error) {
-
-        console.error(
-            "Error carregant qüestionaris:",
-            error
-        );
-
-        return [];
-    }
-
-    return ordenarPerDataDesc(
-        data || [],
-        "data_resposta"
-    );
+   const questionaris = await getQuestionarisContestarByUser( userUuid ); 
+    return ordenarPerDataDesc( questionaris, "data_resposta" );
 }
 
 
@@ -1076,41 +1047,7 @@ function pintarQuestionaris(questionaris) {
 
 async function carregarValoracionsJugador(userUuid) {
 
-    const { data, error } = await supabase
-        .from("valoracions_respostes")
-        .select(`
-            uuid,
-            user_uuid,
-            date,
-            resposta,
-            valoracio_item_uuid,
-            valoracions_items (
-                uuid,
-                valoracio_uuid,
-                item,
-                num_item,
-                tipus_item,
-                opcions_resposta,
-                valoracions (
-                    uuid,
-                    name,
-                    description
-                )
-            )
-        `)
-        .eq("user_uuid", userUuid);
-
-    if (error) {
-
-        console.error(
-            "Error carregant valoracions:",
-            error
-        );
-
-        return [];
-    }
-
-    return data || [];
+   return await getValoracionsRespostesByUser(userUuid);
 }
 
 
@@ -1253,33 +1190,7 @@ function pintarValoracions(valoracions) {
 
 async function carregarLesionsJugador(userUuid) {
 
-    const { data, error } = await supabase
-        .from("injuries")
-        .select(`
-            id,
-            uuid,
-            data_lesio,
-            zona,
-            tipus,
-            gravetat,
-            demana_fisio,
-            user_uuid,
-            team_uuid
-        `)
-        .eq("user_uuid", userUuid)
-        .order("id", { ascending: false });
-
-    if (error) {
-
-        console.error(
-            "Error carregant lesions:",
-            error
-        );
-
-        return [];
-    }
-
-    return data || [];
+    return await getInjuriesByUuid(userUuid);
 }
 
 
@@ -1287,41 +1198,10 @@ async function carregarEpisodisFisio(lesions) {
 
     if (!lesions.length) return [];
 
-    const injuryUuids =
-        lesions.map(l => l.uuid);
+    const injuryUuids = lesions.map(l => l.uuid);
 
-    const { data, error } = await supabase
-        .from("physio_episodes")
-        .select(`
-            uuid,
-            injury_uuid,
-            closed,
-            physio_visits (
-                uuid,
-                episode_uuid,
-                num_visit,
-                date,
-                anamnesi,
-                last_visit,
-                visita_feta,
-                hour,
-                feina_visita,
-                seguents_passos
-            )
-        `)
-        .in("injury_uuid", injuryUuids);
+    return await getPhysioEpisodesByInjuries( injuryUuids );
 
-    if (error) {
-
-        console.error(
-            "Error carregant episodis fisio:",
-            error
-        );
-
-        return [];
-    }
-
-    return data || [];
 }
 
 
