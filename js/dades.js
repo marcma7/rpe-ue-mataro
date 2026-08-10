@@ -960,7 +960,7 @@ function ordenarPerDataDesc(array, camp) {
 ========================================================= */
 
 async function carregarQuestionarisJugador(userUuid) {
-    const questionaris = await getQuestionarisContestats( userUuid ); 
+    const questionaris = await getQuestionarisPerUsuari( userUuid ); 
     return ordenarPerDataDesc( questionaris, "data_resposta" );
 }
 
