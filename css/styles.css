@@ -1918,6 +1918,7 @@ p {
     grid-template-columns:repeat(4, 1fr);
     gap:8px;
     margin-top:12px;
+    padding:5px 15px;
 }
 
 .wellnessVariable{
