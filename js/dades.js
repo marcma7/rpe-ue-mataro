@@ -523,6 +523,67 @@ async function mostrarCardJugador(jugador) {
 
 }
 
+
+
+function prepararLesions(lesions, episodis) {
+
+    if (!lesions || !lesions.length) {
+        return [];
+    }
+
+    return lesions.map(lesio => {
+
+        // Buscar l'episodi associat a aquesta lesió
+        const episodi = (episodis || []).find(
+            e => e.injury_uuid === lesio.uuid
+        );
+
+        // Una lesió es considera tancada
+        // si té un episodi i aquest està closed = 1
+        const closed =
+            episodi
+                ? Number(episodi.closed) === 1
+                : false;
+
+        // Visites de fisioteràpia de l'episodi
+        const visites =
+            episodi?.physio_visits || [];
+
+        // Ordenar visites de més recent a més antiga
+        const visitesOrdenades =
+            ordenarPerDataDesc(visites, "date");
+
+        const ultimaVisita =
+            visitesOrdenades.length > 0
+                ? visitesOrdenades[0]
+                : null;
+
+        return {
+
+            ...lesio,
+
+            // Episodi de fisioteràpia associat
+            episodi: episodi || null,
+
+            // Informació preparada per la UI
+            _closed: closed,
+
+            _activa: !closed,
+
+            _visites: visitesOrdenades,
+
+            _numVisites: visitesOrdenades.length,
+
+            _ultimaVisita: ultimaVisita,
+
+            _ultimaVisitaData:
+                ultimaVisita?.date || null
+        };
+    });
+}
+
+
+
 function tancarPlayerCard() {
 
     document.getElementById(
