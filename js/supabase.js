@@ -937,6 +937,22 @@ async function getValoracionsItemsFromValoracio(uuid){
 }
 
 
+async function getValoracionsRespostesByUser(uuid){
+    const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/valoracions_respostes?user_uuid=eq.${uuid}`,
+        {
+            headers:{
+                "Accept":"application/json",
+                "apikey":SUPABASE_API_KEY,
+                "Authorization":
+                "Bearer "+SUPABASE_API_KEY
+            }
+        }
+    );
+    return await response.json();
+}
+
+
 async function getUser(userUuid){
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/app_users?uuid=eq.${userUuid}`,
