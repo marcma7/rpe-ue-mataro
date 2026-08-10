@@ -261,86 +261,45 @@ async function mostrarCardJugador(jugador) {
 
 function prepararLesions(lesions, episodis) {
 
-    if (!lesions || !lesions.length) {
-        return [];
-    }
-
+    if (!lesions || !lesions.length) return [];
+    
     return lesions.map(lesio => {
-
         // Buscar l'episodi associat a aquesta lesió
-        const episodi = (episodis || []).find(
-            e => e.injury_uuid === lesio.uuid
-        );
+        const episodi = (episodis || []).find(e => e.injury_uuid === lesio.uuid);
 
-        // Una lesió es considera tancada
-        // si té un episodi i aquest està closed = 1
-        const closed =
-            episodi
-                ? Number(episodi.closed) === 1
-                : false;
+        // Una lesió es considera tancada si té un episodi i aquest està closed = 1
+        const closed = episodi ? Number(episodi.closed) === 1 : false;
 
         // Visites de fisioteràpia de l'episodi
-        const visites =
-            episodi?.physio_visits || [];
+        const visites = episodi?.physio_visits || [];
 
         // Ordenar visites de més recent a més antiga
-        const visitesOrdenades =
-            ordenarPerDataDesc(visites, "date");
+        const visitesOrdenades = ordenarPerDataDesc(visites, "date");
 
-        const ultimaVisita =
-            visitesOrdenades.length > 0
-                ? visitesOrdenades[0]
-                : null;
+        const ultimaVisita = visitesOrdenades.length > 0 ? visitesOrdenades[0] : null;
 
         return {
-
             ...lesio,
-
-            // Episodi de fisioteràpia associat
             episodi: episodi || null,
-
-            // Informació preparada per la UI
             _closed: closed,
-
             _activa: !closed,
-
             _visites: visitesOrdenades,
-
             _numVisites: visitesOrdenades.length,
-
             _ultimaVisita: ultimaVisita,
-
-            _ultimaVisitaData:
-                ultimaVisita?.date || null
+            _ultimaVisitaData: ultimaVisita?.date || null
         };
     });
 }
 
 
-
 function tancarPlayerCard() {
-
-    document.getElementById(
-        "playerCard"
-    ).style.display = "none";
-
+    document.getElementById("playerCard").style.display = "none";
 }
 
 
-document
-    .getElementById("tancarCardButton")
-    ?.addEventListener(
-        "click",
-        tancarPlayerCard
-    );
+document.getElementById("tancarCardButton")?.addEventListener("click", tancarPlayerCard);
 
-
-document
-    .getElementById("tancarCardButtonBottom")
-    ?.addEventListener(
-        "click",
-        tancarPlayerCard
-    );
+document.getElementById("tancarCardButtonBottom")?.addEventListener("click", tancarPlayerCard);
 
 document.getElementById("tancarCardButton").addEventListener("click", ()=>{
     document.getElementById("playerCard").style.display="none";
@@ -611,20 +570,11 @@ function pintarWellness(w){
 
     variables.innerHTML = dades.map(x => `
         <div class="wellnessVariable">
-
             <span>${x.nom}</span>
-
             <span class="wellnessVariableValue">
-
-                <span
-                    class="dotWellness"
-                    style="background:${colorWellness(x.nom,x.valor)}">
-                </span>
-
+                <span class="dotWellness" style="background:${colorWellness(x.nom,x.valor)}"></span>
                 ${x.valor ?? "-"}
-
             </span>
-
         </div>
     `).join("");
 }
@@ -654,71 +604,38 @@ function colorGlobalWellness(valor){
 }
 
 
-/* =========================================================
-   UTILITATS
-========================================================= */
-
 function parseData(data) {
-
     if (!data) return null;
-
     if (data instanceof Date) return data;
-
     const d = new Date(data);
+    if (!isNaN(d.getTime())) return d;
 
-    if (!isNaN(d.getTime())) {
-        return d;
-    }
-
-    // dd/MM/yyyy
-    const match = String(data).match(
-        /^(\d{1,2})\/(\d{1,2})\/(\d{4})/
-    );
-
+    const match = String(data).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
     if (match) {
-
         const [, dia, mes, any] = match;
-
-        return new Date(
-            Number(any),
-            Number(mes) - 1,
-            Number(dia)
-        );
+        return new Date(Number(any), Number(mes) - 1, Number(dia));
     }
-
     return null;
 }
 
 
 function formatData(data) {
-
     const d = parseData(data);
-
     if (!d) return "-";
-
     return d.toLocaleDateString("ca-ES");
 }
 
 
 function diesEntre(data) {
-
     const d = parseData(data);
-
     if (!d) return null;
-
     const ara = new Date();
-
-    return Math.floor(
-        (ara - d) / (1000 * 60 * 60 * 24)
-    );
+    return Math.floor((ara - d) / (1000 * 60 * 60 * 24));
 }
 
 
 function escaparHTML(text) {
-
-    if (text === null || text === undefined) {
-        return "";
-    }
+    if (text === null || text === undefined) return "";
 
     return String(text)
         .replace(/&/g, "&amp;")
@@ -730,24 +647,16 @@ function escaparHTML(text) {
 
 
 function ordenarPerDataDesc(array, camp) {
-
     return [...array].sort((a, b) => {
-
         const da = parseData(a[camp]);
         const db = parseData(b[camp]);
-
         if (!da && !db) return 0;
         if (!da) return 1;
         if (!db) return -1;
-
         return db - da;
     });
 }
 
-
-/* =========================================================
-   QÜESTIONARIS
-========================================================= */
 
 async function carregarQuestionarisJugador(userUuid) {
     const questionaris = await getQuestionarisPerUsuari( userUuid ); 
@@ -756,7 +665,6 @@ async function carregarQuestionarisJugador(userUuid) {
 
 
 function pintarQuestionaris(questionaris) {
-
     const container = document.getElementById("playerQuestionnaires");
     if (!container) return;
     container.innerHTML = "";
@@ -771,120 +679,56 @@ function pintarQuestionaris(questionaris) {
     questionaris.forEach(q => {
         const nom = q.questionaris?.name || "Qüestionari";
         const contestat = Number(q.contestat) === 1;
-        const data = q.data_resposta ||
-            q.data_enviament;
-
+        const data = q.data_resposta || q.data_enviament;
         const item = document.createElement("div");
 
         item.className = "dataItem";
-
         item.innerHTML = `
-
             <div class="dataItemLeft">
-
-                <span class="dataItemTitle">
-                    ${escaparHTML(nom)}
-                </span>
-
-                <span class="dataItemDate">
-
-                    ${contestat
-                        ? "Última resposta: " +
-                          formatData(data)
-                        : "Enviat: " +
-                          formatData(q.data_enviament)
-                    }
-
-                </span>
-
+                <span class="dataItemTitle">${escaparHTML(nom)}</span>
+                <span class="dataItemDate">${contestat ? "Última resposta: " + formatData(data) : "Enviat: " + formatData(q.data_enviament)}</span>
             </div>
 
-            <span class="dataItemStatus
-                ${contestat
-                    ? "statusDone"
-                    : "statusPending"}">
-
-                ${contestat
-                    ? "CONTESTAT"
-                    : "PENDENT"}
-
-            </span>
-
+            <span class="dataItemStatus ${contestat ? "statusDone" : "statusPending"}">${contestat ? "CONTESTAT" : "PENDENT"}</span>
         `;
-
         container.appendChild(item);
     });
 }
 
 
-/* =========================================================
-   VALORACIONS
-========================================================= */
-
 async function carregarValoracionsJugador(userUuid) {
-
    return await getValoracionsRespostesByUser(userUuid);
 }
 
 
 function agruparValoracions(respostes) {
-
     const mapa = new Map();
-
     respostes.forEach(r => {
-
-        const valoracio =
-            r.valoracions_items?.valoracions;
-
+        const valoracio = r.valoracions_items?.valoracions;
         if (!valoracio) return;
 
         const uuid = valoracio.uuid;
-
         if (!mapa.has(uuid)) {
-
             mapa.set(uuid, {
-
                 uuid: uuid,
-
                 name: valoracio.name,
-
-                description:
-                    valoracio.description,
-
+                description: valoracio.description,
                 respostes: []
-
             });
         }
 
         mapa.get(uuid).respostes.push(r);
     });
 
-
     const resultado = [];
-
     mapa.forEach(v => {
-
-        const ordenades =
-            ordenarPerDataDesc(
-                v.respostes,
-                "date"
-            );
-
+        const ordenades = ordenarPerDataDesc(v.respostes, "date");
         resultado.push({
-
             ...v,
-
-            ultimaData:
-                ordenades.length
-                    ? ordenades[0].date
-                    : null,
-
-            nombreRespostes:
-                ordenades.length
-
+            ultimaData: ordenades.length ? ordenades[0].date : null,
+            nombreRespostes: ordenades.length
         });
     });
-
 
     return resultado.sort((a, b) => {
 
@@ -901,278 +745,97 @@ function agruparValoracions(respostes) {
 
 function pintarValoracions(valoracions) {
 
-    const container =
-        document.getElementById("playerEvaluations");
-
+    const container = document.getElementById("playerEvaluations");
     if (!container) return;
 
     container.innerHTML = "";
 
     if (!valoracions.length) {
-
-        container.innerHTML =
-            `<div class="noData">
-                Aquest jugador encara no té valoracions.
-            </div>`;
-
+        container.innerHTML = `<div class="noData">Aquest jugador encara no té valoracions.</div>`;
         return;
     }
 
     valoracions.forEach(v => {
-
-        const item =
-            document.createElement("div");
-
+        const item = document.createElement("div");
         item.className = "dataItem";
-
         item.innerHTML = `
-
             <div class="dataItemLeft">
-
-                <span class="dataItemTitle">
-
-                    ${escaparHTML(v.name)}
-
-                </span>
-
-                <span class="dataItemDate">
-
-                    Última valoració:
-                    ${formatData(v.ultimaData)}
-
-                    · ${v.nombreRespostes} respostes
-
-                </span>
-
+                <span class="dataItemTitle">${escaparHTML(v.name)}</span>
+                <span class="dataItemDate">Última valoració: ${formatData(v.ultimaData)} · ${v.nombreRespostes} respostes</span>
             </div>
 
-            <span class="dataItemStatus statusDone">
-
-                REALITZADA
-
-            </span>
-
+            <span class="dataItemStatus statusDone">REALITZADA</span>
         `;
 
         container.appendChild(item);
-
     });
 }
 
-
-/* =========================================================
-   LESIONS
-========================================================= */
-
 async function carregarLesionsJugador(userUuid) {
-
     return await getInjuriesByUuid([userUuid]);
 }
 
 
 async function carregarEpisodisFisio(lesions) {
-
     if (!lesions.length) return [];
-
     const injuryUuids = lesions.map(l => l.uuid);
-
     return await getPhysioEpisodesByInjuries( injuryUuids );
-
 }
 
 
 function pintarLesioActual(lesions, episodis) {
-
-    const container =
-        document.getElementById("playerInjury");
-
+    const container = document.getElementById("playerInjury");
     if (!container) return;
 
     container.innerHTML = "";
-
-    const activa =
-        lesions.find(l => {
-
-            const episodi =
-                episodis.find(
-                    e => e.injury_uuid === l.uuid
-                );
-
-            return !episodi ||
-                   Number(episodi.closed) === 0;
-
-        });
-
+    const activa = lesions.find(l => {
+        const episodi = episodis.find(e => e.injury_uuid === l.uuid);
+        return !episodi || Number(episodi.closed) === 0;
+    });
 
     if (!activa) {
-
-        container.innerHTML =
-            `<div class="noData">
-                No hi ha cap lesió activa.
-            </div>`;
-
+        container.innerHTML = `<div class="noData">No hi ha cap lesió activa.</div>`;
         return;
     }
 
-
-    const episodi =
-        episodis.find(
-            e => e.injury_uuid === activa.uuid
-        );
-
-
-    const visites =
-        episodi?.physio_visits || [];
-
-
-    const ultimaVisita =
-        ordenarPerDataDesc(
-            visites,
-            "date"
-        )[0];
-
+    const episodi = episodis.find(e => e.injury_uuid === activa.uuid);
+    const visites = episodi?.physio_visits || [];
+    const ultimaVisita = ordenarPerDataDesc(visites, "date")[0];
 
     container.innerHTML = `
-
         <div class="injuryCard">
-
-            <strong>
-                ${escaparHTML(
-                    activa.zona || "Lesió"
-                )}
-            </strong>
-
-            <div>
-                Tipus:
-                ${escaparHTML(
-                    activa.tipus || "-"
-                )}
-            </div>
-
-            <div>
-                Gravetat:
-                ${escaparHTML(
-                    activa.gravetat || "-"
-                )}
-            </div>
-
-            <div>
-                Data:
-                ${formatData(
-                    activa.data_lesio
-                )}
-            </div>
-
-            <div>
-                Fisio:
-                ${
-                    Number(activa.demana_fisio) === 1
-                        ? "Sí"
-                        : "No"
-                }
-            </div>
-
-            ${
-                ultimaVisita
-                ? `
-                    <div style="margin-top:8px;">
-                        Última visita:
-                        ${formatData(
-                            ultimaVisita.date
-                        )}
-                    </div>
-                `
-                : ""
-            }
-
+            <strong>${escaparHTML(activa.zona || "Lesió")}</strong>
+            <div>Tipus: ${escaparHTML(activa.tipus || "-")}</div>
+            <div>Gravetat: ${escaparHTML(activa.gravetat || "-")}</div>
+            <div>Data: ${formatData(activa.data_lesio)}</div>
+            <div>Fisio: ${Number(activa.demana_fisio) === 1 ? "Sí" : "No"}</div>
+            ${ultimaVisita ? `<div style="margin-top:8px;">Última visita: ${formatData(ultimaVisita.date)}</div>` : ""}
         </div>
     `;
 }
 
 
 function pintarHistorialLesions(lesions, episodis) {
-
-    const container =
-        document.getElementById(
-            "playerInjuryHistory"
-        );
-
+    const container = document.getElementById("playerInjuryHistory");
     if (!container) return;
-
     container.innerHTML = "";
 
     if (!lesions.length) {
-
-        container.innerHTML =
-            `<div class="noData">
-                No hi ha historial de lesions.
-            </div>`;
-
+        container.innerHTML =`<div class="noData">No hi ha historial de lesions.</div>`;
         return;
     }
 
-
     lesions.forEach(lesio => {
-
-        const episodi =
-            episodis.find(
-                e => e.injury_uuid === lesio.uuid
-            );
-
-        const tancada =
-            episodi &&
-            Number(episodi.closed) === 1;
-
-
-        const item =
-            document.createElement("div");
-
+        const episodi = episodis.find(e => e.injury_uuid === lesio.uuid);
+        const tancada = episodi && Number(episodi.closed) === 1;
+        const item = document.createElement("div");
         item.className = "dataItem";
-
         item.innerHTML = `
-
             <div class="dataItemLeft">
-
-                <span class="dataItemTitle">
-
-                    ${escaparHTML(
-                        lesio.zona ||
-                        "Lesió"
-                    )}
-
-                </span>
-
-                <span class="dataItemDate">
-
-                    ${formatData(
-                        lesio.data_lesio
-                    )}
-
-                    ·
-
-                    ${escaparHTML(
-                        lesio.tipus || "-"
-                    )}
-
-                </span>
-
+                <span class="dataItemTitle">${escaparHTML(lesio.zona || "Lesió")}</span>
+                <span class="dataItemDate">${formatData(lesio.data_lesio)} · ${escaparHTML(lesio.tipus || "-")}</span>
             </div>
-
-            <span class="dataItemStatus
-                ${
-                    tancada
-                        ? "statusDone"
-                        : "statusDanger"
-                }">
-
-                ${
-                    tancada
-                        ? "TANCADA"
-                        : "ACTIVA"
-                }
-
-            </span>
-
+            <span class="dataItemStatus ${tancada ? "statusDone" : "statusDanger"}">${tancada ? "TANCADA" : "ACTIVA"}</span>
         `;
 
         container.appendChild(item);
@@ -1186,119 +849,37 @@ function pintarHistorialLesions(lesions, episodis) {
 
 function pintarFisio(episodis) {
 
-    const container =
-        document.getElementById("playerPhysio");
+    const container = document.getElementById("playerPhysio");
 
     if (!container) return;
 
     container.innerHTML = "";
 
     if (!episodis.length) {
-
-        container.innerHTML =
-            `<div class="noData">
-                No hi ha episodis de fisioteràpia.
-            </div>`;
-
+        container.innerHTML = `<div class="noData">No hi ha episodis de fisioteràpia.</div>`;
         return;
     }
 
 
     episodis.forEach(episodi => {
 
-        const visites =
-            ordenarPerDataDesc(
-                episodi.physio_visits || [],
-                "date"
-            );
-
-        const ultima =
-            visites[0];
-
-
-        const item =
-            document.createElement("div");
-
+        const visites =ordenarPerDataDesc(episodi.physio_visits || [], "date");
+        const ultima = visites[0];
+        const item = document.createElement("div");
         item.className = "dataItem";
-
         item.style.flexDirection = "column";
-
         item.style.alignItems = "stretch";
-
-
         item.innerHTML = `
-
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-            ">
-
+            <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div class="dataItemLeft">
-
-                    <span class="dataItemTitle">
-
-                        Episodi de fisioteràpia
-
-                    </span>
-
-                    <span class="dataItemDate">
-
-                        ${visites.length}
-                        visita/es
-
-                        ${
-                            ultima
-                            ? " · Última: " +
-                              formatData(
-                                  ultima.date
-                              )
-                            : ""
-                        }
-
-                    </span>
-
+                    <span class="dataItemTitle">Episodi de fisioteràpia</span>
+                    <span class="dataItemDate">${visites.length} visita/es${ultima ? " · Última: " + formatData(ultima.date) : ""}</span>
                 </div>
-
-                <span class="dataItemStatus
-                    ${
-                        Number(episodi.closed) === 1
-                            ? "statusDone"
-                            : "statusDanger"
-                    }">
-
-                    ${
-                        Number(episodi.closed) === 1
-                            ? "TANCAT"
-                            : "OBERT"
-                    }
-
-                </span>
-
+                <span class="dataItemStatus${Number(episodi.closed) === 1 ? "statusDone" : "statusDanger"}">${Number(episodi.closed) === 1 ? "TANCAT" : "OBERT"}</span>
             </div>
 
-            ${
-                ultima
-                ? `
-                    <div style="
-                        margin-top:8px;
-                        font-size:12px;
-                        color:#555;
-                    ">
-
-                        ${
-                            escaparHTML(
-                                ultima.feina_visita || "-"
-                            )
-                        }
-
-                    </div>
-                `
-                : ""
-            }
-
+            ${ultima ? `<div style="margin-top:8px; font-size:12px; color:#555;">${escaparHTML(ultima.feina_visita || "-")}</div>` : ""}
         `;
-
         container.appendChild(item);
     });
 }
@@ -1308,359 +889,139 @@ function pintarFisio(episodis) {
    ALERTES AUTOMÀTIQUES
 ========================================================= */
 
-function calcularAlertesJugador(
-    jugador,
-    questionaris,
-    valoracions,
-    lesions,
-    episodis,
-    wellness
-) {
-
+function calcularAlertesJugador(jugador, questionaris, valoracions, lesions, episodis, wellness) {
     const alertes = [];
 
-
-    /* =========================
-       LESIÓ ACTIVA
-    ========================= */
-
-    const lesioActiva =
-        lesions.some(lesio => {
-
-            const episodi =
-                episodis.find(
-                    e =>
-                        e.injury_uuid ===
-                        lesio.uuid
-                );
-
-            return !episodi ||
-                   Number(episodi.closed) === 0;
-        });
-
-
+    const lesioActiva = lesions.some(lesio => {
+        const episodi = episodis.find(e => e.injury_uuid === lesio.uuid);
+        return !episodi || Number(episodi.closed) === 0;
+    });
+    
     if (lesioActiva) {
-
         alertes.push({
-
             nivell: "danger",
-
             titol: "Lesió activa",
-
-            text:
-                "El jugador té una lesió o un episodi de fisioteràpia obert."
-
+            text: "El jugador té una lesió o un episodi de fisioteràpia obert."
         });
     }
 
-
-    /* =========================
-       ACWR
-    ========================= */
-
-    const acwr =
-        Number(jugador.acwr);
-
-
+    const acwr = Number(jugador.acwr);
     if (!isNaN(acwr)) {
-
         if (acwr >= 1.5) {
-
             alertes.push({
-
                 nivell: "danger",
-
                 titol: "ACWR molt elevat",
-
-                text:
-                    `ACWR de ${acwr.toFixed(2)}.`
+                text: `ACWR de ${acwr.toFixed(2)}.`
             });
-
         } else if (acwr >= 1.3) {
-
             alertes.push({
-
                 nivell: "warning",
-
                 titol: "ACWR elevat",
-
-                text:
-                    `ACWR de ${acwr.toFixed(2)}.`
+                text: `ACWR de ${acwr.toFixed(2)}.`
             });
         }
     }
-
-
-    /* =========================
-       VARIACIÓ DE CÀRREGA
-    ========================= */
 
     let variacio = null;
-
     try {
-
-        variacio =
-            calcularVariacioCarrega(
-                jugador
-            );
-
+        variacio = calcularVariacioCarrega(jugador);
     } catch (e) {
-
-        console.warn(
-            "No s'ha pogut calcular variació",
-            e
-        );
+        console.warn("No s'ha pogut calcular variació", e);
     }
 
-
-    if (
-        variacio !== null &&
-        !isNaN(variacio)
-    ) {
-
+    if (variacio !== null && !isNaN(variacio)) {
         if (Math.abs(variacio) >= 50) {
-
             alertes.push({
-
                 nivell: "danger",
-
-                titol:
-                    "Canvi important de càrrega",
-
-                text:
-                    `Variació de càrrega del ${
-                        variacio >= 0 ? "+" : ""
-                    }${variacio.toFixed(0)}%.`
-
+                titol: "Canvi important de càrrega",
+                text: `Variació de càrrega del ${variacio >= 0 ? "+" : ""}${variacio.toFixed(0)}%.`
             });
-
-        } else if (
-            Math.abs(variacio) >= 30
-        ) {
-
+        } else if (Math.abs(variacio) >= 30) {
             alertes.push({
-
                 nivell: "warning",
-
-                titol:
-                    "Canvi de càrrega",
-
-                text:
-                    `Variació de càrrega del ${
-                        variacio >= 0 ? "+" : ""
-                    }${variacio.toFixed(0)}%.`
-
+                titol: "Canvi de càrrega",
+                text: `Variació de càrrega del ${variacio >= 0 ? "+" : ""}${variacio.toFixed(0)}%.`
             });
         }
     }
 
-
-    /* =========================
-       WELLNESS
-    ========================= */
-
     if (wellness) {
-
-        const global =
-            Number(
-                wellness.global ??
-                wellness.globalScore ??
-                wellness.total
-            );
-
+        const global = Number(wellness.global ?? wellness.globalScore ?? wellness.total);
 
         if (!isNaN(global)) {
-
             if (global <= 2) {
-
                 alertes.push({
-
                     nivell: "danger",
-
                     titol: "Wellness molt baix",
-
-                    text:
-                        `Wellness global de ${global}/5.`
-
+                    text: `Wellness global de ${global}/5.`
                 });
-
             } else if (global <= 3) {
-
                 alertes.push({
-
                     nivell: "warning",
-
                     titol: "Wellness baix",
-
-                    text:
-                        `Wellness global de ${global}/5.`
-
+                    text: `Wellness global de ${global}/5.`
                 });
             }
         }
     }
 
-
-    /* =========================
-       DIES SENSE ENTRENAR
-    ========================= */
-
-    const diesSenseEntrenar =
-        Number(
-            jugador.daysWithoutTraining
-        );
-
-
-    if (
-        !isNaN(diesSenseEntrenar) &&
-        diesSenseEntrenar >= 7
-    ) {
-
+    const diesSenseEntrenar = Number(jugador.daysWithoutTraining);
+    if (!isNaN(diesSenseEntrenar) && diesSenseEntrenar >= 7) {
         alertes.push({
-
             nivell: "warning",
-
-            titol:
-                "Període llarg sense entrenar",
-
-            text:
-                `${diesSenseEntrenar} dies sense entrenar.`
-
+            titol: "Període llarg sense entrenar",
+            text: `${diesSenseEntrenar} dies sense entrenar.`
         });
     }
 
+    const diesSenseRPE = Number(jugador.daysWithoutRPE);
 
-    /* =========================
-       RPE
-    ========================= */
-
-    const diesSenseRPE =
-        Number(
-            jugador.daysWithoutRPE
-        );
-
-
-    if (
-        !isNaN(diesSenseRPE) &&
-        diesSenseRPE >= 3
-    ) {
-
+    if (!isNaN(diesSenseRPE) && diesSenseRPE >= 3) {
         alertes.push({
-
             nivell: "warning",
-
             titol: "RPE no registrat",
-
-            text:
-                `${diesSenseRPE} dies sense registrar RPE.`
-
+            text: `${diesSenseRPE} dies sense registrar RPE.`
         });
     }
 
-
-    /* =========================
-       QÜESTIONARIS
-    ========================= */
-
-    const pendents =
-        questionaris.filter(
-            q =>
-                Number(q.contestat) !== 1
-        );
-
-
+    const pendents = questionaris.filter(q => Number(q.contestat) !== 1);
     if (pendents.length > 0) {
-
         alertes.push({
-
             nivell: "info",
-
-            titol:
-                "Qüestionaris pendents",
-
-            text:
-                `${pendents.length} qüestionari(s) pendent(s).`
-
+            titol: "Qüestionaris pendents",
+            text: `${pendents.length} qüestionari(s) pendent(s).`
         });
     }
-
-
-    /* =========================
-       VALORACIONS ANTIGUES
-    ========================= */
 
     if (valoracions.length) {
-
-        const ultima =
-            valoracions
-                .filter(v => v.ultimaData)
-                .sort((a, b) => {
-
-                    const da =
-                        parseData(a.ultimaData);
-
-                    const db =
-                        parseData(b.ultimaData);
-
+        const ultima = valoracions.filter(v => v.ultimaData).sort((a, b) => {
+                    const da = parseData(a.ultimaData);
+                    const db = parseData(b.ultimaData);
                     return db - da;
-                })[0];
+        })[0];
 
 
         if (ultima) {
-
-            const dies =
-                diesEntre(
-                    ultima.ultimaData
-                );
-
-
-            if (
-                diasValid(dies) &&
-                dies >= 90
-            ) {
-
+            const dies = diesEntre(ultima.ultimaData);
+            if (diasValid(dies) && dies >= 90) {
                 alertes.push({
-
                     nivell: "info",
-
-                    titol:
-                        "Valoració antiga",
-
-                    text:
-                        `Fa ${dies} dies de l'última valoració.`
-
+                    titol: "Valoració antiga",
+                    text: `Fa ${dies} dies de l'última valoració.`
                 });
             }
         }
     }
 
-
-    /* =========================
-       FISIO
-    ========================= */
-
-    const episodisOberts =
-        episodis.filter(
-            e => Number(e.closed) === 0
-        );
-
+    const episodisOberts = episodis.filter(e => Number(e.closed) === 0);
 
     if (episodisOberts.length) {
-
         alertes.push({
-
             nivell: "warning",
-
-            titol:
-                "Seguiment de fisioteràpia",
-
-            text:
-                `${episodisOberts.length} episodi(s) de fisio obert(s).`
-
+            titol: "Seguiment de fisioteràpia",
+            text: `${episodisOberts.length} episodi(s) de fisio obert(s).`
         });
     }
-
-
     return ordenarAlertes(alertes);
 }
 
@@ -1677,104 +1038,41 @@ function diasValid(dies) {
 function ordenarAlertes(alertes) {
 
     const ordre = {
-
         danger: 1,
-
         warning: 2,
-
         info: 3
     };
 
-
-    return alertes.sort(
-        (a, b) =>
-            ordre[a.nivell] -
-            ordre[b.nivell]
-    );
+    return alertes.sort((a, b) => ordre[a.nivell] - ordre[b.nivell]);
 }
 
 
 function pintarAlertes(alertes) {
 
-    const container =
-        document.getElementById(
-            "playerAlerts"
-        );
-
+    const container = document.getElementById("playerAlerts");
     if (!container) return;
-
     container.innerHTML = "";
 
-
     if (!alertes.length) {
-
-        container.innerHTML = `
-
-            <div class="noAlerts">
-
-                ✓ No hi ha alertes automàtiques
-
-            </div>
-
-        `;
-
+        container.innerHTML = `<div class="noAlerts">✓ No hi ha alertes</div>`;
         return;
     }
 
 
     alertes.forEach(alerta => {
-
-        const div =
-            document.createElement("div");
-
-        div.className =
-            `alertCard alert${
-                alerta.nivell
-                    .charAt(0)
-                    .toUpperCase() +
-                alerta.nivell.slice(1)
-            }`;
-
-
-        const icon =
-            alerta.nivell === "danger"
-                ? "🔴"
-                : alerta.nivell === "warning"
-                    ? "🟠"
-                    : "🔵";
-
+        const div = document.createElement("div");
+        div.className = `alertCard alert${alerta.nivell.charAt(0).toUpperCase() + alerta.nivell.slice(1)}`;
+        const icon = alerta.nivell === "danger" ? "🔴" : alerta.nivell === "warning" ? "🟠" : "🔵";
 
         div.innerHTML = `
-
-            <div class="alertIcon">
-                ${icon}
-            </div>
-
+            <div class="alertIcon">${icon}</div>
             <div class="alertContent">
-
-                <div class="alertTitle">
-
-                    ${escaparHTML(
-                        alerta.titol
-                    )}
-
-                </div>
-
-                <div class="alertDescription">
-
-                    ${escaparHTML(
-                        alerta.text
-                    )}
-
-                </div>
-
+                <div class="alertTitle">${escaparHTML(alerta.titol)}</div>
+                <div class="alertDescription">${escaparHTML(alerta.text)}</div>
             </div>
-
-        `;
-
+       `;
 
         container.appendChild(div);
-
     });
 }
 
@@ -1964,15 +1262,15 @@ function calcularRiscJugador(jugador, wellness, lesions, episodis) {
 
     if (risc >= 75) {
         nivell = "danger";
-        text = "Risc molt elevat";
+        text = "Risc molt alt";
         classe = "danger";
     } else if (risc >= 50) {
         nivell = "high";
-        text = "Risc elevat";
+        text = "Risc alt";
         classe = "warning";
     } else if (risc >= 25) {
         nivell = "medium";
-        text = "Vigilància";
+        text = "Risc moderat";
         classe = "warning";
     } else {
         nivell = "low";
