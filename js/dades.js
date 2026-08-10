@@ -1176,7 +1176,7 @@ function pintarValoracions(valoracions) {
 
 async function carregarLesionsJugador(userUuid) {
 
-    return await getInjuriesByUuid(userUuid);
+    return await getInjuriesByUuid([userUuid]);
 }
 
 
