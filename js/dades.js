@@ -402,7 +402,7 @@ async function calcularWellnessDetallat(userUuid){
 }
 
 
-function calcularEstatJugador(player){
+function calcularEstatJugador(risc){
     if (risc >= 75) return {text:"🔴 Risc molt alt", class:"danger"};
     if (risc >= 50) return {text:"🟠 Risc alt", class:"warning"};
     if (risc >= 25) return {text:"🟡 Risc moderat", class:"warning"};
