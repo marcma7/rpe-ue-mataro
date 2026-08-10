@@ -173,44 +173,379 @@ function pintarDades(jugadors){
 }
 
 
-async function mostrarCardJugador(jugador){
-    jugadorActual=jugador;
-    document.getElementById("playerCardName").textContent = jugador.nom;
+async function mostrarCardJugador(jugador) {
 
-    const estat=calcularEstatJugador(jugador);
-    const status=document.getElementById("playerStatus");
-    status.textContent=estat.text;
-    status.className= "playerStatus "+estat.class;
+    try {
 
-    document.getElementById("playerACWR").textContent=jugador.acwr.toFixed(2);
-    document.getElementById("playerLoad7").textContent=jugador.load7.toFixed(0)+" AU";
-    const variacio=calcularVariacioCarrega(jugador);
-    document.getElementById("playerVariation").textContent=(variacio>=0?"+":"")+variacio.toFixed(0)+"%";
-    document.getElementById("playerSessions").textContent=jugador.sessions7;
-    document.getElementById("playerLastPractice").textContent=jugador.lastPractice ?? "-";
-    document.getElementById("playerAverageLoad").textContent=jugador.averageLoad.toFixed(0)+" AU";
-    document.getElementById("playerDaysWithoutTraining").textContent=jugador.daysWithoutTraining ?? "-";
-    const diesRPE = await calcularDiesSenseRPE(jugador.uuid);
-    document.getElementById("playerDaysWithoutRPE").textContent = diesRPE === null ? "-" : diesRPE;
+        jugadorActual = jugador;
 
-    const wellness = await calcularWellnessDetallat(jugador.uuid);
-    jugador.wellness = wellness;
-    pintarWellness(wellness);
 
-    const lesio=await comprovarLesioActiva(jugador.uuid);
-    jugador.lesionActiva=lesio.activa;
-    pintarEstatLesio(lesio);
+        /* =====================================================
+           CAPÇALERA
+        ===================================================== */
 
-    const historialLesions = await obtenirHistorialLesions(jugador.uuid);
-    pintarHistorialLesions(historialLesions);
+        document.getElementById(
+            "playerCardName"
+        ).textContent = jugador.nom;
 
-    await carregarUltimesSessions(jugador.uuid);
 
-    generarAlertes(jugador);
+        const estat =
+            calcularEstatJugador(
+                jugador
+            );
 
-    document.getElementById("playerCard").style.display="flex";
+
+        const status =
+            document.getElementById(
+                "playerStatus"
+            );
+
+
+        status.textContent =
+            estat.text;
+
+
+        status.className =
+            "playerStatus " +
+            estat.class;
+
+
+
+        /* =====================================================
+           ESTAT ACTUAL
+        ===================================================== */
+
+        document.getElementById(
+            "playerACWR"
+        ).textContent =
+
+            typeof jugador.acwr === "number"
+
+                ? jugador.acwr.toFixed(2)
+
+                : "-";
+
+
+        document.getElementById(
+            "playerLoad7"
+        ).textContent =
+
+            typeof jugador.load7 === "number"
+
+                ? jugador.load7.toFixed(0) +
+                  " AU"
+
+                : "-";
+
+
+        let variacio = null;
+
+        try {
+
+            variacio =
+                calcularVariacioCarrega(
+                    jugador
+                );
+
+        } catch (e) {
+
+            console.warn(
+                "Error calculant variació:",
+                e
+            );
+
+        }
+
+
+        document.getElementById(
+            "playerVariation"
+        ).textContent =
+
+            variacio !== null &&
+            !isNaN(variacio)
+
+                ? (
+                    variacio >= 0
+                        ? "+"
+                        : ""
+                  ) +
+                  variacio.toFixed(0) +
+                  "%"
+
+                : "-";
+
+
+
+        /* =====================================================
+           ACTIVITAT
+        ===================================================== */
+
+        document.getElementById(
+            "playerSessions"
+        ).textContent =
+            jugador.sessions7 ?? "-";
+
+
+        document.getElementById(
+            "playerLastPractice"
+        ).textContent =
+            jugador.lastPractice ?? "-";
+
+
+        document.getElementById(
+            "playerAverageLoad"
+        ).textContent =
+
+            typeof jugador.averageLoad ===
+            "number"
+
+                ? jugador.averageLoad.toFixed(0) +
+                  " AU"
+
+                : "-";
+
+
+        document.getElementById(
+            "playerDaysWithoutTraining"
+        ).textContent =
+            jugador.daysWithoutTraining ?? "-";
+
+
+
+        /* =====================================================
+           RPE
+        ===================================================== */
+
+        const diesRPE =
+            await calcularDiesSenseRPE(
+                jugador.uuid
+            );
+
+
+        jugador.daysWithoutRPE =
+            diesRPE;
+
+
+        document.getElementById(
+            "playerDaysWithoutRPE"
+        ).textContent =
+
+            diesRPE === null
+                ? "-"
+                : diesRPE;
+
+
+
+        /* =====================================================
+           WELLNESS
+        ===================================================== */
+
+        const wellness =
+            await calcularWellnessDetallat(
+                jugador.uuid
+            );
+
+
+        jugador.wellness =
+            wellness;
+
+
+        pintarWellness(
+            wellness
+        );
+
+
+
+        /* =====================================================
+           QÜESTIONARIS
+        ===================================================== */
+
+        const questionaris =
+            await carregarQuestionarisJugador(
+                jugador.uuid
+            );
+
+
+        pintarQuestionaris(
+            questionaris
+        );
+
+
+
+        /* =====================================================
+           VALORACIONS
+        ===================================================== */
+
+        const respostesValoracions =
+            await carregarValoracionsJugador(
+                jugador.uuid
+            );
+
+
+        const valoracions =
+            agruparValoracions(
+                respostesValoracions
+            );
+
+
+        pintarValoracions(
+            valoracions
+        );
+
+
+
+        /* =====================================================
+           LESIONS
+        ===================================================== */
+
+        const lesions =
+            await carregarLesionsJugador(
+                jugador.uuid
+            );
+
+
+        /* =====================================================
+           FISIO
+        ===================================================== */
+
+        const episodis =
+            await carregarEpisodisFisio(
+                lesions
+            );
+
+
+        const lesionsPreparades =
+            prepararLesions(
+                lesions,
+                episodis
+            );
+
+
+        pintarLesioActual(
+            lesionsPreparades,
+            episodis
+        );
+
+
+        pintarHistorialLesions(
+            lesionsPreparades,
+            episodis
+        );
+
+
+        pintarFisio(
+            episodis
+        );
+
+
+
+        /* =====================================================
+           ÚLTIMES SESSIONS
+        ===================================================== */
+
+        await carregarUltimesSessions(
+            jugador.uuid
+        );
+
+
+
+        /* =====================================================
+           ALERTES
+        ===================================================== */
+
+        jugador.daysWithoutRPE =
+            diesRPE;
+
+
+        const alertes =
+            calcularAlertesJugador(
+
+                jugador,
+
+                questionaris,
+
+                valoracions,
+
+                lesionsPreparades,
+
+                episodis,
+
+                wellness
+
+            );
+
+
+        pintarAlertes(
+            alertes
+        );
+
+
+
+        /* =====================================================
+           RESUM
+        ===================================================== */
+
+        pintarResumJugador(
+
+            jugador,
+
+            alertes,
+
+            lesionsPreparades,
+
+            wellness
+
+        );
+
+
+
+        /* =====================================================
+           MOSTRAR CARD
+        ===================================================== */
+
+        document.getElementById(
+            "playerCard"
+        ).style.display = "flex";
+
+
+    } catch (error) {
+
+        console.error(
+            "Error mostrant card jugador:",
+            error
+        );
+
+        alert(
+            "No s'ha pogut carregar tota la informació del jugador."
+        );
+
+    }
+
 }
 
+function tancarPlayerCard() {
+
+    document.getElementById(
+        "playerCard"
+    ).style.display = "none";
+
+}
+
+
+document
+    .getElementById("tancarCardButton")
+    ?.addEventListener(
+        "click",
+        tancarPlayerCard
+    );
+
+
+document
+    .getElementById("tancarCardButtonBottom")
+    ?.addEventListener(
+        "click",
+        tancarPlayerCard
+    );
 
 document.getElementById("tancarCardButton").addEventListener("click", ()=>{
     document.getElementById("playerCard").style.display="none";
@@ -526,4 +861,1529 @@ function colorGlobalWellness(valor){
     if(valor >= 4) return "#006400";
     if(valor >= 3) return "#FCB714";
     return "#D90808";
+}
+
+
+/* =========================================================
+   UTILITATS
+========================================================= */
+
+function parseData(data) {
+
+    if (!data) return null;
+
+    if (data instanceof Date) return data;
+
+    const d = new Date(data);
+
+    if (!isNaN(d.getTime())) {
+        return d;
+    }
+
+    // dd/MM/yyyy
+    const match = String(data).match(
+        /^(\d{1,2})\/(\d{1,2})\/(\d{4})/
+    );
+
+    if (match) {
+
+        const [, dia, mes, any] = match;
+
+        return new Date(
+            Number(any),
+            Number(mes) - 1,
+            Number(dia)
+        );
+    }
+
+    return null;
+}
+
+
+function formatData(data) {
+
+    const d = parseData(data);
+
+    if (!d) return "-";
+
+    return d.toLocaleDateString("ca-ES");
+}
+
+
+function diesEntre(data) {
+
+    const d = parseData(data);
+
+    if (!d) return null;
+
+    const ara = new Date();
+
+    return Math.floor(
+        (ara - d) / (1000 * 60 * 60 * 24)
+    );
+}
+
+
+function escaparHTML(text) {
+
+    if (text === null || text === undefined) {
+        return "";
+    }
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function ordenarPerDataDesc(array, camp) {
+
+    return [...array].sort((a, b) => {
+
+        const da = parseData(a[camp]);
+        const db = parseData(b[camp]);
+
+        if (!da && !db) return 0;
+        if (!da) return 1;
+        if (!db) return -1;
+
+        return db - da;
+    });
+}
+
+
+/* =========================================================
+   QÜESTIONARIS
+========================================================= */
+
+async function carregarQuestionarisJugador(userUuid) {
+
+    const { data, error } = await supabase
+        .from("questionaris_contestar")
+        .select(`
+            uuid,
+            user_uuid,
+            questionari_uuid,
+            data_enviament,
+            data_resposta,
+            contestat,
+            questionaris (
+                uuid,
+                name,
+                description
+            )
+        `)
+        .eq("user_uuid", userUuid);
+
+    if (error) {
+
+        console.error(
+            "Error carregant qüestionaris:",
+            error
+        );
+
+        return [];
+    }
+
+    return ordenarPerDataDesc(
+        data || [],
+        "data_resposta"
+    );
+}
+
+
+function pintarQuestionaris(questionaris) {
+
+    const container =
+        document.getElementById("playerQuestionnaires");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    if (!questionaris.length) {
+
+        container.innerHTML =
+            `<div class="noData">
+                Aquest jugador encara no té qüestionaris.
+            </div>`;
+
+        return;
+    }
+
+    questionaris.forEach(q => {
+
+        const nom =
+            q.questionaris?.name ||
+            "Qüestionari";
+
+        const contestat =
+            Number(q.contestat) === 1;
+
+        const data =
+            q.data_resposta ||
+            q.data_enviament;
+
+        const item = document.createElement("div");
+
+        item.className = "dataItem";
+
+        item.innerHTML = `
+
+            <div class="dataItemLeft">
+
+                <span class="dataItemTitle">
+                    ${escaparHTML(nom)}
+                </span>
+
+                <span class="dataItemDate">
+
+                    ${contestat
+                        ? "Última resposta: " +
+                          formatData(data)
+                        : "Enviat: " +
+                          formatData(q.data_enviament)
+                    }
+
+                </span>
+
+            </div>
+
+            <span class="dataItemStatus
+                ${contestat
+                    ? "statusDone"
+                    : "statusPending"}">
+
+                ${contestat
+                    ? "CONTESTAT"
+                    : "PENDENT"}
+
+            </span>
+
+        `;
+
+        container.appendChild(item);
+    });
+}
+
+
+/* =========================================================
+   VALORACIONS
+========================================================= */
+
+async function carregarValoracionsJugador(userUuid) {
+
+    const { data, error } = await supabase
+        .from("valoracions_respostes")
+        .select(`
+            uuid,
+            user_uuid,
+            date,
+            resposta,
+            valoracio_item_uuid,
+            valoracions_items (
+                uuid,
+                valoracio_uuid,
+                item,
+                num_item,
+                tipus_item,
+                opcions_resposta,
+                valoracions (
+                    uuid,
+                    name,
+                    description
+                )
+            )
+        `)
+        .eq("user_uuid", userUuid);
+
+    if (error) {
+
+        console.error(
+            "Error carregant valoracions:",
+            error
+        );
+
+        return [];
+    }
+
+    return data || [];
+}
+
+
+function agruparValoracions(respostes) {
+
+    const mapa = new Map();
+
+    respostes.forEach(r => {
+
+        const valoracio =
+            r.valoracions_items?.valoracions;
+
+        if (!valoracio) return;
+
+        const uuid = valoracio.uuid;
+
+        if (!mapa.has(uuid)) {
+
+            mapa.set(uuid, {
+
+                uuid: uuid,
+
+                name: valoracio.name,
+
+                description:
+                    valoracio.description,
+
+                respostes: []
+
+            });
+        }
+
+        mapa.get(uuid).respostes.push(r);
+    });
+
+
+    const resultado = [];
+
+    mapa.forEach(v => {
+
+        const ordenades =
+            ordenarPerDataDesc(
+                v.respostes,
+                "date"
+            );
+
+        resultado.push({
+
+            ...v,
+
+            ultimaData:
+                ordenades.length
+                    ? ordenades[0].date
+                    : null,
+
+            nombreRespostes:
+                ordenades.length
+
+        });
+    });
+
+
+    return resultado.sort((a, b) => {
+
+        const da = parseData(a.ultimaData);
+        const db = parseData(b.ultimaData);
+
+        if (!da) return 1;
+        if (!db) return -1;
+
+        return db - da;
+    });
+}
+
+
+function pintarValoracions(valoracions) {
+
+    const container =
+        document.getElementById("playerEvaluations");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    if (!valoracions.length) {
+
+        container.innerHTML =
+            `<div class="noData">
+                Aquest jugador encara no té valoracions.
+            </div>`;
+
+        return;
+    }
+
+    valoracions.forEach(v => {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "dataItem";
+
+        item.innerHTML = `
+
+            <div class="dataItemLeft">
+
+                <span class="dataItemTitle">
+
+                    ${escaparHTML(v.name)}
+
+                </span>
+
+                <span class="dataItemDate">
+
+                    Última valoració:
+                    ${formatData(v.ultimaData)}
+
+                    · ${v.nombreRespostes} respostes
+
+                </span>
+
+            </div>
+
+            <span class="dataItemStatus statusDone">
+
+                REALITZADA
+
+            </span>
+
+        `;
+
+        container.appendChild(item);
+
+    });
+}
+
+
+/* =========================================================
+   LESIONS
+========================================================= */
+
+async function carregarLesionsJugador(userUuid) {
+
+    const { data, error } = await supabase
+        .from("injuries")
+        .select(`
+            id,
+            uuid,
+            data_lesio,
+            zona,
+            tipus,
+            gravetat,
+            demana_fisio,
+            user_uuid,
+            team_uuid
+        `)
+        .eq("user_uuid", userUuid)
+        .order("id", { ascending: false });
+
+    if (error) {
+
+        console.error(
+            "Error carregant lesions:",
+            error
+        );
+
+        return [];
+    }
+
+    return data || [];
+}
+
+
+async function carregarEpisodisFisio(lesions) {
+
+    if (!lesions.length) return [];
+
+    const injuryUuids =
+        lesions.map(l => l.uuid);
+
+    const { data, error } = await supabase
+        .from("physio_episodes")
+        .select(`
+            uuid,
+            injury_uuid,
+            closed,
+            physio_visits (
+                uuid,
+                episode_uuid,
+                num_visit,
+                date,
+                anamnesi,
+                last_visit,
+                visita_feta,
+                hour,
+                feina_visita,
+                seguents_passos
+            )
+        `)
+        .in("injury_uuid", injuryUuids);
+
+    if (error) {
+
+        console.error(
+            "Error carregant episodis fisio:",
+            error
+        );
+
+        return [];
+    }
+
+    return data || [];
+}
+
+
+function pintarLesioActual(lesions, episodis) {
+
+    const container =
+        document.getElementById("playerInjury");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    const activa =
+        lesions.find(l => {
+
+            const episodi =
+                episodis.find(
+                    e => e.injury_uuid === l.uuid
+                );
+
+            return !episodi ||
+                   Number(episodi.closed) === 0;
+
+        });
+
+
+    if (!activa) {
+
+        container.innerHTML =
+            `<div class="noData">
+                No hi ha cap lesió activa.
+            </div>`;
+
+        return;
+    }
+
+
+    const episodi =
+        episodis.find(
+            e => e.injury_uuid === activa.uuid
+        );
+
+
+    const visites =
+        episodi?.physio_visits || [];
+
+
+    const ultimaVisita =
+        ordenarPerDataDesc(
+            visites,
+            "date"
+        )[0];
+
+
+    container.innerHTML = `
+
+        <div class="injuryCard">
+
+            <strong>
+                ${escaparHTML(
+                    activa.zona || "Lesió"
+                )}
+            </strong>
+
+            <div>
+                Tipus:
+                ${escaparHTML(
+                    activa.tipus || "-"
+                )}
+            </div>
+
+            <div>
+                Gravetat:
+                ${escaparHTML(
+                    activa.gravetat || "-"
+                )}
+            </div>
+
+            <div>
+                Data:
+                ${formatData(
+                    activa.data_lesio
+                )}
+            </div>
+
+            <div>
+                Fisio:
+                ${
+                    Number(activa.demana_fisio) === 1
+                        ? "Sí"
+                        : "No"
+                }
+            </div>
+
+            ${
+                ultimaVisita
+                ? `
+                    <div style="margin-top:8px;">
+                        Última visita:
+                        ${formatData(
+                            ultimaVisita.date
+                        )}
+                    </div>
+                `
+                : ""
+            }
+
+        </div>
+    `;
+}
+
+
+function pintarHistorialLesions(lesions, episodis) {
+
+    const container =
+        document.getElementById(
+            "playerInjuryHistory"
+        );
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    if (!lesions.length) {
+
+        container.innerHTML =
+            `<div class="noData">
+                No hi ha historial de lesions.
+            </div>`;
+
+        return;
+    }
+
+
+    lesions.forEach(lesio => {
+
+        const episodi =
+            episodis.find(
+                e => e.injury_uuid === lesio.uuid
+            );
+
+        const tancada =
+            episodi &&
+            Number(episodi.closed) === 1;
+
+
+        const item =
+            document.createElement("div");
+
+        item.className = "dataItem";
+
+        item.innerHTML = `
+
+            <div class="dataItemLeft">
+
+                <span class="dataItemTitle">
+
+                    ${escaparHTML(
+                        lesio.zona ||
+                        "Lesió"
+                    )}
+
+                </span>
+
+                <span class="dataItemDate">
+
+                    ${formatData(
+                        lesio.data_lesio
+                    )}
+
+                    ·
+
+                    ${escaparHTML(
+                        lesio.tipus || "-"
+                    )}
+
+                </span>
+
+            </div>
+
+            <span class="dataItemStatus
+                ${
+                    tancada
+                        ? "statusDone"
+                        : "statusDanger"
+                }">
+
+                ${
+                    tancada
+                        ? "TANCADA"
+                        : "ACTIVA"
+                }
+
+            </span>
+
+        `;
+
+        container.appendChild(item);
+    });
+}
+
+
+/* =========================================================
+   FISIO
+========================================================= */
+
+function pintarFisio(episodis) {
+
+    const container =
+        document.getElementById("playerPhysio");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    if (!episodis.length) {
+
+        container.innerHTML =
+            `<div class="noData">
+                No hi ha episodis de fisioteràpia.
+            </div>`;
+
+        return;
+    }
+
+
+    episodis.forEach(episodi => {
+
+        const visites =
+            ordenarPerDataDesc(
+                episodi.physio_visits || [],
+                "date"
+            );
+
+        const ultima =
+            visites[0];
+
+
+        const item =
+            document.createElement("div");
+
+        item.className = "dataItem";
+
+        item.style.flexDirection = "column";
+
+        item.style.alignItems = "stretch";
+
+
+        item.innerHTML = `
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+            ">
+
+                <div class="dataItemLeft">
+
+                    <span class="dataItemTitle">
+
+                        Episodi de fisioteràpia
+
+                    </span>
+
+                    <span class="dataItemDate">
+
+                        ${visites.length}
+                        visita/es
+
+                        ${
+                            ultima
+                            ? " · Última: " +
+                              formatData(
+                                  ultima.date
+                              )
+                            : ""
+                        }
+
+                    </span>
+
+                </div>
+
+                <span class="dataItemStatus
+                    ${
+                        Number(episodi.closed) === 1
+                            ? "statusDone"
+                            : "statusDanger"
+                    }">
+
+                    ${
+                        Number(episodi.closed) === 1
+                            ? "TANCAT"
+                            : "OBERT"
+                    }
+
+                </span>
+
+            </div>
+
+            ${
+                ultima
+                ? `
+                    <div style="
+                        margin-top:8px;
+                        font-size:12px;
+                        color:#555;
+                    ">
+
+                        ${
+                            escaparHTML(
+                                ultima.feina_visita || "-"
+                            )
+                        }
+
+                    </div>
+                `
+                : ""
+            }
+
+        `;
+
+        container.appendChild(item);
+    });
+}
+
+
+/* =========================================================
+   ALERTES AUTOMÀTIQUES
+========================================================= */
+
+function calcularAlertesJugador(
+    jugador,
+    questionaris,
+    valoracions,
+    lesions,
+    episodis,
+    wellness
+) {
+
+    const alertes = [];
+
+
+    /* =========================
+       LESIÓ ACTIVA
+    ========================= */
+
+    const lesioActiva =
+        lesions.some(lesio => {
+
+            const episodi =
+                episodis.find(
+                    e =>
+                        e.injury_uuid ===
+                        lesio.uuid
+                );
+
+            return !episodi ||
+                   Number(episodi.closed) === 0;
+        });
+
+
+    if (lesioActiva) {
+
+        alertes.push({
+
+            nivell: "danger",
+
+            titol: "Lesió activa",
+
+            text:
+                "El jugador té una lesió o un episodi de fisioteràpia obert."
+
+        });
+    }
+
+
+    /* =========================
+       ACWR
+    ========================= */
+
+    const acwr =
+        Number(jugador.acwr);
+
+
+    if (!isNaN(acwr)) {
+
+        if (acwr >= 1.5) {
+
+            alertes.push({
+
+                nivell: "danger",
+
+                titol: "ACWR molt elevat",
+
+                text:
+                    `ACWR de ${acwr.toFixed(2)}.`
+            });
+
+        } else if (acwr >= 1.3) {
+
+            alertes.push({
+
+                nivell: "warning",
+
+                titol: "ACWR elevat",
+
+                text:
+                    `ACWR de ${acwr.toFixed(2)}.`
+            });
+        }
+    }
+
+
+    /* =========================
+       VARIACIÓ DE CÀRREGA
+    ========================= */
+
+    let variacio = null;
+
+    try {
+
+        variacio =
+            calcularVariacioCarrega(
+                jugador
+            );
+
+    } catch (e) {
+
+        console.warn(
+            "No s'ha pogut calcular variació",
+            e
+        );
+    }
+
+
+    if (
+        variacio !== null &&
+        !isNaN(variacio)
+    ) {
+
+        if (Math.abs(variacio) >= 50) {
+
+            alertes.push({
+
+                nivell: "danger",
+
+                titol:
+                    "Canvi important de càrrega",
+
+                text:
+                    `Variació de càrrega del ${
+                        variacio >= 0 ? "+" : ""
+                    }${variacio.toFixed(0)}%.`
+
+            });
+
+        } else if (
+            Math.abs(variacio) >= 30
+        ) {
+
+            alertes.push({
+
+                nivell: "warning",
+
+                titol:
+                    "Canvi de càrrega",
+
+                text:
+                    `Variació de càrrega del ${
+                        variacio >= 0 ? "+" : ""
+                    }${variacio.toFixed(0)}%.`
+
+            });
+        }
+    }
+
+
+    /* =========================
+       WELLNESS
+    ========================= */
+
+    if (wellness) {
+
+        const global =
+            Number(
+                wellness.global ??
+                wellness.globalScore ??
+                wellness.total
+            );
+
+
+        if (!isNaN(global)) {
+
+            if (global <= 2) {
+
+                alertes.push({
+
+                    nivell: "danger",
+
+                    titol: "Wellness molt baix",
+
+                    text:
+                        `Wellness global de ${global}/5.`
+
+                });
+
+            } else if (global <= 3) {
+
+                alertes.push({
+
+                    nivell: "warning",
+
+                    titol: "Wellness baix",
+
+                    text:
+                        `Wellness global de ${global}/5.`
+
+                });
+            }
+        }
+    }
+
+
+    /* =========================
+       DIES SENSE ENTRENAR
+    ========================= */
+
+    const diesSenseEntrenar =
+        Number(
+            jugador.daysWithoutTraining
+        );
+
+
+    if (
+        !isNaN(diesSenseEntrenar) &&
+        diesSenseEntrenar >= 7
+    ) {
+
+        alertes.push({
+
+            nivell: "warning",
+
+            titol:
+                "Període llarg sense entrenar",
+
+            text:
+                `${diesSenseEntrenar} dies sense entrenar.`
+
+        });
+    }
+
+
+    /* =========================
+       RPE
+    ========================= */
+
+    const diesSenseRPE =
+        Number(
+            jugador.daysWithoutRPE
+        );
+
+
+    if (
+        !isNaN(diesSenseRPE) &&
+        diesSenseRPE >= 3
+    ) {
+
+        alertes.push({
+
+            nivell: "warning",
+
+            titol: "RPE no registrat",
+
+            text:
+                `${diesSenseRPE} dies sense registrar RPE.`
+
+        });
+    }
+
+
+    /* =========================
+       QÜESTIONARIS
+    ========================= */
+
+    const pendents =
+        questionaris.filter(
+            q =>
+                Number(q.contestat) !== 1
+        );
+
+
+    if (pendents.length > 0) {
+
+        alertes.push({
+
+            nivell: "info",
+
+            titol:
+                "Qüestionaris pendents",
+
+            text:
+                `${pendents.length} qüestionari(s) pendent(s).`
+
+        });
+    }
+
+
+    /* =========================
+       VALORACIONS ANTIGUES
+    ========================= */
+
+    if (valoracions.length) {
+
+        const ultima =
+            valoracions
+                .filter(v => v.ultimaData)
+                .sort((a, b) => {
+
+                    const da =
+                        parseData(a.ultimaData);
+
+                    const db =
+                        parseData(b.ultimaData);
+
+                    return db - da;
+                })[0];
+
+
+        if (ultima) {
+
+            const dies =
+                diesEntre(
+                    ultima.ultimaData
+                );
+
+
+            if (
+                diasValid(dies) &&
+                dies >= 90
+            ) {
+
+                alertes.push({
+
+                    nivell: "info",
+
+                    titol:
+                        "Valoració antiga",
+
+                    text:
+                        `Fa ${dies} dies de l'última valoració.`
+
+                });
+            }
+        }
+    }
+
+
+    /* =========================
+       FISIO
+    ========================= */
+
+    const episodisOberts =
+        episodis.filter(
+            e => Number(e.closed) === 0
+        );
+
+
+    if (episodisOberts.length) {
+
+        alertes.push({
+
+            nivell: "warning",
+
+            titol:
+                "Seguiment de fisioteràpia",
+
+            text:
+                `${episodisOberts.length} episodi(s) de fisio obert(s).`
+
+        });
+    }
+
+
+    return ordenarAlertes(alertes);
+}
+
+
+function diasValid(dies) {
+
+    return (
+        dies !== null &&
+        !isNaN(dies)
+    );
+}
+
+
+function ordenarAlertes(alertes) {
+
+    const ordre = {
+
+        danger: 1,
+
+        warning: 2,
+
+        info: 3
+    };
+
+
+    return alertes.sort(
+        (a, b) =>
+            ordre[a.nivell] -
+            ordre[b.nivell]
+    );
+}
+
+
+function pintarAlertes(alertes) {
+
+    const container =
+        document.getElementById(
+            "playerAlerts"
+        );
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+
+    if (!alertes.length) {
+
+        container.innerHTML = `
+
+            <div class="noAlerts">
+
+                ✓ No hi ha alertes automàtiques
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    alertes.forEach(alerta => {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            `alertCard alert${
+                alerta.nivell
+                    .charAt(0)
+                    .toUpperCase() +
+                alerta.nivell.slice(1)
+            }`;
+
+
+        const icon =
+            alerta.nivell === "danger"
+                ? "🔴"
+                : alerta.nivell === "warning"
+                    ? "🟠"
+                    : "🔵";
+
+
+        div.innerHTML = `
+
+            <div class="alertIcon">
+                ${icon}
+            </div>
+
+            <div class="alertContent">
+
+                <div class="alertTitle">
+
+                    ${escaparHTML(
+                        alerta.titol
+                    )}
+
+                </div>
+
+                <div class="alertDescription">
+
+                    ${escaparHTML(
+                        alerta.text
+                    )}
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(div);
+
+    });
+}
+
+
+function pintarResumJugador(
+    jugador,
+    alertes,
+    lesions,
+    wellness
+) {
+
+    const summaryStatus =
+        document.getElementById(
+            "summaryStatus"
+        );
+
+    const summaryAlerts =
+        document.getElementById(
+            "summaryAlerts"
+        );
+
+    const summaryInjury =
+        document.getElementById(
+            "summaryInjury"
+        );
+
+    const summaryRPE =
+        document.getElementById(
+            "summaryRPE"
+        );
+
+    const summaryWellness =
+        document.getElementById(
+            "summaryWellness"
+        );
+
+    const summaryLastTraining =
+        document.getElementById(
+            "summaryLastTraining"
+        );
+
+
+    /* ESTAT */
+
+    const danger =
+        alertes.filter(
+            a => a.nivell === "danger"
+        ).length;
+
+    const warning =
+        alertes.filter(
+            a => a.nivell === "warning"
+        ).length;
+
+
+    if (danger > 0) {
+
+        summaryStatus.textContent =
+            "ATENCIÓ";
+
+    } else if (warning > 0) {
+
+        summaryStatus.textContent =
+            "VIGILAR";
+
+    } else {
+
+        summaryStatus.textContent =
+            "OK";
+    }
+
+
+    summaryAlerts.textContent =
+        alertes.length;
+
+
+    /* LESIÓ */
+
+    const lesioActiva =
+        lesions.some(
+            l =>
+                !l._closed
+        );
+
+
+    summaryInjury.textContent =
+        lesioActiva
+            ? "ACTIVA"
+            : "Cap";
+
+
+    /* RPE */
+
+    const diesRPE =
+        Number(
+            jugador.daysWithoutRPE
+        );
+
+
+    summaryRPE.textContent =
+        !isNaN(diesRPE)
+            ? diesRPE === 0
+                ? "OK"
+                : `${diesRPE} dies`
+            : "-";
+
+
+    /* WELLNESS */
+
+    if (wellness) {
+
+        const global =
+            Number(
+                wellness.global ??
+                wellness.globalScore ??
+                wellness.total
+            );
+
+        summaryWellness.textContent =
+            !isNaN(global)
+                ? `${global}/5`
+                : "-";
+
+    } else {
+
+        summaryWellness.textContent =
+            "-";
+    }
+
+
+    /* ÚLTIM ENTRENAMENT */
+
+    summaryLastTraining.textContent =
+        jugador.lastPractice || "-";
+}
+
+
+function pintarResumJugador(
+    jugador,
+    alertes,
+    lesions,
+    wellness
+) {
+
+    const summaryStatus =
+        document.getElementById(
+            "summaryStatus"
+        );
+
+    const summaryAlerts =
+        document.getElementById(
+            "summaryAlerts"
+        );
+
+    const summaryInjury =
+        document.getElementById(
+            "summaryInjury"
+        );
+
+    const summaryRPE =
+        document.getElementById(
+            "summaryRPE"
+        );
+
+    const summaryWellness =
+        document.getElementById(
+            "summaryWellness"
+        );
+
+    const summaryLastTraining =
+        document.getElementById(
+            "summaryLastTraining"
+        );
+
+
+    /* ESTAT */
+
+    const danger =
+        alertes.filter(
+            a => a.nivell === "danger"
+        ).length;
+
+    const warning =
+        alertes.filter(
+            a => a.nivell === "warning"
+        ).length;
+
+
+    if (danger > 0) {
+
+        summaryStatus.textContent =
+            "ATENCIÓ";
+
+    } else if (warning > 0) {
+
+        summaryStatus.textContent =
+            "VIGILAR";
+
+    } else {
+
+        summaryStatus.textContent =
+            "OK";
+    }
+
+
+    summaryAlerts.textContent =
+        alertes.length;
+
+
+    /* LESIÓ */
+
+    const lesioActiva =
+        lesions.some(
+            l =>
+                !l._closed
+        );
+
+
+    summaryInjury.textContent =
+        lesioActiva
+            ? "ACTIVA"
+            : "Cap";
+
+
+    /* RPE */
+
+    const diesRPE =
+        Number(
+            jugador.daysWithoutRPE
+        );
+
+
+    summaryRPE.textContent =
+        !isNaN(diesRPE)
+            ? diesRPE === 0
+                ? "OK"
+                : `${diesRPE} dies`
+            : "-";
+
+
+    /* WELLNESS */
+
+    if (wellness) {
+
+        const global =
+            Number(
+                wellness.global ??
+                wellness.globalScore ??
+                wellness.total
+            );
+
+        summaryWellness.textContent =
+            !isNaN(global)
+                ? `${global}/5`
+                : "-";
+
+    } else {
+
+        summaryWellness.textContent =
+            "-";
+    }
+
+
+    /* ÚLTIM ENTRENAMENT */
+
+    summaryLastTraining.textContent =
+        jugador.lastPractice || "-";
 }
