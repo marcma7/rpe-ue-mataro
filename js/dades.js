@@ -960,42 +960,28 @@ function ordenarPerDataDesc(array, camp) {
 ========================================================= */
 
 async function carregarQuestionarisJugador(userUuid) {
-
-   const questionaris = await getQuestionarisContestarByUser( userUuid ); 
+    const questionaris = await getQuestionarisContestats( userUuid ); 
     return ordenarPerDataDesc( questionaris, "data_resposta" );
 }
 
 
 function pintarQuestionaris(questionaris) {
 
-    const container =
-        document.getElementById("playerQuestionnaires");
-
+    const container = document.getElementById("playerQuestionnaires");
     if (!container) return;
-
     container.innerHTML = "";
-
     if (!questionaris.length) {
-
         container.innerHTML =
             `<div class="noData">
                 Aquest jugador encara no té qüestionaris.
             </div>`;
-
         return;
     }
 
     questionaris.forEach(q => {
-
-        const nom =
-            q.questionaris?.name ||
-            "Qüestionari";
-
-        const contestat =
-            Number(q.contestat) === 1;
-
-        const data =
-            q.data_resposta ||
+        const nom = q.questionaris?.name || "Qüestionari";
+        const contestat = Number(q.contestat) === 1;
+        const data = q.data_resposta ||
             q.data_enviament;
 
         const item = document.createElement("div");
