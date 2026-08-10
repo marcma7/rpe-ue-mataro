@@ -233,6 +233,10 @@ textarea:focus{
     padding:5px 15px;
 }
 
+.dadaFila + h3 {
+    margin-top: 20px;
+}
+
 .rpeBottomButtons {
     margin-top:70px;
     justify-content:space-around;
