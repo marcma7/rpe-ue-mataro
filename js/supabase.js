@@ -40,6 +40,26 @@ async function getQuestionarisPerContestar(userUuid) {
 }
 
 
+async function getQuestionarisContestats(userUuid) {
+
+    const url = SUPABASE_URL + "/rest/v1/questionaris_contestar" + "?user_uuid=eq." + encodeURIComponent(userUuid) + "&contestat=eq.1";
+
+    try {
+        const resposta = await fetch(url, {
+            headers: {
+                "Accept": "application/json",
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY
+            }
+        });
+        return await resposta.json();
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+
 async function getUserTeamByUserUuid(userUuid) {
     const url = SUPABASE_URL + "/rest/v1/user_teams?user_uuid=eq." + encodeURIComponent(userUuid);
 
