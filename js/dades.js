@@ -174,362 +174,85 @@ function pintarDades(jugadors){
 
 
 async function mostrarCardJugador(jugador) {
-
     try {
-
         jugadorActual = jugador;
 
+        /* CAPÇALERA */
+        document.getElementById("playerCardName").textContent = jugador.nom;
 
-        /* =====================================================
-           CAPÇALERA
-        ===================================================== */
-
-        document.getElementById(
-            "playerCardName"
-        ).textContent = jugador.nom;
-
-
-        const estat =
-            calcularEstatJugador(
-                jugador
-            );
-
-
-        const status =
-            document.getElementById(
-                "playerStatus"
-            );
-
-
-        status.textContent =
-            estat.text;
-
-
-        status.className =
-            "playerStatus " +
-            estat.class;
-
-
-
-        /* =====================================================
-           ESTAT ACTUAL
-        ===================================================== */
-
-        document.getElementById(
-            "playerACWR"
-        ).textContent =
-
-            typeof jugador.acwr === "number"
-
-                ? jugador.acwr.toFixed(2)
-
-                : "-";
-
-
-        document.getElementById(
-            "playerLoad7"
-        ).textContent =
-
-            typeof jugador.load7 === "number"
-
-                ? jugador.load7.toFixed(0) +
-                  " AU"
-
-                : "-";
-
+        /* ESTAT ACTUAL */
+        document.getElementById("playerACWR").textContent = typeof jugador.acwr === "number" ? jugador.acwr.toFixed(2) : "-";
+        document.getElementById("playerLoad7").textContent = typeof jugador.load7 === "number" ? jugador.load7.toFixed(0) + " AU" : "-";
 
         let variacio = null;
-
         try {
-
-            variacio =
-                calcularVariacioCarrega(
-                    jugador
-                );
-
+            variacio = calcularVariacioCarrega(jugador);
         } catch (e) {
-
-            console.warn(
-                "Error calculant variació:",
-                e
-            );
-
+            console.warn("Error calculant variació:", e);
         }
 
-
-        document.getElementById(
-            "playerVariation"
-        ).textContent =
-
-            variacio !== null &&
-            !isNaN(variacio)
-
-                ? (
-                    variacio >= 0
-                        ? "+"
-                        : ""
-                  ) +
-                  variacio.toFixed(0) +
-                  "%"
-
-                : "-";
-
-
-
-        /* =====================================================
-           ACTIVITAT
-        ===================================================== */
-
-        document.getElementById(
-            "playerSessions"
-        ).textContent =
-            jugador.sessions7 ?? "-";
-
-
-        document.getElementById(
-            "playerLastPractice"
-        ).textContent =
-            jugador.lastPractice ?? "-";
-
-
-        document.getElementById(
-            "playerAverageLoad"
-        ).textContent =
-
-            typeof jugador.averageLoad ===
-            "number"
-
-                ? jugador.averageLoad.toFixed(0) +
-                  " AU"
-
-                : "-";
-
-
-        document.getElementById(
-            "playerDaysWithoutTraining"
-        ).textContent =
-            jugador.daysWithoutTraining ?? "-";
-
-
-
-        /* =====================================================
-           RPE
-        ===================================================== */
-
-        const diesRPE =
-            await calcularDiesSenseRPE(
-                jugador.uuid
-            );
-
-
-        jugador.daysWithoutRPE =
-            diesRPE;
-
-
-        document.getElementById(
-            "playerDaysWithoutRPE"
-        ).textContent =
-
-            diesRPE === null
-                ? "-"
-                : diesRPE;
-
-
-
-        /* =====================================================
-           WELLNESS
-        ===================================================== */
-
-        const wellness =
-            await calcularWellnessDetallat(
-                jugador.uuid
-            );
-
-
-        jugador.wellness =
-            wellness;
-
-
-        pintarWellness(
-            wellness
-        );
-
-
-
-        /* =====================================================
-           QÜESTIONARIS
-        ===================================================== */
-
-        const questionaris =
-            await carregarQuestionarisJugador(
-                jugador.uuid
-            );
-
-
-        pintarQuestionaris(
-            questionaris
-        );
-
-
-
-        /* =====================================================
-           VALORACIONS
-        ===================================================== */
-
-        const respostesValoracions =
-            await carregarValoracionsJugador(
-                jugador.uuid
-            );
-
-
-        const valoracions =
-            agruparValoracions(
-                respostesValoracions
-            );
-
-
-        pintarValoracions(
-            valoracions
-        );
-
-
-
-        /* =====================================================
-           LESIONS
-        ===================================================== */
-
-        const lesions =
-            await carregarLesionsJugador(
-                jugador.uuid
-            );
-
-
-        /* =====================================================
-           FISIO
-        ===================================================== */
-
-        const episodis =
-            await carregarEpisodisFisio(
-                lesions
-            );
-
-
-        const lesionsPreparades =
-            prepararLesions(
-                lesions,
-                episodis
-            );
-
-
-        pintarLesioActual(
-            lesionsPreparades,
-            episodis
-        );
-
-
-        pintarHistorialLesions(
-            lesionsPreparades,
-            episodis
-        );
-
-
-        pintarFisio(
-            episodis
-        );
-
-
-
-        /* =====================================================
-           ÚLTIMES SESSIONS
-        ===================================================== */
-
-        await carregarUltimesSessions(
-            jugador.uuid
-        );
-
-
-
-        /* =====================================================
-           ALERTES
-        ===================================================== */
-
-        jugador.daysWithoutRPE =
-            diesRPE;
-
-        const risc = calcularRiscJugador(
-    jugador,
-    wellness,
-    lesionsPreparades,
-    episodis
-);
-
-jugador.risc = risc;
-
-
-        const alertes =
-            calcularAlertesJugador(
-
-                jugador,
-
-                questionaris,
-
-                valoracions,
-
-                lesionsPreparades,
-
-                episodis,
-
-                wellness
-
-            );
-
-
-        pintarAlertes(
-            alertes
-        );
-
-
-
-        /* =====================================================
-           RESUM
-        ===================================================== */
-
-        pintarResumJugador(
-
-            jugador,
-
-            alertes,
-
-            lesionsPreparades,
-
-            wellness
-
-        );
-
-
-
-        /* =====================================================
-           MOSTRAR CARD
-        ===================================================== */
-
-        document.getElementById(
-            "playerCard"
-        ).style.display = "flex";
-
-
+        document.getElementById("playerVariation").textContent = variacio !== null && !isNaN(variacio) ? (variacio >= 0 ? "+" : "") + variacio.toFixed(0) + "%" : "-";
+
+        /* ACTIVITAT */
+        document.getElementById("playerSessions").textContent = jugador.sessions7 ?? "-";
+        document.getElementById("playerLastPractice").textContent = jugador.lastPractice ?? "-";
+        document.getElementById("playerAverageLoad").textContent = typeof jugador.averageLoad === "number" ? jugador.averageLoad.toFixed(0) + " AU" : "-";
+        document.getElementById("playerDaysWithoutTraining").textContent = jugador.daysWithoutTraining ?? "-";
+
+        /* RPE */
+        const diesRPE = await calcularDiesSenseRPE(jugador.uuid);
+        jugador.daysWithoutRPE = diesRPE;
+        document.getElementById("playerDaysWithoutRPE").textContent = diesRPE === null ? "-" : diesRPE;
+
+        /* WELLNESS */
+        const wellness = await calcularWellnessDetallat(jugador.uuid);
+        jugador.wellness = wellness;
+        pintarWellness(wellness);
+
+        /* QÜESTIONARIS */
+        const questionaris = await carregarQuestionarisJugador(jugador.uuid);
+        pintarQuestionaris(questionaris);
+
+        /* VALORACIONS */
+        const respostesValoracions = await carregarValoracionsJugador(jugador.uuid);
+        const valoracions = agruparValoracions(respostesValoracions);
+        pintarValoracions(valoracions);
+
+        /* LESIONS */
+        const lesions = await carregarLesionsJugador(jugador.uuid);
+ 
+        /* FISIO */
+        const episodis = await carregarEpisodisFisio(lesions);
+        const lesionsPreparades = prepararLesions(lesions, episodis);
+        pintarLesioActual(lesionsPreparades, episodis);
+        pintarHistorialLesions(lesionsPreparades, episodis);
+        pintarFisio(episodis);
+
+        /* ÚLTIMES SESSIONS */
+        await carregarUltimesSessions(jugador.uuid);
+
+        /* ALERTES */
+        jugador.daysWithoutRPE = diesRPE;
+
+        const risc = calcularRiscJugador(jugador, wellness, lesionsPreparades, episodis);
+        jugador.risc = risc;
+
+        const estat = calcularEstatJugador(risc);
+        const status = document.getElementById("playerStatus");
+        status.textContent = estat.text;
+        status.className = "playerStatus " + estat.class;
+        const alertes = calcularAlertesJugador(jugador, questionaris, valoracions, lesionsPreparades, episodis, wellness);
+        pintarAlertes(alertes);
+
+        /* RESUM */
+        pintarResumJugador(jugador, alertes, lesionsPreparades, wellness);
+
+        /* MOSTRAR CARD */
+        document.getElementById("playerCard").style.display = "flex";
     } catch (error) {
-
-        console.error(
-            "Error mostrant card jugador:",
-            error
-        );
-
-        alert(
-            "No s'ha pogut carregar tota la informació del jugador."
-        );
-
+        console.error("Error mostrant card jugador:", error);
+        alert("No s'ha pogut carregar tota la informació del jugador.");
     }
-
 }
 
 
@@ -680,15 +403,10 @@ async function calcularWellnessDetallat(userUuid){
 
 
 function calcularEstatJugador(player){
-
-    let score = 100;
-    if(player.acwr > 1.5) score -= 30;
-    if(player.acwr < 0.8) score -= 10;
-
-    if(score >=75) return {text:"🟢 Disponible", class:"available"};
-    if(score >=50) return {text:"🟡 Vigilància", class:"warning"};
-    
-    return {text:"🔴 Risc", class:"danger"};
+    if (risc >= 75) return {text:"🔴 Risc molt alt", class:"danger"};
+    if (risc >= 50) return {text:"🟠 Risc alt", class:"warning"};
+    if (risc >= 25) return {text:"🟡 Risc moderat", class:"warning"};
+    return {text:"🟢 Risc baix", class:"available"};
 }
 
 
