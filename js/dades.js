@@ -456,6 +456,15 @@ async function mostrarCardJugador(jugador) {
         jugador.daysWithoutRPE =
             diesRPE;
 
+        const risc = calcularRiscJugador(
+    jugador,
+    wellness,
+    lesionsPreparades,
+    episodis
+);
+
+jugador.risc = risc;
+
 
         const alertes =
             calcularAlertesJugador(
@@ -2050,267 +2059,212 @@ function pintarAlertes(alertes) {
 }
 
 
-function pintarResumJugador(
-    jugador,
-    alertes,
-    lesions,
-    wellness
-) {
+function pintarResumJugador(jugador, alertes, lesions, wellness) {
 
-    const summaryStatus =
-        document.getElementById(
-            "summaryStatus"
-        );
-
-    const summaryAlerts =
-        document.getElementById(
-            "summaryAlerts"
-        );
-
-    const summaryInjury =
-        document.getElementById(
-            "summaryInjury"
-        );
-
-    const summaryRPE =
-        document.getElementById(
-            "summaryRPE"
-        );
-
-    const summaryWellness =
-        document.getElementById(
-            "summaryWellness"
-        );
-
-    const summaryLastTraining =
-        document.getElementById(
-            "summaryLastTraining"
-        );
-
+    const summaryAlerts = document.getElementById("summaryAlerts");
+    const summaryInjury = document.getElementById("summaryInjury");
+    const summaryRPE = document.getElementById("summaryRPE");
+    const summaryWellness = document.getElementById("summaryWellness");
+    const summaryLastTraining = document.getElementById("summaryLastTraining");
 
     /* ESTAT */
-
-    const danger =
-        alertes.filter(
-            a => a.nivell === "danger"
-        ).length;
-
-    const warning =
-        alertes.filter(
-            a => a.nivell === "warning"
-        ).length;
-
-
-    if (danger > 0) {
-
-        summaryStatus.textContent =
-            "ATENCIÓ";
-
-    } else if (warning > 0) {
-
-        summaryStatus.textContent =
-            "VIGILAR";
-
-    } else {
-
-        summaryStatus.textContent =
-            "OK";
-    }
-
-
-    summaryAlerts.textContent =
-        alertes.length;
-
+    const summaryStatus = document.getElementById("summaryStatus");
+    summaryStatus.textContent = `${jugador.risc.score}/100 · ${jugador.risc.text}`;
+    summaryStatus.className = `summaryRisk ${jugador.risc.classe}`;
+    summaryAlerts.textContent = alertes.length;
 
     /* LESIÓ */
-
-    const lesioActiva =
-        lesions.some(
-            l =>
-                !l._closed
-        );
-
-
-    summaryInjury.textContent =
-        lesioActiva
-            ? "ACTIVA"
-            : "Cap";
-
+    const lesioActiva = lesions.some(l => !l._closed);
+    summaryInjury.textContent = lesioActiva ? "ACTIVA" : "Cap";
 
     /* RPE */
-
-    const diesRPE =
-        Number(
-            jugador.daysWithoutRPE
-        );
-
-
-    summaryRPE.textContent =
-        !isNaN(diesRPE)
-            ? diesRPE === 0
-                ? "OK"
-                : `${diesRPE} dies`
-            : "-";
-
+    const diesRPE = Number(jugador.daysWithoutRPE);
+    summaryRPE.textContent = !isNaN(diesRPE) ? diesRPE === 0 ? "OK" : `${diesRPE} dies` : "-";
 
     /* WELLNESS */
-
     if (wellness) {
-
-        const global =
-            Number(
-                wellness.global ??
-                wellness.globalScore ??
-                wellness.total
-            );
-
-        summaryWellness.textContent =
-            !isNaN(global)
-                ? `${global}/5`
-                : "-";
-
+        const global = Number(wellness.global ?? wellness.globalScore ?? wellness.total);
+        summaryWellness.textContent = !isNaN(global) ? `${global/4}/5` : "-";
     } else {
-
-        summaryWellness.textContent =
-            "-";
+        summaryWellness.textContent = "-";
     }
 
-
     /* ÚLTIM ENTRENAMENT */
-
-    summaryLastTraining.textContent =
-        jugador.lastPractice || "-";
+    summaryLastTraining.textContent = jugador.lastPractice || "-";
 }
 
 
-function pintarResumJugador(
-    jugador,
-    alertes,
-    lesions,
-    wellness
-) {
+function calcularRiscJugador(jugador, wellness, lesions, episodis) {
 
-    const summaryStatus =
-        document.getElementById(
-            "summaryStatus"
-        );
+    let risc = 0;
+    const factors = [];
 
-    const summaryAlerts =
-        document.getElementById(
-            "summaryAlerts"
-        );
-
-    const summaryInjury =
-        document.getElementById(
-            "summaryInjury"
-        );
-
-    const summaryRPE =
-        document.getElementById(
-            "summaryRPE"
-        );
-
-    const summaryWellness =
-        document.getElementById(
-            "summaryWellness"
-        );
-
-    const summaryLastTraining =
-        document.getElementById(
-            "summaryLastTraining"
-        );
-
-
-    /* ESTAT */
-
-    const danger =
-        alertes.filter(
-            a => a.nivell === "danger"
-        ).length;
-
-    const warning =
-        alertes.filter(
-            a => a.nivell === "warning"
-        ).length;
-
-
-    if (danger > 0) {
-
-        summaryStatus.textContent =
-            "ATENCIÓ";
-
-    } else if (warning > 0) {
-
-        summaryStatus.textContent =
-            "VIGILAR";
-
-    } else {
-
-        summaryStatus.textContent =
-            "OK";
+    function afegirPunts(punts, nom, detall) {
+        risc += punts;
+        factors.push({punts, nom, detall});
     }
 
+    /* 1. LESIÓ / FISIO */
+    const lesioActiva = (lesions || []).some(l => l._activa === true);
 
-    summaryAlerts.textContent =
-        alertes.length;
+    if (lesioActiva) {
+        afegirPunts(30, "Lesió activa", "El jugador té una lesió activa.");
+    }
 
+    const episodisOberts = (episodis || []).filter(e => Number(e.closed) === 0);
+    if (!lesioActiva && episodisOberts.length > 0) {
+        afegirPunts(15, "Seguiment de fisioteràpia", `${episodisOberts.length} episodi(s) de fisioteràpia obert(s).`);
+    }
 
-    /* LESIÓ */
+    /* 2. ACWR */
+    const acwr = Number(jugador.acwr);
+    if (!isNaN(acwr)) {
+        if (acwr >= 1.5) {
+            afegirPunts(25, "ACWR molt elevat", `ACWR ${acwr.toFixed(2)}.`);
+        } else if (acwr >= 1.3) {
+            afegirPunts(15, "ACWR elevat", `ACWR ${acwr.toFixed(2)}.`);
+        } else if (acwr < 0.8) {
+            afegirPunts(8, "ACWR baix", `ACWR ${acwr.toFixed(2)}.`);
+        }
+    }
 
-    const lesioActiva =
-        lesions.some(
-            l =>
-                !l._closed
-        );
+    /* 3. VARIACIÓ DE CÀRREGA */
+    let variacio = null;
+    try {
+        variacio = calcularVariacioCarrega(jugador);
+    } catch (e) {
+        variacio = null;
+    }
 
+    if (variacio !== null && !isNaN(variacio)) {
+        const absVariacio = Math.abs(variacio);
+        if (absVariacio >= 50) {
+            afegirPunts(15, "Canvi molt important de càrrega", `Variació del ${variacio >= 0 ? "+" : ""}${variacio.toFixed(0)}%.`);
+        } else if (absVariacio >= 30) {
+            afegirPunts(8, "Canvi important de càrrega", `Variació del ${variacio >= 0 ? "+" : ""}${variacio.toFixed(0)}%.`);
+        }
+    }
 
-    summaryInjury.textContent =
-        lesioActiva
-            ? "ACTIVA"
-            : "Cap";
-
-
-    /* RPE */
-
-    const diesRPE =
-        Number(
-            jugador.daysWithoutRPE
-        );
-
-
-    summaryRPE.textContent =
-        !isNaN(diesRPE)
-            ? diesRPE === 0
-                ? "OK"
-                : `${diesRPE} dies`
-            : "-";
-
-
-    /* WELLNESS */
-
+    /* 4. WELLNESS GLOBAL */
     if (wellness) {
+        const mitjana = Number(wellness.mitjana);
+        if (!isNaN(mitjana)) {
+            if (mitjana >= 4) {
+                afegirPunts(20, "Wellness molt baix", `Valor global ${mitjana.toFixed(1)}/5.`);
+            } else if (mitjana >= 3.5) {
+                afegirPunts(12, "Wellness baix", `Valor global ${mitjana.toFixed(1)}/5.`);
+            } else if (mitjana >= 3) {
+                afegirPunts(5, "Wellness moderat", `Valor global ${mitjana.toFixed(1)}/5.`);
+            }
+        }
 
-        const global =
-            Number(
-                wellness.global ??
-                wellness.globalScore ??
-                wellness.total
-            );
+        /* VARIABLES INDIVIDUALS */
+        const dolor = Number(wellness.dolor);
+        const fatiga = Number(wellness.fatiga);
+        const estres = Number(wellness.estres);
+        const anim = Number(wellness.anim);
 
-        summaryWellness.textContent =
-            !isNaN(global)
-                ? `${global}/5`
-                : "-";
+        if (dolor >= 4) {
+            afegirPunts(15, "Dolor elevat", `Dolor ${dolor}/5.`);
+        } else if (dolor === 3) {
+            afegirPunts(7, "Dolor moderat", `Dolor ${dolor}/5.`);
+        }
 
-    } else {
+        if (fatiga >= 4) {
+            afegirPunts(10, "Fatiga elevada", `Fatiga ${fatiga}/5.`);
+        } else if (fatiga === 3) {
+            afegirPunts(5, "Fatiga moderada", `Fatiga ${fatiga}/5.`);
+        }
 
-        summaryWellness.textContent =
-            "-";
+        if (estres >= 4) {
+            afegirPunts(6, "Estrès elevat", `Estrès ${estres}/5.`);
+        }
+
+        if (anim <= 2) {
+            afegirPunts(5, "Ànim baix", `Ànim ${anim}/5.`);
+        }
     }
 
+    /* 5. DIES SENSE ENTRENAR */
+    const diesSenseEntrenar = Number(jugador.daysWithoutTraining);
+    if (!isNaN(diesSenseEntrenar)) {
+        if (diesSenseEntrenar >= 14) {
+            afegirPunts(10, "Període molt llarg sense entrenar", `${diesSenseEntrenar} dies sense entrenar.`);
+        } else if (diesSenseEntrenar >= 7) {
+            afegirPunts(5, "Període sense entrenar", `${diesSenseEntrenar} dies sense entrenar.`);
+        }
+    }
 
-    /* ÚLTIM ENTRENAMENT */
+    /* 6. RPE */
+    const diesSenseRPE = Number(jugador.daysWithoutRPE);
+    if (!isNaN(diesSenseRPE)) {
+        if (diesSenseRPE >= 7 && Number(jugador.sessions7) > 0) {
+            afegirPunts(8, "RPE no registrat", `${diesSenseRPE} dies sense registrar RPE tot i haver entrenat.`);
+        } else if (diesSenseRPE >= 3 && Number(jugador.sessions7) > 0) {
+            afegirPunts(4, "RPE incomplet", `${diesSenseRPE} dies sense registrar RPE.`);
+        }
+    }
 
-    summaryLastTraining.textContent =
-        jugador.lastPractice || "-";
+    /* 7. DENSITAT D'ENTRENAMENT */
+    const sessions7 = Number(jugador.sessions7);
+    if (!isNaN(sessions7)) {
+        if (sessions7 >= 6) {
+            afegirPunts(8, "Alta densitat d'entrenament", `${sessions7} sessions en 7 dies.`);
+        } else if (sessions7 >= 5) {
+            afegirPunts(4, "Densitat d'entrenament elevada",`${sessions7} sessions en 7 dies.`);
+        }
+    }
+
+    /* 8. POCA INFORMACIÓ PER ACWR */
+    const sessions28 = Number(jugador.sessions28);
+    if (!isNaN(sessions28) && sessions28 > 0 && sessions28 < 4) {
+        factors.push({
+            punts: 0,
+            nom: "Poca informació per ACWR",
+            detall: `Només ${sessions28} sessions registrades en 28 dies.`
+        });
+    }
+
+    /* 9. COMBINACIONS DE RISC */
+    if (!isNaN(acwr) && acwr >= 1.3 && wellness && Number(wellness.fatiga) >= 4) {
+        afegirPunts(10, "Càrrega + fatiga", `ACWR ${acwr.toFixed(2)} amb fatiga ${wellness.fatiga}/5.`);
+    }
+
+    if (!isNaN(acwr) && acwr >= 1.3 && wellness && Number(wellness.dolor) >= 4) {
+        afegirPunts(10, "Càrrega + dolor", `ACWR ${acwr.toFixed(2)} amb dolor ${wellness.dolor}/5.`);
+    }
+
+    /* RESULTAT  */
+    // Limitem el resultat a 100
+    risc = Math.min(Math.round(risc), 100);
+
+    let nivell;
+    let text;
+    let classe;
+
+    if (risc >= 75) {
+        nivell = "danger";
+        text = "Risc molt elevat";
+        classe = "danger";
+    } else if (risc >= 50) {
+        nivell = "high";
+        text = "Risc elevat";
+        classe = "warning";
+    } else if (risc >= 25) {
+        nivell = "medium";
+        text = "Vigilància";
+        classe = "warning";
+    } else {
+        nivell = "low";
+        text = "Risc baix";
+        classe = "available";
+    }
+
+    return {
+        score: risc,
+        nivell,
+        text,
+        classe,
+        factors: factors.sort((a, b) => b.punts - a.punts)
+    };
 }
