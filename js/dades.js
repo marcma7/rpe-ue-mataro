@@ -239,6 +239,7 @@ async function mostrarCardJugador(jugador) {
         jugador.risc = risc;
 
         const estat = calcularEstatJugador(risc);
+        
         const status = document.getElementById("playerStatus");
         status.textContent = estat.text;
         status.className = "playerStatus " + estat.class;
@@ -404,9 +405,9 @@ async function calcularWellnessDetallat(userUuid){
 
 
 function calcularEstatJugador(risc){
-    if (risc >= 75) return {text:"🔴 Risc molt alt", class:"danger"};
-    if (risc >= 50) return {text:"🟠 Risc alt", class:"warning"};
-    if (risc >= 25) return {text:"🟡 Risc moderat", class:"warning"};
+    if (risc.score >= 75) return {text:"🔴 Risc molt alt", class:"danger"};
+    if (risc.score >= 50) return {text:"🟠 Risc alt", class:"warning"};
+    if (risc.score >= 25) return {text:"🟡 Risc moderat", class:"warning"};
     return {text:"🟢 Risc baix", class:"available"};
 }
 
