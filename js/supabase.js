@@ -20,6 +20,26 @@ async function fetchUserByCode(code) {
 }
 
 
+async function getQuestionarisPerUsuari(userUuid) {
+
+    const url = SUPABASE_URL + "/rest/v1/questionaris_contestar" + "?user_uuid=eq." + encodeURIComponent(userUuid);
+
+    try {
+        const resposta = await fetch(url, {
+            headers: {
+                "Accept": "application/json",
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY
+            }
+        });
+        return await resposta.json();
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+
 async function getQuestionarisPerContestar(userUuid) {
 
     const url = SUPABASE_URL + "/rest/v1/questionaris_contestar" + "?user_uuid=eq." + encodeURIComponent(userUuid) + "&contestat=eq.0";
