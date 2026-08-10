@@ -174,7 +174,6 @@ function pintarDades(jugadors){
 
 
 async function mostrarCardJugador(jugador){
-
     jugadorActual=jugador;
     document.getElementById("playerCardName").textContent = jugador.nom;
 
@@ -234,85 +233,42 @@ function convertirDataRPE(data){
 
 
 async function calcularWellnessDetallat(userUuid){
-
     const questionaris = await getQuestionarisByCodeWord("WELLNESS");
-
     if(questionaris.length===0) return null;
 
-
     const qUuids = questionaris.map(q=>q.uuid);
-
-
-    const questionarisUser = await getQuestionarisUser(
-        qUuids,
-        [userUuid]
-    );
-
-
+    const questionarisUser = await getQuestionarisUser(qUuids, [userUuid]);
     if(questionarisUser.length===0) return null;
-
 
     const dates = questionarisUser.map(q=>({
         uuid:q.uuid,
         date:q.data_resposta ? convertirData(q.data_resposta) : new Date(0)
     }));
 
-
     const ultima = dates.sort((a,b)=>b.date-a.date)[0];
 
-
-    const respostes = await getAnswersByQuestionari([
-        ultima.uuid
-    ]);
-
-
-    const valors = respostes
-        .map(r=>Number(r.resposta));
-
+    const respostes = await getAnswersByQuestionari([ultima.uuid]);
+    const valors = respostes.map(r=>Number(r.resposta));
 
     const wellness = {
-
         estres: valors[0] ?? 0,
-
         fatiga: valors[1] ?? 0,
-
         dolor: valors[2] ?? 0,
-
         anim: valors[3] ?? 0
-
     };
-
-
-    wellness.total =
-        wellness.estres +
-        wellness.fatiga +
-        wellness.dolor +
-        wellness.anim;
-
-
-    wellness.mitjana =
-        wellness.total / 4;
-
+    wellness.total = wellness.estres + wellness.fatiga + wellness.dolor + wellness.anim;
+    wellness.mitjana = wellness.total / 4;
 
     if(wellness.mitjana <= 2){
-
         wellness.estat="🟢";
         wellness.class="available";
-
-    }
-    else if(wellness.mitjana <= 3.5){
-
+    } else if(wellness.mitjana <= 3.5){
         wellness.estat="🟡";
         wellness.class="warning";
-
-    }
-    else{
-
+    } else {
         wellness.estat="🔴";
         wellness.class="danger";
-
     }
-
 
     return wellness;
 }
