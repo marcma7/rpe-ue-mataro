@@ -257,19 +257,31 @@ function pintarUsuarisEnviar(){
 
             fila.className = "filaEnviar";
 
-            fila.innerHTML = `
-                <span>
-                    ${capitalitzar(u.name)}
-                    ${capitalitzar(u.surname)}
-                </span>
+            const nomComplet =
+    `${capitalitzar(u.name)} ${capitalitzar(u.surname)}`;
 
-                <input
-                    type="checkbox"
-                    ${usuarisSeleccionats.includes(u.uuid) ? "checked" : ""}
-                    data-user-uuid="${u.uuid}"
-                    onchange="toggleUsuariEnviar('${u.uuid}')"
-                >
-            `;
+let mida = "14px";
+
+if(nomComplet.length > 25){
+    mida = "13px";
+}
+
+if(nomComplet.length > 32){
+    mida = "12px";
+}
+
+fila.innerHTML = `
+    <span style="font-size:${mida}">
+        ${nomComplet}
+    </span>
+
+    <input
+        type="checkbox"
+        ${usuarisSeleccionats.includes(u.uuid) ? "checked" : ""}
+        data-user-uuid="${u.uuid}"
+        onchange="toggleUsuariEnviar('${u.uuid}')"
+    >
+`;
 
             jugadors.appendChild(fila);
         });
