@@ -1524,6 +1524,9 @@ p {
 
 .filaEnviar span{
     flex:1;
+    min-width:0;
+    overflow-wrap:anywhere;
+    word-break:break-word;
 }
 
 .filaEnviar input[type="checkbox"]{
@@ -1532,7 +1535,6 @@ p {
     margin:0;
     flex-shrink:0;
 }
-
 .botonsEnviarQuestionari{
     display:flex;
     gap:12px;
