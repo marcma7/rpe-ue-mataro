@@ -43,6 +43,7 @@ async function loadTeams() {
 
     if(teams.length > 0){
         selector.value = teams[0].uuid;
+        await actualitzarPermisosEquip(teams[0].uuid);
         await pickPlayers(teams[0].uuid);
     } else {
         document.getElementById("llistaJugadors").innerHTML = "";
@@ -52,7 +53,9 @@ async function loadTeams() {
 
 
 document.getElementById("selectorTeams").addEventListener("change", async e => {
-    await pickPlayers(e.target.value);
+    const teamUuid = e.target.value;
+    await actualitzarPermisosEquip(teamUuid);
+    await pickPlayers(teamUuid);
 });
 
 
@@ -65,61 +68,162 @@ async function pickPlayers(teamUuid) {
 
 
 function pintarJugadors(users) {
+
     const llista = document.getElementById("llistaJugadors");
     llista.innerHTML = "";
+
+    const potGestionar =
+        window.permisosEquipActual?.potGestionar === true;
+
+
     users.sort((a, b) => {
+
         function priority(role) {
-            switch(role){
-                case "JUGADOR": return 0;
-                case "ENTR./PREPA/FISIO": return 1;
-                case "SUPERADMIN": return 2;
-                default: return 3;
+
+            switch(role) {
+
+                case "JUGADOR":
+                    return 0;
+
+                case "ENTR./PREPA/FISIO":
+                    return 1;
+
+                case "SUPERADMIN":
+                    return 2;
+
+                default:
+                    return 3;
             }
         }
+
         return priority(a.role) - priority(b.role);
     });
 
+
     for (const user of users) {
+
         const fila = document.createElement("div");
         fila.className = "jugadorFila";
+
+
+        let accions = "";
+
+
+        // -----------------------------------------
+        // NOMÉS SI POT GESTIONAR
+        // -----------------------------------------
+
+        if (potGestionar) {
+
+            if (user.role === "JUGADOR") {
+
+                accions += `
+                    <button
+                        class="addInjuryButton"
+                        data-uuid="${user.uuid}"
+                        title="Afegir lesió">
+                        +
+                    </button>
+
+                    <button
+                        class="questionnaireButton"
+                        data-uuid="${user.uuid}"
+                        title="Qüestionaris">
+                        ❓
+                    </button>
+
+                    <button
+                        class="assessmentButton"
+                        data-uuid="${user.uuid}"
+                        title="Valoracions">
+                        📋
+                    </button>
+                `;
+
+            } else {
+
+                // Manté l'espai perquè les files quedin alineades
+                accions += `
+                    <div class="addInjuryPlaceholder"></div>
+                    <div class="addInjuryPlaceholder"></div>
+                    <div class="addInjuryPlaceholder"></div>
+                `;
+            }
+
+
+            accions += `
+                <button
+                    class="deletePlayerButton"
+                    data-uuid="${user.uuid}"
+                    title="Eliminar jugador">
+                    ✕
+                </button>
+            `;
+        }
+
+
         fila.innerHTML = `
-            <span>${capitalize(user.name)} ${capitalize(user.surname)} - ${user.code}</span>
+            <span>
+                ${capitalize(user.name)}
+                ${capitalize(user.surname)}
+                - ${user.code}
+            </span>
+
             <div class="playerActions">
-                ${user.role === "JUGADOR" ? `
-                    <button class="addInjuryButton" data-uuid="${user.uuid}" title="Afegir lesió">+</button>
-                    <button class="questionnaireButton" data-uuid="${user.uuid}" title="Qüestionaris">❓</button>
-                    <button class="assessmentButton" data-uuid="${user.uuid}" title="Valoracions">📋</button>
-                ` : `
-                    <div class="addInjuryPlaceholder"></div>
-                    <div class="addInjuryPlaceholder"></div>
-                    <div class="addInjuryPlaceholder"></div>
-                `}
-                <button class="deletePlayerButton" data-uuid="${user.uuid}" title="Eliminar jugador">✕</button>
+                ${accions}
             </div>
         `;
-        llista.appendChild(fila);
-    
-        const deleteButton = fila.querySelector(".deletePlayerButton");
-        deleteButton.addEventListener("click", () => {
-            eliminarJugador(user);
-        });
 
-        const addButton = fila.querySelector(".addInjuryButton");
-        if(addButton){
+        llista.appendChild(fila);
+
+
+        // -----------------------------------------
+        // EVENTS DELS BOTONS
+        // -----------------------------------------
+
+        if (!potGestionar) {
+            continue;
+        }
+
+
+        const deleteButton =
+            fila.querySelector(".deletePlayerButton");
+
+        if (deleteButton) {
+
+            deleteButton.addEventListener("click", () => {
+                eliminarJugador(user);
+            });
+        }
+
+
+        const addButton =
+            fila.querySelector(".addInjuryButton");
+
+        if (addButton) {
+
             addButton.addEventListener("click", () => {
                 obrirAfegirLesio(user);
             });
         }
 
-        const questionnaireButton = fila.querySelector(".questionnaireButton");
+
+        const questionnaireButton =
+            fila.querySelector(".questionnaireButton");
+
         if (questionnaireButton) {
+
             questionnaireButton.addEventListener("click", () => {
                 obrirQuestionaris(user);
             });
         }
 
-        const assessmentButton = fila.querySelector(".assessmentButton");
+
+        const assessmentButton =
+            fila.querySelector(".assessmentButton");
+
         if (assessmentButton) {
+
             assessmentButton.addEventListener("click", () => {
                 obrirValoracions(user);
             });
@@ -355,3 +459,93 @@ async function assignarSessionsExistents(userUuid, teamUuid){
         }
     }
 }
+
+
+async function obtenirPermisosEquip(teamUuid) {
+
+    const role = obtenirRoleLocal();
+    const userUuid = obtenirUserUuidLocal();
+
+    // No hi ha usuari identificat
+    if (!role || !userUuid) {
+        return {
+            superadmin: false,
+            membreEquip: false,
+            potGestionar: false
+        };
+    }
+
+    // SUPERADMIN -> ho pot fer tot
+    if (role === "SUPERADMIN") {
+        return {
+            superadmin: true,
+            membreEquip: true,
+            potGestionar: true
+        };
+    }
+
+    // Comprovar si l'usuari pertany a l'equip seleccionat
+    const userTeams = await getUserTeamByTeamUuidAndUserUuid(
+        teamUuid,
+        userUuid
+    );
+
+    const membreEquip = userTeams.length > 0;
+
+    return {
+        superadmin: false,
+        membreEquip: membreEquip,
+        potGestionar: membreEquip
+    };
+}
+
+
+async function actualitzarPermisosEquip(teamUuid) {
+
+    const permisos = await obtenirPermisosEquip(teamUuid);
+
+    // Guardem els permisos actuals
+    window.permisosEquipActual = permisos;
+
+    // -----------------------------------------
+    // NOU EQUIP / ELIMINAR EQUIP
+    // -----------------------------------------
+
+    document.getElementById("teamAdminButtons").style.display =
+        permisos.superadmin ? "" : "none";
+
+
+    // -----------------------------------------
+    // AFEGIR JUGADOR
+    // -----------------------------------------
+
+    document.getElementById("addPlayerRow").style.display =
+        permisos.potGestionar ? "" : "none";
+
+
+    // -----------------------------------------
+    // BOTONS DE SESSIONS
+    // -----------------------------------------
+
+    document.getElementById("afegirSessionsButton").style.display =
+        permisos.potGestionar ? "" : "none";
+
+    document.getElementById("modificarSessioButton").style.display =
+        permisos.potGestionar ? "" : "none";
+
+    document.getElementById("eliminarSessionsButton").style.display =
+        permisos.potGestionar ? "" : "none";
+
+
+    // -----------------------------------------
+    // ENRERE
+    // -----------------------------------------
+
+    // Sempre visible
+    document.getElementById("enrereSessionsATeams").style.display = "";
+
+
+    return permisos;
+}
+
+
