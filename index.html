@@ -88,13 +88,16 @@
     <!-- EQUIPS -->
     <div id="pantallaTeams" class="container pantallaTeams" style="display:none;">
         <h1>GESTIÓ D'EQUIPS</h1>
-        <div class="teamRow">
-            <select id="selectorTeams"></select>
-            <button id="nouEquipButton">NOU EQUIP</button>
-            <button id="eliminarEquipButton">ELIMINAR EQUIP</button>
-        </div>
+       <div class="teamRow">
+    <select id="selectorTeams"></select>
 
-        <div class="addPlayerRow proporcioJugador">
+    <div id="teamAdminButtons">
+        <button id="nouEquipButton">NOU EQUIP</button>
+        <button id="eliminarEquipButton">ELIMINAR EQUIP</button>
+    </div>
+</div>
+
+        <div id="addPlayerRow" class="addPlayerRow proporcioJugador">
             <input id="nomJugador" type="text" placeholder="Nom">
             <input id="cognomJugador" type="text" placeholder="Cognom">
             <select id="rolJugador">
@@ -106,12 +109,12 @@
         </div>
 
         <div id="llistaJugadors"></div>
-        <div class="barraBotons">
-            <button id="afegirSessionsButton">AFEGIR SESSIONS</button>
-            <button id="modificarSessioButton">MODIFICAR SESSIONS</button>
-            <button id="eliminarSessionsButton">ELIMINAR SESSIONS</button>
-            <button id="enrereSessionsATeams">ENRERE</button>
-        </div>        
+        <div id="teamsBottomButtons" class="barraBotons">
+    <button id="afegirSessionsButton">AFEGIR SESSIONS</button>
+    <button id="modificarSessioButton">MODIFICAR SESSIONS</button>
+    <button id="eliminarSessionsButton">ELIMINAR SESSIONS</button>
+    <button id="enrereSessionsATeams">ENRERE</button>
+</div>
     </div>
 
     <!-- SESSIONS -->
