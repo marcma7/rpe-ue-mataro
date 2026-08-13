@@ -53,6 +53,9 @@ async function carregarEnviarQuestionari(){
     );
 
     usuarisEnviar = await usersResponse.json();
+    usuarisEnviar = usuarisEnviar.filter(
+    u => u.role === "JUGADOR"
+);
 
 
     // ==========================================
