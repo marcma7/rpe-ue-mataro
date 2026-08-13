@@ -182,34 +182,26 @@ function pintarEquipsEnviar(){
     div.innerHTML = "";
 
     equipsEnviar.forEach(e => {
-        div.innerHTML += `
-            <label class="filaEnviar">
-                <span>${e.team_name}</span>
-                <input type="checkbox" onchange="toggleEquipEnviar('${e.uuid}')">
-            </label>
+
+        const fila = document.createElement("label");
+        fila.className = "filaEnviar";
+
+        const checked = equipsSeleccionats.includes(e.uuid)
+            ? "checked"
+            : "";
+
+        fila.innerHTML = `
+            <span>${e.team_name}</span>
+
+            <input
+                type="checkbox"
+                ${checked}
+                onchange="toggleEquipEnviar('${e.uuid}')"
+            >
         `;
+
+        div.appendChild(fila);
     });
-}
-
-
-function toggleEquipEnviar(uuid){
-
-    const equip = equipsEnviar.find(e=>e.uuid===uuid);
-
-    if(equipsSeleccionats.includes(uuid)){
-        equipsSeleccionats = equipsSeleccionats.filter(x=>x!==uuid);
-    } else {
-        equipsSeleccionats.push(uuid);
-        const nousUsuaris = equip.users.map(u=>u.uuid);
-        usuarisSeleccionats = [...new Set([...usuarisSeleccionats, ...nousUsuaris])];
-    }
-
-    pintarUsuarisEnviar();
-}
-
-
-function capitalitzar(text){
-    return text.toLowerCase().split(" ").map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
 }
 
 
@@ -219,12 +211,10 @@ function pintarUsuarisEnviar(){
 
     div.innerHTML = "";
 
-
     // Ordenar equips alfabèticament
     const equipsOrdenats = [...equipsEnviar].sort(
         (a, b) => a.team_name.localeCompare(b.team_name, "ca")
     );
-
 
     equipsOrdenats.forEach(equip => {
 
@@ -232,9 +222,9 @@ function pintarUsuarisEnviar(){
             (a, b) => a.surname.localeCompare(b.surname, "ca")
         );
 
-
         const equipContainer = document.createElement("div");
         equipContainer.className = "grupEquipEnviar";
+        equipContainer.dataset.uuid = equip.uuid;
 
 
         // ==========================================
@@ -263,16 +253,9 @@ function pintarUsuarisEnviar(){
 
         usuaris.forEach(u => {
 
-            const checked =
-                usuarisSeleccionats.includes(u.uuid)
-                    ? "checked"
-                    : "";
-
-
             const fila = document.createElement("label");
 
             fila.className = "filaEnviar";
-
 
             fila.innerHTML = `
                 <span>
@@ -282,18 +265,18 @@ function pintarUsuarisEnviar(){
 
                 <input
                     type="checkbox"
-                    ${checked}
+                    ${usuarisSeleccionats.includes(u.uuid) ? "checked" : ""}
+                    data-user-uuid="${u.uuid}"
                     onchange="toggleUsuariEnviar('${u.uuid}')"
                 >
             `;
-
 
             jugadors.appendChild(fila);
         });
 
 
         // ==========================================
-        // CLICK EQUIP
+        // OBRIR / TANCAR EQUIP
         // ==========================================
 
         capcalera.addEventListener("click", () => {
@@ -301,8 +284,7 @@ function pintarUsuarisEnviar(){
             const obert =
                 jugadors.style.display !== "none";
 
-
-            if (obert) {
+            if(obert){
 
                 jugadors.style.display = "none";
 
@@ -310,7 +292,7 @@ function pintarUsuarisEnviar(){
                     .querySelector(".fletxaEquipEnviar")
                     .textContent = "▶";
 
-            } else {
+            }else{
 
                 jugadors.style.display = "block";
 
@@ -331,6 +313,152 @@ function pintarUsuarisEnviar(){
         div.appendChild(equipContainer);
     });
 }
+
+
+function toggleEquipEnviar(uuid){
+
+    const equip = equipsEnviar.find(
+        e => e.uuid === uuid
+    );
+
+    if(!equip) return;
+
+
+    // ==========================================
+    // SELECCIONAR / DESELECCIONAR EQUIP
+    // ==========================================
+
+    const seleccionat =
+        equipsSeleccionats.includes(uuid);
+
+
+    if(seleccionat){
+
+        // Treure equip
+        equipsSeleccionats =
+            equipsSeleccionats.filter(
+                x => x !== uuid
+            );
+
+        // Treure els seus jugadors
+        const idsUsuarisEquip =
+            equip.users.map(u => u.uuid);
+
+        usuarisSeleccionats =
+            usuarisSeleccionats.filter(
+                u => !idsUsuarisEquip.includes(u)
+            );
+
+    }else{
+
+        // Afegir equip
+        equipsSeleccionats.push(uuid);
+
+        // Afegir els seus jugadors
+        const nousUsuaris =
+            equip.users.map(u => u.uuid);
+
+        usuarisSeleccionats = [
+            ...new Set([
+                ...usuarisSeleccionats,
+                ...nousUsuaris
+            ])
+        ];
+    }
+
+
+    // ==========================================
+    // ACTUALITZAR CHECKS DELS JUGADORS
+    // ==========================================
+
+    equip.users.forEach(u => {
+
+        const checkbox =
+            document.querySelector(
+                `input[data-user-uuid="${u.uuid}"]`
+            );
+
+        if(checkbox){
+
+            checkbox.checked =
+                usuarisSeleccionats.includes(u.uuid);
+        }
+    });
+
+}
+
+
+function toggleUsuariEnviar(uuid){
+
+    // ==========================================
+    // SELECCIONAR / DESELECCIONAR JUGADOR
+    // ==========================================
+
+    if(usuarisSeleccionats.includes(uuid)){
+
+        usuarisSeleccionats =
+            usuarisSeleccionats.filter(
+                u => u !== uuid
+            );
+
+    }else{
+
+        usuarisSeleccionats.push(uuid);
+    }
+
+
+    // ==========================================
+    // ACTUALITZAR ESTAT DELS EQUIPS
+    // ==========================================
+
+    equipsEnviar.forEach(equip => {
+
+        const idsUsuarisEquip =
+            equip.users.map(u => u.uuid);
+
+        const totsSeleccionats =
+            idsUsuarisEquip.length > 0 &&
+            idsUsuarisEquip.every(
+                u => usuarisSeleccionats.includes(u)
+            );
+
+        const checkboxEquip =
+            document.querySelector(
+                `input[onchange="toggleEquipEnviar('${equip.uuid}')"]`
+            );
+
+        if(checkboxEquip){
+
+            checkboxEquip.checked =
+                totsSeleccionats;
+        }
+
+
+        // Actualitzar equipsSeleccionats
+        if(totsSeleccionats){
+
+            if(!equipsSeleccionats.includes(equip.uuid)){
+                equipsSeleccionats.push(equip.uuid);
+            }
+
+        }else{
+
+            equipsSeleccionats =
+                equipsSeleccionats.filter(
+                    x => x !== equip.uuid
+                );
+        }
+    });
+
+}
+
+
+function capitalitzar(text){
+    return text.toLowerCase().split(" ").map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
+}
+
+
+
 
 
 async function enviarQuestionaris(){
@@ -364,15 +492,3 @@ async function enviarQuestionaris(){
 }
 
 
-function toggleUsuariEnviar(uuid){
-
-    if(usuarisSeleccionats.includes(uuid)){
-        usuarisSeleccionats =
-            usuarisSeleccionats.filter(u => u !== uuid);
-    }else{
-        usuarisSeleccionats.push(uuid);
-    }
-
-    pintarUsuarisEnviar();
-
-}
