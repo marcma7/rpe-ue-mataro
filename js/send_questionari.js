@@ -262,11 +262,11 @@ function pintarUsuarisEnviar(){
 
 let mida = "14px";
 
-if(nomComplet.length > 25){
+if(nomComplet.length > 12){
     mida = "13px";
 }
 
-if(nomComplet.length > 32){
+if(nomComplet.length > 20){
     mida = "12px";
 }
 
