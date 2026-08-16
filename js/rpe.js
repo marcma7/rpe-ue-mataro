@@ -85,42 +85,111 @@ document.querySelectorAll(".rpeButton").forEach(button => {
 async function confirmarRPE(user) {
 
     if (isFinished) return;
+
+
     if (selectedRPE === -1) {
+
         alert("Cal registrar un RPE");
+
         return;
     }
 
+
+    // =================================================
+    // TEAM REGISTRANT L'RPE D'UN JUGADOR
+    // =================================================
+
+    if (venimDeRpeTeam) {
+
+        await confirmarRPETeam();
+
+        return;
+    }
+
+
+    // =================================================
+    // RPE NORMAL DEL JUGADOR
+    // =================================================
+
     const practTimes = ptpt.filter(x => {
+
         if (!x.practices)
             return false;
+
         return x.practices.practice_date === selectedDate;
     });
 
-    const prepfis = practTimes.filter(x => x.practice_type === "prepfis");
-    const train = practTimes.filter(x => x.practice_type === "train");
-    const game = practTimes.filter(x => x.practice_type === "game");
+
+    const prepfis =
+        practTimes.filter(
+            x => x.practice_type === "prepfis"
+        );
+
+    const train =
+        practTimes.filter(
+            x => x.practice_type === "train"
+        );
+
+    const game =
+        practTimes.filter(
+            x => x.practice_type === "game"
+        );
+
+
     const registre = {
+
         player_uuid: user.uuid,
+
         register: selectedRPE,
-        date_register: new Date().toISOString(),
+
+        date_register:
+            new Date().toISOString(),
+
         date_practice: selectedDate,
-        weighted_register: getRPEWeight(selectedRPE, prepfis, train, game)
+
+        weighted_register:
+            getRPEWeight(
+                selectedRPE,
+                prepfis,
+                train,
+                game
+            )
     };
+
 
     await addRPERegister([registre]);
 
-    dates = dates.filter(x => x !== selectedDate);
+
+    dates =
+        dates.filter(
+            x => x !== selectedDate
+        );
+
+
     selectedRPE = -1;
-    
-    document.querySelectorAll(".rpeButton").forEach(b => b.classList.remove("rpeSelected"));
+
+
+    document
+        .querySelectorAll(".rpeButton")
+        .forEach(b =>
+            b.classList.remove("rpeSelected")
+        );
+
 
     if (dates.length === 0) {
+
         isFinished = true;
+
         actualitzarEstatRPE();
+
         alert("No tens sessions pendents");
+
         return;
     }
+
+
     selectedDate = dates[0];
+
     omplirSelectorDates();
 }
 
@@ -137,13 +206,20 @@ function actualitzarEstatRPE() {
 
     const botoConfirmar = document.getElementById("confirmarRPEButton");
     const selector = document.getElementById("selectorData");
+
     botoConfirmar.disabled = isFinished;
-    selector.disabled = isFinished;
+
+    // Si venim del TEAM, el selector sempre està deshabilitat
+    selector.disabled = venimDeRpeTeam || isFinished;
 
     document.querySelectorAll(".rpeButton").forEach(button => {
         button.disabled = isFinished;
-        if (isFinished) button.style.opacity = "0.35";
-        else button.style.opacity = "1";
+
+        if (isFinished) {
+            button.style.opacity = "0.35";
+        } else {
+            button.style.opacity = "1";
+        }
     });
 }
 

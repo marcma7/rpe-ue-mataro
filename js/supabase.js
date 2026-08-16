@@ -145,13 +145,13 @@ async function getRPEByUserUuid(userUuid) {
 
 
 async function addRPERegister(rpeRegister) {
-    const url = SUPABASE_URL + "/rest/v1/rpe_registers";
+    const url = SUPABASE_URL + "/rest/v1/rpe_registers?on_conflict=player_uuid,date_practice";
 
     const resposta = await fetch(url, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Prefer": "return=representation",
+            "Prefer": "resolution=merge-duplicates,return=representation",
             "apikey": SUPABASE_API_KEY,
             "Authorization": "Bearer " + SUPABASE_API_KEY
         },

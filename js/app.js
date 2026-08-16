@@ -57,6 +57,9 @@ botoSortir.addEventListener("click", sortir);
 const sortirButtonRPE = document.getElementById("sortirButtonRPE");
 sortirButtonRPE.addEventListener("click", sortir);
 
+const sortirButtonRPETeam = document.getElementById("sortirButtonRpeTeam");
+sortirButtonRPETeam.addEventListener("click", sortir);
+
 botoEntrar.addEventListener("click", entrar);
 
 document.getElementById("enrereDades").addEventListener("click", ()=>{
@@ -146,21 +149,47 @@ async function entrar() {
 
 async function decideRoute(user) {
 
-    if (user.role !== "JUGADOR") {
-        mostrarPantalla("management");
+    if (user.role === "JUGADOR") {
+
+        venimDeRpeTeam = false;
+
+        const questionaris = await getQuestionarisPerContestar(user.uuid);
+
+        if (questionaris.length === 0) {
+
+            mostrarPantalla("rpe");
+
+            await loadRPE(user);
+            await acabarLoadRPE(user);
+
+        } else {
+
+            mostrarPantalla("questionaris");
+
+            await loadQuestionarisPendents(
+                user,
+                questionaris
+            );
+        }
+
         return;
     }
 
-    const questionaris = await getQuestionarisPerContestar(user.uuid);
 
-    if (questionaris.length === 0) {
-        mostrarPantalla("rpe");
-        await loadRPE(user);
-        await acabarLoadRPE(user);
-    } else {
-        mostrarPantalla("questionaris");
-        await loadQuestionarisPendents(user, questionaris);
+    if (user.role === "TEAM") {
+
+        venimDeRpeTeam = false;
+
+        mostrarPantalla("rpeTeam");
+
+        await loadRPETeam(user);
+
+        return;
     }
+
+
+    // SUPERADMIN, ENTR./PREPA/FISIO, etc.
+    mostrarPantalla("management");
 }
 
 
@@ -190,6 +219,7 @@ function mostrarPantalla(pantalla) {
     document.getElementById("pantallaValoracioItems").style.display="none";
     document.getElementById("pantallaAddValoracioItem").style.display="none";
     document.getElementById("pantallaEnviarQuestionarisJugador").style.display="none";
+    document.getElementById("pantallaRpeTeam").style.display = "none";
     document.getElementById("pantallaEnviarValoracionsJugador").style.display="none";
 
     if (pantalla === "login") document.getElementById("pantallaLogin").style.display = "flex";
@@ -218,6 +248,7 @@ function mostrarPantalla(pantalla) {
     if(pantalla==="gestioValoracions") document.getElementById("pantallaGestioValoracions").style.display="flex";
     if(pantalla==="valoracioItems") document.getElementById("pantallaValoracioItems").style.display="flex";
     if(pantalla==="addValoracioItem") document.getElementById("pantallaAddValoracioItem").style.display="flex";
+    if (pantalla === "rpeTeam") document.getElementById("pantallaRpeTeam").style.display = "flex";
 }
 
 
