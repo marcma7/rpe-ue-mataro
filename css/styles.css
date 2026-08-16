@@ -2773,3 +2773,619 @@ p {
     min-height: 44px;
     margin: 0;
 }
+
+
+/* =========================================================
+   ESTAT DESPRÉS DE L'ÚLTIMA SESSIÓ
+========================================================= */
+
+#pantallaEstatUltimaSessio {
+    width:100%;
+    height:100%;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+#pantallaEstatUltimaSessio h1 {
+    flex-shrink:0;
+    margin:0;
+    font-size:24px;
+}
+
+#taulaEstatUltimaSessio {
+    flex:1;
+    min-height:0;
+    overflow:hidden;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    background:white;
+    display:flex;
+    flex-direction:column;
+}
+
+/* CAPÇALERA */
+
+.estatCapcalera {
+    flex-shrink:0;
+    display:grid;
+    grid-template-columns:2fr 1.2fr 70px 2fr 60px;
+    gap:8px;
+
+    padding:12px;
+
+    background:#f3f4f6;
+    border-bottom:1px solid #e5e7eb;
+
+    font-size:12px;
+    font-weight:700;
+    color:#6b7280;
+    text-align:center;
+}
+
+.estatCapcalera > div:first-child {
+    text-align:left;
+}
+
+/* LLISTA */
+
+#llistaEstatUltimaSessio {
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+}
+
+/* FILA */
+
+.estatJugadorFila {
+    display:grid;
+    grid-template-columns:2fr 1.2fr 70px 2fr 60px;
+    gap:8px;
+
+    align-items:center;
+
+    min-height:58px;
+
+    padding:8px 12px;
+
+    border-bottom:1px solid #f0f0f0;
+}
+
+.estatJugadorFila:last-child {
+    border-bottom:none;
+}
+
+.estatJugadorNom {
+    font-size:14px;
+    font-weight:600;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.estatJugadorData {
+    font-size:13px;
+    color:#555;
+    text-align:center;
+}
+
+/* BOLA RPE */
+
+.estatRpe {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.rpeEstatBola {
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    display:block;
+}
+
+.rpeEstatBola.verda {
+    background:#22c55e;
+    box-shadow:0 0 0 3px rgba(34,197,94,.15);
+}
+
+.rpeEstatBola.vermella {
+    background:#ef4444;
+    box-shadow:0 0 0 3px rgba(239,68,68,.15);
+}
+
+/* MOLESTIES */
+
+.estatMolesties {
+    font-size:13px;
+    color:#555;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.estatMolesties.cap {
+    color:#aaa;
+    font-style:italic;
+}
+
+/* BOTÓ FISIO */
+
+.estatFisio {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.demanarFisioButton {
+    width:38px !important;
+    height:38px !important;
+    min-width:38px !important;
+    min-height:38px !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    border-radius:50% !important;
+
+    background:#f59e0b !important;
+    color:white !important;
+
+    font-size:19px !important;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.demanarFisioButton:hover {
+    background:#d97706 !important;
+    transform:scale(1.08);
+}
+
+/* BOTÓ INFERIOR */
+
+#accedirAppButton {
+    flex-shrink:0;
+    width:100%;
+    min-height:52px;
+    margin:0;
+    font-size:17px;
+    font-weight:700;
+}
+
+/* MÒBIL */
+
+@media (max-width:600px) {
+
+    .estatCapcalera,
+    .estatJugadorFila {
+        grid-template-columns:1.7fr 1fr 50px 1.7fr 45px;
+        gap:5px;
+        padding-left:8px;
+        padding-right:8px;
+    }
+
+    .estatCapcalera {
+        font-size:10px;
+    }
+
+    .estatJugadorNom {
+        font-size:13px;
+    }
+
+    .estatJugadorData,
+    .estatMolesties {
+        font-size:12px;
+    }
+}
+
+
+#pantallaEstatRPE {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100dvh;
+    box-sizing: border-box;
+    padding: 20px;
+    gap: 15px;
+}
+
+
+.capEstatRPE {
+    flex-shrink: 0;
+}
+
+
+.capEstatRPE h1 {
+    margin: 0;
+    text-align: center;
+    font-size: 24px;
+}
+
+
+.contenidorTaulaEstatRPE {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+
+    border: 1px solid #ddd;
+    border-radius: 12px;
+
+    background: white;
+}
+
+
+.capçaleraEstatRPE {
+    display: grid;
+    grid-template-columns:
+        minmax(150px, 2fr)
+        minmax(90px, 1fr)
+        70px
+        minmax(150px, 2fr)
+        70px;
+
+    align-items: center;
+
+    padding: 12px 10px;
+
+    background: #f3f3f3;
+
+    font-weight: 700;
+
+    border-bottom: 1px solid #ddd;
+}
+
+
+.llistaEstatRPE {
+    height: 100%;
+    overflow-y: auto;
+}
+
+
+.filaEstatRPE {
+    display: grid;
+
+    grid-template-columns:
+        minmax(150px, 2fr)
+        minmax(90px, 1fr)
+        70px
+        minmax(150px, 2fr)
+        70px;
+
+    align-items: center;
+
+    min-height: 58px;
+
+    padding: 8px 10px;
+
+    border-bottom: 1px solid #eee;
+
+    box-sizing: border-box;
+}
+
+
+.celEstatRPE {
+    padding: 5px;
+}
+
+
+.jugadorEstatRPE {
+    font-weight: 600;
+}
+
+
+.celEstatRPEbola {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.bolaRPE {
+    width: 18px;
+    height: 18px;
+
+    border-radius: 50%;
+
+    display: inline-block;
+}
+
+
+.bolaRPEVerd {
+    background: #22c55e;
+}
+
+
+.bolaRPETvermella {
+    background: #ef4444;
+}
+
+
+.celMolesties {
+    word-break: break-word;
+}
+
+
+.celFisioEstat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.botoDemanarFisio {
+    width: 40px;
+    height: 40px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #f3f4f6;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.botoDemanarFisio:hover {
+    background: #e5e7eb;
+}
+
+
+.botoDemanarFisio:disabled {
+    cursor: default;
+}
+
+
+.botoFisioDemanat {
+    background: #22c55e;
+    color: white;
+}
+
+
+.botoAccedirAppEstatRPE {
+    flex-shrink: 0;
+
+    width: 100%;
+
+    min-height: 55px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #111827;
+    color: white;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.botoAccedirAppEstatRPE:active {
+    transform: scale(0.99);
+}
+
+
+#pantallaEstatUltimaSessio .estatCapcalera {
+    display: grid !important;
+    grid-template-columns: 2fr 1.2fr 70px 2fr 60px !important;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    gap: 8px;
+    padding: 12px;
+    background: #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 12px;
+    font-weight: 700;
+    color: #6b7280;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+#pantallaEstatUltimaSessio .estatCapcalera > div {
+    display: block !important;
+    width: auto !important;
+    min-width: 0;
+}
+
+#pantallaEstatUltimaSessio .estatCapcalera > div:first-child {
+    text-align: left;
+}
+
+#pantallaEstatUltimaSessio .estatJugadorFila {
+    display: grid !important;
+    grid-template-columns: 2fr 1.2fr 70px 2fr 60px !important;
+}
+
+#taulaEstatUltimaSessio {
+    flex:1;
+    min-height:0;
+    height:0;
+    overflow:hidden;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    background:white;
+    display:flex;
+    flex-direction:column;
+}
+
+#taulaEstatUltimaSessio {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+}
+
+#llistaEstatUltimaSessio {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 10px;
+}
+
+#taulaEstatUltimaSessio {
+    flex:1;
+    min-height:0;
+    height:auto;
+}
+
+#taulaEstatUltimaSessio {
+    flex:1;
+    min-height:0;
+    height:auto !important;
+    overflow:hidden;
+}
+
+#llistaEstatUltimaSessio {
+    flex:1;
+    min-height:0;
+    height:auto !important;
+    overflow-y:auto;
+    padding-bottom:20px;
+}
+
+.llistaEstatRPE {
+    height: auto;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+
+.contenidorTaulaEstatRPE {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+
+    border: 1px solid #ddd;
+    border-radius: 12px;
+
+    background: white;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.filaEstatRPE {
+    display: grid;
+
+    grid-template-columns:
+        minmax(150px, 2fr)
+        minmax(90px, 1fr)
+        70px
+        minmax(150px, 2fr)
+        70px;
+
+    align-items: center;
+
+    width: 100%;
+    min-height: 58px;
+
+    padding: 8px 10px;
+
+    border-bottom: 1px solid #eee;
+
+    box-sizing: border-box;
+}
+
+
+.llistaEstatRPE {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 20px;
+    margin: 0;
+}
+
+.botoDemanarFisio {
+    width: 40px;
+    height: 40px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.filaEstatRPE {
+    display: grid;
+
+    grid-template-columns:
+        minmax(150px, 2fr)
+        minmax(90px, 1fr)
+        70px
+        minmax(150px, 2fr)
+        70px;
+
+    align-items: center;
+
+    min-height: 58px;
+    padding: 8px 10px;
+
+    box-sizing: border-box;
+
+    position: relative;
+}
+
+.filaEstatRPE::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: #eee;
+}
+
+
+.celMolesties {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    min-width:0;
+}
+
+.celMolesties span {
+    flex:1;
+    min-width:0;
+    word-break:break-word;
+}
+
+.celMolesties .botoDemanarFisio {
+    flex-shrink:0;
+    width:36px !important;
+    height:36px !important;
+    min-width:36px !important;
+    min-height:36px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:none !important;
+    border-radius:50%;
+    background:transparent !important;
+    font-size:20px;
+}
