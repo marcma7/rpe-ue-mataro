@@ -3476,7 +3476,7 @@ p {
 
 .infoJugadorEstatRPE {
     display: grid;
-    grid-template-columns: 90px 150px 1fr;
+    grid-template-columns: 75px 125px 1fr;
     align-items: center;
-    column-gap: 20px;
+    column-gap: 10px;
 }
