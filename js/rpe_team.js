@@ -278,6 +278,8 @@ function obrirRPEJugadorTeam(jugador) {
 
     selectedRPE = -1;
 
+    netejarMolestiesRPE();
+
     document.querySelectorAll(".rpeButton").forEach(b => {
         b.classList.remove("rpeSelected");
     });
@@ -370,24 +372,28 @@ async function confirmarRPETeam() {
 
     const registre = {
 
-        player_uuid: jugador.uuid,
+    player_uuid: jugador.uuid,
 
-        register: selectedRPE,
+    register: selectedRPE,
 
-        date_register:
-            new Date().toISOString(),
+    date_register:
+        new Date().toISOString(),
 
-        date_practice:
-            teamDataSeleccionada,
+    date_practice:
+        teamDataSeleccionada,
 
-        weighted_register:
-            getRPEWeight(
-                selectedRPE,
-                prepfis,
-                train,
-                game
-            )
-    };
+    weighted_register:
+        getRPEWeight(
+            selectedRPE,
+            prepfis,
+            train,
+            game
+        ),
+
+    te_molesties: teMolesties,
+
+    molesties: textMolesties
+};
 
 
     await addRPERegister([registre]);

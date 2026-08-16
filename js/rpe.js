@@ -3,10 +3,14 @@ let dates = [];
 let selectedDate = "";
 let selectedRPE = -1;
 let isFinished = false;
+let teMolesties = null;
+let textMolesties = "";
 
 
 async function loadRPE(user) {
     isFinished = false;
+
+    netejarMolestiesRPE();
 
     const userTeams = await getUserTeamByUserUuid(user.uuid);
     const teamUuids = userTeams.map(x => x.uuid);
@@ -94,6 +98,18 @@ async function confirmarRPE(user) {
         return;
     }
 
+    const molestiesSeleccionada =
+    document.querySelector(
+        'input[name="teMolesties"]:checked'
+    );
+
+teMolesties =
+    molestiesSeleccionada?.value === "SI";
+
+textMolesties =
+    teMolesties
+        ? document.getElementById("textMolesties").value.trim()
+        : "";
 
     // =================================================
     // TEAM REGISTRANT L'RPE D'UN JUGADOR
@@ -138,23 +154,27 @@ async function confirmarRPE(user) {
 
     const registre = {
 
-        player_uuid: user.uuid,
+    player_uuid: user.uuid,
 
-        register: selectedRPE,
+    register: selectedRPE,
 
-        date_register:
-            new Date().toISOString(),
+    date_register:
+        new Date().toISOString(),
 
-        date_practice: selectedDate,
+    date_practice: selectedDate,
 
-        weighted_register:
-            getRPEWeight(
-                selectedRPE,
-                prepfis,
-                train,
-                game
-            )
-    };
+    weighted_register:
+        getRPEWeight(
+            selectedRPE,
+            prepfis,
+            train,
+            game
+        ),
+
+    te_molesties: teMolesties,
+
+    molesties: textMolesties
+};
 
 
     await addRPERegister([registre]);
@@ -174,6 +194,8 @@ async function confirmarRPE(user) {
         .forEach(b =>
             b.classList.remove("rpeSelected")
         );
+
+        netejarMolestiesRPE();
 
 
     if (dates.length === 0) {
@@ -233,4 +255,79 @@ function tancarSessioRPE() {
     isFinished = false;
     document.querySelectorAll(".rpeButton").forEach(b => b.classList.remove("rpeSelected"));
     mostrarPantalla("login");
+}
+
+
+
+function actualitzarMolestiesRPE() {
+
+    const seleccionada =
+        document.querySelector(
+            'input[name="teMolesties"]:checked'
+        );
+
+    const textarea =
+        document.getElementById("textMolesties");
+
+    if (!seleccionada) {
+        textarea.disabled = true;
+        textarea.value = "";
+        teMolesties = false;
+        textMolesties = "";
+        return;
+    }
+
+    teMolesties =
+        seleccionada.value === "SI";
+
+    if (teMolesties) {
+
+        textarea.disabled = false;
+
+    } else {
+
+        textarea.disabled = true;
+        textarea.value = "";
+        textMolesties = "";
+    }
+}
+
+
+document
+    .querySelectorAll('input[name="teMolesties"]')
+    .forEach(input => {
+
+        input.addEventListener("change", function () {
+
+            actualitzarMolestiesRPE();
+
+        });
+
+    });
+
+function netejarMolestiesRPE() {
+
+    const radioNo =
+        document.querySelector(
+            'input[name="teMolesties"][value="NO"]'
+        );
+
+    const textarea =
+        document.getElementById("textMolesties");
+
+    if (radioNo) {
+        radioNo.checked = true;
+    }
+
+    document
+        .querySelectorAll('input[name="teMolesties"][value="SI"]')
+        .forEach(input => {
+            input.checked = false;
+        });
+
+    textarea.value = "";
+    textarea.disabled = true;
+
+    teMolesties = false;
+    textMolesties = "";
 }

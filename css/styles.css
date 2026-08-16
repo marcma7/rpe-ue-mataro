@@ -2560,3 +2560,216 @@ p {
     margin-top: 15px;
     margin-bottom: 15px;
 }
+
+
+.molestiesRPE {
+    width: 100%;
+    margin-top: 25px;
+}
+
+.molestiesPregunta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.molestiesOpcions {
+    display: flex;
+    gap: 20px;
+}
+
+.molestiesOpcions label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.molestiesOpcions input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+.molestiesRPE {
+    width: 100%;
+    margin-top: 25px;
+}
+
+.molestiesPregunta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.molestiesOpcions {
+    display: flex;
+    gap: 20px;
+}
+
+.molestiesOpcions label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.molestiesOpcions input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+.molestiesText {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.molestiesText label {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.molestiesText textarea {
+    width: 100%;
+    min-height: 100px;
+    resize: vertical;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-family: Inter, sans-serif;
+    font-size: 15px;
+    background: white;
+}
+
+.molestiesText textarea:disabled {
+    background: #f3f3f3;
+    opacity: 0.6;
+}
+
+#pantallaRpeTeam {
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    box-sizing: border-box;
+}
+
+
+#pantallaRpeTeam {
+    width: 100%;
+    height: 100dvh;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#pantallaRpeTeam .pantallaContingut {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#selectorDataRpeTeam {
+    flex-shrink: 0;
+}
+
+#llistaJugadorsRpeTeam {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+#sortirButtonRpeTeam {
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   PANTALLA RPE - AJUSTAR A L'ALÇADA DEL DISPOSITIU
+========================================================= */
+
+#pantallaRPE {
+    width: 100%;
+    max-width: 700px;
+    height: 100dvh;
+    min-height: 0;
+    margin: 0 auto;
+    padding: 12px 20px;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+#pantallaRPE .rpeTitle {
+    margin: 4px 0 12px;
+    font-size: 32px;
+    line-height: 1;
+}
+
+#pantallaRPE .dataRow {
+    margin-bottom: 10px;
+}
+
+#pantallaRPE #rpeGrid {
+    gap: 7px;
+}
+
+#pantallaRPE .rpeButton {
+    width: 72px;
+    height: 72px;
+    font-size: 21px;
+    justify-self: center;
+}
+
+#pantallaRPE .molestiesRPE {
+    margin-top: 12px;
+}
+
+#pantallaRPE .molestiesPregunta {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+#pantallaRPE .molestiesText {
+    gap: 5px;
+}
+
+#pantallaRPE .molestiesText label {
+    font-size: 13px;
+}
+
+#pantallaRPE .molestiesText textarea {
+    min-height: 65px;
+    height: 65px;
+    resize: none;
+    padding: 8px;
+    font-size: 14px;
+}
+
+#pantallaRPE .botonsFinalsSessio {
+    margin-top: 10px;
+    margin-bottom: 0;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+#pantallaRPE .botonsFinalsSessio button {
+    min-height: 44px;
+    margin: 0;
+}
