@@ -1,3 +1,4 @@
+let userTeamsEquipGlobal = [];
 let teamActual = null;
 let teamJugadors = [];
 let teamDates = [];
@@ -46,6 +47,7 @@ async function loadRPETeam(user) {
     // -----------------------------------------
 
     const userTeamsEquip = await getPlayersByTeam(teamUuid);
+    userTeamsEquipGlobal = userTeamsEquip;
 
     const userUuids = [
         ...new Set(
@@ -124,35 +126,25 @@ teamDates.sort(
         playerTeamUuids
     );
 
-
     // -----------------------------------------
-    // 6. SI NO HI HA SESSIONS
-    // -----------------------------------------
+// 6. ELIMINAR DATES COMPLETADES
+// -----------------------------------------
+actualitzarDatesRpeTeam();
 
-    if (teamDates.length === 0) {
+if (teamDates.length === 0) {
 
-        document.getElementById(
-            "selectorDataRpeTeam"
-        ).innerHTML = "";
+    document.getElementById("selectorDataRpeTeam").innerHTML = "";
 
-        document.getElementById(
-            "llistaJugadorsRpeTeam"
-        ).innerHTML =
-            "<p>No hi ha sessions registrades.</p>";
+    document.getElementById("llistaJugadorsRpeTeam").innerHTML =
+        "<p>No hi ha sessions pendents.</p>";
 
-        return;
-    }
+    return;
+}
 
+teamDataSeleccionada = teamDates[0];
 
-    // -----------------------------------------
-    // 7. DATA INICIAL
-    // -----------------------------------------
-
-    teamDataSeleccionada = teamDates[0];
-
-    omplirSelectorDatesRpeTeam();
-
-    pintarJugadorsRpeTeam();
+omplirSelectorDatesRpeTeam();
+pintarJugadorsRpeTeam();
 }
 
 
@@ -421,6 +413,7 @@ if (index >= 0) {
 }
 
 
+
     // -----------------------------------------
     // NETEJAR ESTAT RPE
     // -----------------------------------------
@@ -472,4 +465,44 @@ function pintarColorRPE(boto, rpe) {
     if (rpe >= 1 && rpe <= 10) {
         boto.classList.add(`rpe${rpe}`);
     }
+}
+
+
+
+function actualitzarDatesRpeTeam() {
+
+    teamDates = teamDates.filter(data => {
+
+        // Jugadors que tenen una sessió aquell dia
+        const jugadorsAmbSessio = userTeamsEquipGlobal
+            .filter(ut =>
+                teamPTPT.some(pt =>
+                    pt.player_team_uuid === ut.uuid &&
+                    pt.practices &&
+                    pt.practices.practice_date === data
+                )
+            )
+            .map(ut => ut.user_uuid);
+
+        // Si no hi ha cap jugador amb sessió,
+        // mantenim la data
+        if (jugadorsAmbSessio.length === 0) {
+            return true;
+        }
+
+        // Eliminem possibles duplicats de jugador
+        const jugadorsUnics = [...new Set(jugadorsAmbSessio)];
+
+        // Comprovem si TOTS tenen RPE aquell dia
+        const totsTenenRPE = jugadorsUnics.every(playerUuid =>
+            teamRpes.some(rpe =>
+                rpe.player_uuid === playerUuid &&
+                rpe.date_practice === data
+            )
+        );
+
+        // Si tots tenen RPE -> eliminem la data
+        // Si falta algun RPE -> mantenim la data
+        return !totsTenenRPE;
+    });
 }
