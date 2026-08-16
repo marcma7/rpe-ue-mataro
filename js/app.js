@@ -271,10 +271,13 @@ function sortir() {
 }
 
 
-
 let estatRPEJugadors = [];
 let estatRPEActual = null;
 
+
+// =====================================================
+// CARREGAR ESTAT RPE
+// =====================================================
 
 async function loadEstatRPE(user) {
 
@@ -282,7 +285,7 @@ async function loadEstatRPE(user) {
     estatRPEActual = user;
 
     // =====================================================
-    // 1. OBTENIR JUGADORS I EQUIPS QUE HEM DE VEURE
+    // 1. OBTENIR JUGADORS I EQUIPS
     // =====================================================
 
     let jugadors = [];
@@ -291,46 +294,45 @@ async function loadEstatRPE(user) {
 
     // =====================================================
     // SUPERADMIN
-    // -> TOTS ELS JUGADORS
     // =====================================================
 
-   if (user.role === "SUPERADMIN") {
+    if (user.role === "SUPERADMIN") {
 
-    const totsUsuaris = await getAllUsers();
+        const totsUsuaris = await getAllUsers();
 
-    jugadors = totsUsuaris.filter(
-        u => u.role === "JUGADOR"
-    );
-
-    // Buscar els equips de tots els jugadors en paral·lel
-    const resultatsTeams = await Promise.all(
-        jugadors.map(async jugador => {
-
-            const userTeamsJugador =
-                await getUserTeamByUserUuid(
-                    jugador.uuid
-                );
-
-            return {
-                uuid: jugador.uuid,
-                teams: userTeamsJugador
-            };
-        })
-    );
-
-    for (const resultat of resultatsTeams) {
-
-        jugadorsTeams.set(
-            resultat.uuid,
-            resultat.teams
+        jugadors = totsUsuaris.filter(
+            u => u.role === "JUGADOR"
         );
+
+
+        const resultatsTeams = await Promise.all(
+            jugadors.map(async jugador => {
+
+                const userTeamsJugador =
+                    await getUserTeamByUserUuid(
+                        jugador.uuid
+                    );
+
+                return {
+                    uuid: jugador.uuid,
+                    teams: userTeamsJugador
+                };
+            })
+        );
+
+
+        for (const resultat of resultatsTeams) {
+
+            jugadorsTeams.set(
+                resultat.uuid,
+                resultat.teams
+            );
+        }
     }
-}
 
 
     // =====================================================
     // NO SUPERADMIN
-    // -> NOMÉS JUGADORS DELS SEUS EQUIPS
     // =====================================================
 
     else {
@@ -339,6 +341,7 @@ async function loadEstatRPE(user) {
             await getUserTeamByUserUuid(
                 user.uuid
             );
+
 
         const meusTeamUuids = [
             ...new Set(
@@ -365,6 +368,7 @@ async function loadEstatRPE(user) {
                 const jugadorUuid =
                     ut.user_uuid;
 
+
                 if (!jugadorsMap.has(jugadorUuid)) {
 
                     jugadorsMap.set(
@@ -372,6 +376,7 @@ async function loadEstatRPE(user) {
                         []
                     );
                 }
+
 
                 jugadorsMap
                     .get(jugadorUuid)
@@ -389,39 +394,44 @@ async function loadEstatRPE(user) {
         if (jugadorUuids.length > 0) {
 
             const users =
-    await getUsersByUserTeam(
-        jugadorUuids
-    );
-
-    console.log(users);
+                await getUsersByUserTeam(
+                    jugadorUuids
+                );
 
 
-// Eliminar jugadors duplicats pel seu UUID
-jugadors =
-    Array.from(
-        new Map(
-            users
-                .filter(u => u.role === "JUGADOR")
-                .map(u => [u.uuid, u])
-        ).values()
-    );
+            jugadors =
+                Array.from(
+                    new Map(
+                        users
+                            .filter(
+                                u =>
+                                    u.role === "JUGADOR"
+                            )
+                            .map(
+                                u => [
+                                    u.uuid,
+                                    u
+                                ]
+                            )
+                    ).values()
+                );
 
 
-for (const jugador of jugadors) {
+            for (const jugador of jugadors) {
 
-    jugadorsTeams.set(
-        jugador.uuid,
-        jugadorsMap.get(
-            jugador.uuid
-        ) || []
-    );
-}
+                jugadorsTeams.set(
+                    jugador.uuid,
+                    jugadorsMap.get(
+                        jugador.uuid
+                    ) || []
+                );
+            }
         }
     }
 
 
     // =====================================================
-    // 2. OBTENIR TOTS ELS RPE DELS JUGADORS
+    // 2. OBTENIR TOTS ELS RPE
     // =====================================================
 
     const jugadorUuids =
@@ -432,6 +442,7 @@ for (const jugador of jugadors) {
 
     let rpes = [];
 
+
     if (jugadorUuids.length > 0) {
 
         rpes =
@@ -440,44 +451,59 @@ for (const jugador of jugadors) {
             );
     }
 
-    // =====================================================
-// CARREGAR LES PRÀCTIQUES UNA SOLA VEGADA PER EQUIP
-// =====================================================
-
-const practicesPerTeam = new Map();
-
-const totsElsTeamUuids = [
-    ...new Set(
-        Array.from(jugadorsTeams.values())
-            .flat()
-            .map(ut => ut.team_uuid)
-    )
-];
-
-const resultatsPractices = await Promise.all(
-    totsElsTeamUuids.map(async teamUuid => {
-
-        const practices =
-            await getPracticesByTeam(teamUuid);
-
-        return {
-            teamUuid,
-            practices
-        };
-    })
-);
-
-for (const resultat of resultatsPractices) {
-
-    practicesPerTeam.set(
-        resultat.teamUuid,
-        resultat.practices
-    );
-}
-
 
     // =====================================================
-    // 3. BUSCAR L'ÚLTIMA SESSIÓ DE CADA JUGADOR
+    // 3. CARREGAR PRÀCTIQUES UNA SOLA VEGADA PER EQUIP
+    // =====================================================
+
+    const practicesPerTeam = new Map();
+
+
+    const totsElsTeamUuids = [
+        ...new Set(
+            Array.from(
+                jugadorsTeams.values()
+            )
+                .flat()
+                .map(
+                    ut => ut.team_uuid
+                )
+        )
+    ];
+
+
+    const resultatsPractices =
+        await Promise.all(
+
+            totsElsTeamUuids.map(
+                async teamUuid => {
+
+                    const practices =
+                        await getPracticesByTeam(
+                            teamUuid
+                        );
+
+
+                    return {
+                        teamUuid,
+                        practices
+                    };
+                }
+            )
+        );
+
+
+    for (const resultat of resultatsPractices) {
+
+        practicesPerTeam.set(
+            resultat.teamUuid,
+            resultat.practices
+        );
+    }
+
+
+    // =====================================================
+    // 4. BUSCAR ÚLTIMA SESSIÓ DE CADA JUGADOR
     // =====================================================
 
     for (const jugador of jugadors) {
@@ -487,10 +513,6 @@ for (const resultat of resultatsPractices) {
                 jugador.uuid
             ) || [];
 
-
-        // -----------------------------------------------
-        // EQUIPS DEL JUGADOR
-        // -----------------------------------------------
 
         const teamUuids = [
             ...new Set(
@@ -504,22 +526,35 @@ for (const resultat of resultatsPractices) {
         let practicesJugador = [];
 
 
-        // -----------------------------------------------
-        // CARREGAR SESSIONS DELS SEUS EQUIPS
-        // -----------------------------------------------
+        // =================================================
+        // SESSIONS DELS SEUS EQUIPS
+        // =================================================
 
         for (const teamUuid of teamUuids) {
 
             const practices =
-        practicesPerTeam.get(teamUuid) || [];
+                practicesPerTeam.get(
+                    teamUuid
+                ) || [];
 
 
             for (const practice of practices) {
 
-                // Només sessions que ja han passat
+                if (
+                    !practice.practice_date ||
+                    practice.practice_date === "-"
+                ) {
+                    continue;
+                }
+
+
                 const parts =
-                    practice.practice_date
-                        .split("-");
+                    practice.practice_date.split("-");
+
+
+                if (parts.length !== 3) {
+                    continue;
+                }
 
 
                 const data =
@@ -531,18 +566,26 @@ for (const resultat of resultatsPractices) {
 
 
                 data.setHours(
-                    0, 0, 0, 0
+                    0,
+                    0,
+                    0,
+                    0
                 );
 
 
                 const avui =
                     new Date();
 
+
                 avui.setHours(
-                    0, 0, 0, 0
+                    0,
+                    0,
+                    0,
+                    0
                 );
 
 
+                // Només sessions ja realitzades
                 if (data <= avui) {
 
                     practicesJugador.push(
@@ -557,26 +600,16 @@ for (const resultat of resultatsPractices) {
         // SI NO TÉ CAP SESSIÓ
         // =================================================
 
-        if (practicesJugador.length === 0) {
-
-            estatRPEJugadors.push({
-
-                jugador: jugador,
-
-                dataUltimaSessio: null,
-
-                rpe: null,
-
-                teMolesties: false
-
-            });
+        if (
+            practicesJugador.length === 0
+        ) {
 
             continue;
         }
 
 
         // =================================================
-        // ELIMINAR DUPLICATS DE SESSIONS
+        // ELIMINAR DUPLICATS
         // =================================================
 
         const practicesUnics =
@@ -595,7 +628,7 @@ for (const resultat of resultatsPractices) {
 
 
         // =================================================
-        // ORDENAR: MÉS RECENT -> MÉS ANTIGA
+        // ORDENAR MÉS RECENT -> MÉS ANTIGA
         // =================================================
 
         practicesUnics.sort(
@@ -611,7 +644,7 @@ for (const resultat of resultatsPractices) {
 
 
         // =================================================
-        // ÚLTIMA SESSIÓ REAL
+        // ÚLTIMA SESSIÓ
         // =================================================
 
         const ultimaSessio =
@@ -622,12 +655,14 @@ for (const resultat of resultatsPractices) {
             ultimaSessio.practice_date;
 
 
+
         // =================================================
-        // BUSCAR RPE EXACTAMENT D'AQUELLA DATA
+        // BUSCAR RPE D'AQUELLA DATA
         // =================================================
 
         const rpe =
             rpes.find(
+
                 r =>
                     r.player_uuid ===
                     jugador.uuid &&
@@ -635,6 +670,7 @@ for (const resultat of resultatsPractices) {
                     r.date_practice ===
                     dataUltimaSessio
             );
+
 
 
         // =================================================
@@ -662,7 +698,8 @@ for (const resultat of resultatsPractices) {
             dataUltimaSessio:
                 dataUltimaSessio,
 
-            rpe: rpe || null,
+            rpe:
+                rpe || null,
 
             teMolesties:
                 !!teMolesties
@@ -671,17 +708,19 @@ for (const resultat of resultatsPractices) {
 
 
     // =====================================================
-    // 4. ORDENAR JUGADORS PER NOM
+    // 5. ORDENAR JUGADORS PER NOM
     // =====================================================
 
     estatRPEJugadors.sort(
         (a, b) => {
 
             const nomA =
-                `${a.jugador.name} ${a.jugador.surname}`;
+                `${a.jugador.player_first_name} ${a.jugador.player_last_name}`;
+
 
             const nomB =
-                `${b.jugador.name} ${b.jugador.surname}`;
+                `${b.jugador.player_first_name} ${b.jugador.player_last_name}`;
+
 
             return nomA.localeCompare(
                 nomB
@@ -691,7 +730,7 @@ for (const resultat of resultatsPractices) {
 
 
     // =====================================================
-    // 5. PINTAR
+    // 6. PINTAR
     // =====================================================
 
     pintarEstatRPE();
@@ -699,182 +738,217 @@ for (const resultat of resultatsPractices) {
 
 
 
+// =====================================================
+// PINTAR ESTAT RPE
+// =====================================================
+
 function pintarEstatRPE() {
 
     const contenidor =
-        document.getElementById(
-            "llistaEstatRPE"
-        );
+        document.getElementById("llistaEstatRPE");
 
     contenidor.innerHTML = "";
 
-
     for (const registre of estatRPEJugadors) {
 
-        const jugador =
-            registre.jugador;
+        const jugador = registre.jugador;
+        const rpe = registre.rpe;
 
-        const rpe =
-            registre.rpe;
+        // =================================================
+        // FILA
+        // =================================================
 
-
-        const fila =
-            document.createElement("div");
-
-        fila.className =
-            "filaEstatRPE";
+        const fila = document.createElement("div");
+        fila.className = "filaJugadorEstatRPE";
 
 
         // =================================================
-        // JUGADOR
+        // NOM
         // =================================================
 
-        const celJugador =
-            document.createElement("div");
+        const nom = document.createElement("div");
+        nom.className = "nomJugadorEstatRPE";
 
-        celJugador.className =
-            "celEstatRPE jugadorEstatRPE";
-
-        celJugador.textContent =
-            `${capitalize(jugador.name)} ${capitalize(jugador.surname)}`;
+        nom.textContent =
+            `${capitalize(jugador.name)} ${capitalize(jugador.surname)}`.trim();
 
 
         // =================================================
-        // DATA DE L'ÚLTIMA SESSIÓ
+        // INFORMACIÓ
         // =================================================
 
-        const celData =
-            document.createElement("div");
+        const info = document.createElement("div");
+        info.className = "infoJugadorEstatRPE";
 
-        celData.className =
-            "celEstatRPE";
 
-        celData.textContent =
+        // =================================================
+        // DATA
+        // =================================================
+
+        const data = document.createElement("div");
+        data.className = "dataJugadorEstatRPE";
+
+        data.textContent =
             registre.dataUltimaSessio || "-";
 
 
         // =================================================
-        // RPE
-        // =================================================
+// RPE
+// =================================================
 
-        const celRPE =
-            document.createElement("div");
+const rpeInfo = document.createElement("div");
+rpeInfo.className = "rpeJugadorEstatRPE";
 
-        celRPE.className =
-            "celEstatRPE celEstatRPEbola";
+const bola = document.createElement("span");
+bola.className = "bolaRPE";
 
+const textRPE = document.createElement("span");
+textRPE.className = "textRPE";
 
-        const bola =
-            document.createElement("span");
+if (!registre.dataUltimaSessio) {
 
-        bola.className =
-            "bolaRPE";
-
-
-        if (!registre.dataUltimaSessio) {
-
-    // No mostrar cap rodona
+    // No mostrar cap rodona ni text
 
 } else if (rpe) {
 
     bola.classList.add("bolaRPEVerd");
     bola.title = "RPE registrat";
 
+    textRPE.textContent = "RPE registrat";
+
 } else {
 
     bola.classList.add("bolaRPETvermella");
     bola.title = "RPE pendent";
+
+    textRPE.textContent = "RPE pendent";
 }
 
-
-        celRPE.appendChild(
-            bola
-        );
+if (registre.dataUltimaSessio) {
+    rpeInfo.appendChild(bola);
+    rpeInfo.appendChild(textRPE);
+}
 
 
         // =================================================
         // MOLÈSTIES
         // =================================================
 
-        const celMolesties = document.createElement("div");
+        const molesties = document.createElement("div");
+        molesties.className = "molestiesJugadorEstatRPE";
 
-celMolesties.className =
-    "celEstatRPE celMolesties";
 
-if (
-    rpe &&
-    registre.teMolesties &&
-    rpe.molesties
-) {
+        if (
+            registre.teMolesties &&
+            rpe &&
+            rpe.molesties
+        ) {
 
-    const textMolesties = document.createElement("span");
-    textMolesties.textContent = rpe.molesties;
+            molesties.textContent =
+                rpe.molesties;
 
-    celMolesties.appendChild(textMolesties);
 
-    const botoFisio = document.createElement("button");
+            // =============================================
+            // RELLOTGE
+            // =============================================
 
-    botoFisio.className = "botoDemanarFisio";
-    botoFisio.textContent = "🕐";
+            const botoFisio =
+                document.createElement("button");
 
-    // aquí mantens el mateix onclick que ja tenies
-    // botoFisio.onclick = ...
+            botoFisio.className =
+                "botoDemanarFisio";
 
-    celMolesties.appendChild(botoFisio);
+            botoFisio.type = "button";
 
-} else {
+            botoFisio.title =
+                "Demanar hora de fisioteràpia";
 
-    celMolesties.textContent = "-";
-}
+            botoFisio.innerHTML = "🕐";
+
+            botoFisio.addEventListener(
+                "click",
+                () => {
+                    demanarFisio(
+                        jugador,
+                        rpe
+                    );
+                }
+            );
+
+            molesties.appendChild(
+                botoFisio
+            );
+
+        } else {
+
+            molesties.textContent =
+                "Sense molèsties";
+        }
+
 
         // =================================================
         // AFEGIR
         // =================================================
 
-        fila.appendChild(
-            celJugador
-        );
+        info.appendChild(data);
+        info.appendChild(rpeInfo);
+        info.appendChild(molesties);
 
-        fila.appendChild(
-            celData
-        );
+        fila.appendChild(nom);
+        fila.appendChild(info);
 
-        fila.appendChild(
-            celRPE
-        );
-
-        fila.appendChild(
-            celMolesties
-        );
-
-
-        contenidor.appendChild(
-            fila
-        );
+        contenidor.appendChild(fila);
     }
 }
 
 
 
+// =====================================================
+// ACCÉS A MANAGEMENT
+// =====================================================
+
 document
-    .getElementById("accedirAppEstatRPE")
-    .addEventListener("click", async () => {
+    .getElementById(
+        "accedirAppEstatRPE"
+    )
+    .addEventListener(
+        "click",
+        async () => {
 
-        const code = obtenirCodeLocal();
+            const code =
+                obtenirCodeLocal();
 
-        const user =
-            await fetchUserByCode(code);
 
-        if (!user) {
-            sortir();
-            return;
+            const user =
+                await fetchUserByCode(
+                    code
+                );
+
+
+            if (!user) {
+
+                sortir();
+
+                return;
+            }
+
+
+            mostrarPantalla(
+                "management"
+            );
         }
-
-        mostrarPantalla("management");
-    });
+    );
 
 
-function demanarFisio(jugador, rpe) {
+
+// =====================================================
+// DEMANAR FISIO
+// =====================================================
+
+function demanarFisio(
+    jugador,
+    rpe
+) {
 
     console.log(
         "Demanar fisio:",
@@ -882,5 +956,7 @@ function demanarFisio(jugador, rpe) {
         rpe
     );
 
-    // Aquí connectarem amb el flux de fisioteràpia.
+
+    // Aquí connectarem amb el flux
+    // de fisioteràpia.
 }
