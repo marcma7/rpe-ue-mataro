@@ -620,13 +620,6 @@ function parseData(data) {
 }
 
 
-function formatData(data) {
-    const d = parseData(data);
-    if (!d) return "-";
-    return d.toLocaleDateString("ca-ES");
-}
-
-
 function diesEntre(data) {
     const d = parseData(data);
     if (!d) return null;
