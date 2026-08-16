@@ -1587,3 +1587,19 @@ async function deleteQuestion(uuid){
 
     if(!response.ok) throw new Error(await response.text());
 }
+
+
+async function getAllUserTeams() {
+    const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/user_teams`,
+        {
+            headers: {
+                "Accept": "application/json",
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY
+            }
+        }
+    );
+
+    return await response.json();
+}

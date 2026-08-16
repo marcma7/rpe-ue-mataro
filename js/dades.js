@@ -176,6 +176,7 @@ function pintarDades(jugadors){
 async function mostrarCardJugador(jugador) {
     try {
         jugadorActual = jugador;
+        await actualitzarBotoPassarValoracions(equipActualUuid);
 
         /* CAPÇALERA */
         document.getElementById("playerCardName").textContent = jugador.nom;
@@ -1285,4 +1286,33 @@ function calcularRiscJugador(jugador, wellness, lesions, episodis) {
         classe,
         factors: factors.sort((a, b) => b.punts - a.punts)
     };
+}
+
+
+
+async function actualitzarBotoPassarValoracions(teamUuid) {
+
+    const button = document.getElementById("passarValoracioButton");
+
+    if (!button) return;
+
+    const role = obtenirRoleLocal();
+    const userUuid = obtenirUserUuidLocal();
+
+    if (role === "SUPERADMIN") {
+        button.style.display = "";
+        return;
+    }
+
+    if (!userUuid) {
+        button.style.display = "none";
+        return;
+    }
+
+    const userTeams = await getUserTeamByTeamUuidAndUserUuid(
+        teamUuid,
+        userUuid
+    );
+
+    button.style.display = userTeams.length > 0 ? "" : "none";
 }

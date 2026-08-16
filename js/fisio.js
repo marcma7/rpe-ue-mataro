@@ -31,35 +31,87 @@ document.getElementById("fisioButton").addEventListener("click", ()=>{
 async function carregarLesions(){
 
     injuries = await getAllInjuries();
-    const userUuids = injuries.map(i => i.user_uuid);
+
+    // -----------------------------------------
+    // FILTRE DE PERMISOS
+    // -----------------------------------------
+
+    const visibleUserUuids = await getUserUuidsVisibleInjuries();
+
+    // SUPERADMIN -> totes
+    if (visibleUserUuids !== null) {
+        injuries = injuries.filter(i =>
+            visibleUserUuids.includes(i.user_uuid)
+        );
+    }
+
+    // -----------------------------------------
+    // USUARIS DE LESIONS
+    // -----------------------------------------
+
+    const userUuids = [
+        ...new Set(injuries.map(i => i.user_uuid))
+    ];
+
     injuriesUsers = await getAllUsers(userUuids);
 
-    // Buscar episodis de totes les lesions
+    // -----------------------------------------
+    // EPISODIS
+    // -----------------------------------------
+
     const injuryUuids = injuries.map(i => i.uuid);
+
     physioEpisodes = await getEpisodesByInjury(injuryUuids);
 
-    // Buscar visites de tots els episodis
+    // -----------------------------------------
+    // VISITES
+    // -----------------------------------------
+
     const episodeUuids = physioEpisodes.map(e => e.uuid);
+
     physioVisits = await getVisitsByEpisodes(episodeUuids);
 
-    injuries.forEach(lesio=>{
-        lesio.user = injuriesUsers.find(u => u.uuid === lesio.user_uuid);
+    // -----------------------------------------
+    // PREPARAR LESIONS
+    // -----------------------------------------
 
-        // Episodi d'aquesta lesió
-        lesio.episode = physioEpisodes.find(e => e.injury_uuid === lesio.uuid);
+    injuries.forEach(lesio => {
 
-        // Totes les visites d'aquest episodi
-        lesio.visites = physioVisits.filter(v => v.episode_uuid === lesio.episode?.uuid);
+        lesio.user = injuriesUsers.find(
+            u => u.uuid === lesio.user_uuid
+        );
 
-        // Comprovar si té hora assignada
+        lesio.episode = physioEpisodes.find(
+            e => e.injury_uuid === lesio.uuid
+        );
+
+        lesio.visites = physioVisits.filter(
+            v => v.episode_uuid === lesio.episode?.uuid
+        );
+
         if(lesio.visites.length > 0) {
-            lesio.te_hora = lesio.visites.filter(v => v.date != null && v.hour != null).length;
-            lesio.visites_fetes = lesio.visites.filter(v => v.visita_feta == 1).length;
+
+            lesio.te_hora =
+                lesio.visites.filter(
+                    v => v.date != null && v.hour != null
+                ).length;
+
+            lesio.visites_fetes =
+                lesio.visites.filter(
+                    v => v.visita_feta == 1
+                ).length;
         }
-        lesio.showText = (lesio.user?.name ?? "") + " " + (lesio.user?.surname ?? "") + " - " + lesio.data_lesio;
+
+        lesio.showText =
+            (lesio.user?.name ?? "") +
+            " " +
+            (lesio.user?.surname ?? "") +
+            " - " +
+            lesio.data_lesio;
     });
 
     injuriesShowing = injuries;
+
     pintarLesions();
 }
 
@@ -163,4 +215,46 @@ function filtrarLesions(){
     else if(filtre === "Tancades") injuriesShowing = injuries.filter(l => l.demana_fisio == 0 || l.te_hora == l.visites_fetes);
     
     pintarLesions();
+}
+
+
+
+async function getUserUuidsVisibleInjuries() {
+
+    const role = obtenirRoleLocal();
+    const userUuid = obtenirUserUuidLocal();
+
+    // SUPERADMIN -> pot veure totes les lesions
+    if (role === "SUPERADMIN") {
+        return null;
+    }
+
+    if (!userUuid) {
+        return [];
+    }
+
+    // Equips als quals pertany l'usuari de l'app
+    const myUserTeams = await getUserTeamByUserUuid(userUuid);
+
+    if (myUserTeams.length === 0) {
+        return [];
+    }
+
+    const myTeamUuids = [
+        ...new Set(myUserTeams.map(ut => ut.team_uuid))
+    ];
+
+    // Tots els user_teams de tots els equips on
+    // pertany l'usuari de l'app
+    const allUserTeams = await getAllUserTeams();
+
+    const visibleUserUuids = [
+        ...new Set(
+            allUserTeams
+                .filter(ut => myTeamUuids.includes(ut.team_uuid))
+                .map(ut => ut.user_uuid)
+        )
+    ];
+
+    return visibleUserUuids;
 }

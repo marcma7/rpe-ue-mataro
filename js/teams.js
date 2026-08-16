@@ -577,5 +577,3 @@ async function actualitzarPermisosEquip(teamUuid) {
 
     return permisos;
 }
-
-
