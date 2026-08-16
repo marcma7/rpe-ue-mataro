@@ -270,33 +270,50 @@ function capitalize(text){
 
 document.getElementById("afegirJugadorButton").addEventListener("click", afegirJugador);
 
-
 async function afegirJugador() {
 
     const nom = document.getElementById("nomJugador").value.trim().toLowerCase();
     const cognom = document.getElementById("cognomJugador").value.trim().toLowerCase();
     const rol = document.getElementById("rolJugador").value;
     const teamUuid = document.getElementById("selectorTeams").value;
+
     if (nom === "") return;
 
     const users = await findUserByNameAndSurnameAndRole(nom, cognom, rol);
 
     if (users.length > 0) {
+
         existingUser = users[0];
+
         if (confirm("Aquest usuari ja existeix.\n\nVols assignar-lo a aquest equip?")) {
+
             await insertUserTeam({
                 user_uuid: existingUser.uuid,
                 team_uuid: teamUuid
             });
-            const userTeam = await getUserTeamByTeamUuidAndUserUuid(teamUuid, existingUser.uuid);
-            await assignarSessionsExistents(existingUser.uuid, teamUuid);
+
+            const userTeam = await getUserTeamByTeamUuidAndUserUuid(
+                teamUuid,
+                existingUser.uuid
+            );
+
+            // NOMÉS JUGADORS
+            if (rol === "JUGADOR") {
+                await assignarSessionsExistents(
+                    existingUser.uuid,
+                    teamUuid
+                );
+            }
+
             await pickPlayers(teamUuid);
         }
+
         return;
     }
-    
+
     const allUsers = await getAllUsers();
     const code = createUserCode(nom, cognom, allUsers);
+
     const newUser = {
         code: code,
         name: nom,
@@ -305,20 +322,33 @@ async function afegirJugador() {
     };
 
     const createdUser = await insertUser(newUser);
+
     if (createdUser.length === 0) return;
+
     await insertUserTeam({
         user_uuid: createdUser[0].uuid,
         team_uuid: teamUuid
     });
-    const userTeam = await getUserTeamByTeamUuidAndUserUuid(teamUuid, createdUser[0].uuid);
-    await assignarSessionsExistents(createdUser[0].uuid, teamUuid);
+
+    const userTeam = await getUserTeamByTeamUuidAndUserUuid(
+        teamUuid,
+        createdUser[0].uuid
+    );
+
+    // NOMÉS JUGADORS
+    if (rol === "JUGADOR") {
+        await assignarSessionsExistents(
+            createdUser[0].uuid,
+            teamUuid
+        );
+    }
+
     await pickPlayers(teamUuid);
 
     document.getElementById("nomJugador").value = "";
     document.getElementById("cognomJugador").value = "";
     document.getElementById("rolJugador").value = "JUGADOR";
 }
-
 
 function createUserCode(name, surname, users) {
     function removeAccents(text) {

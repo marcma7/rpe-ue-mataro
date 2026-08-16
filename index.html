@@ -540,252 +540,135 @@
 
     <div id="playerCard" class="dialogOverlay" style="display:none;">
 
-    <div class="playerCard">
-
-        <!-- CAPÇALERA -->
-        <div class="playerCardHeader">
-
-            <div class="playerCardTitle">
-                <h2 id="playerCardName">Jugador</h2>
-
-                <div id="playerStatus" class="playerStatus">
-                    -
+        <div class="playerCard">
+            <!-- CAPÇALERA -->
+            <div class="playerCardHeader">
+                <div class="playerCardTitle">
+                    <h2 id="playerCardName">Jugador</h2>
+                    <div id="playerStatus" class="playerStatus"></div>
                 </div>
+
+                <button id="tancarCardButton" class="closePlayerCard">✕</button>
             </div>
 
-            <button id="tancarCardButton" class="closePlayerCard">
-                ✕
-            </button>
+            <div class="playerCardContent">
+                <h3>RESUM</h3>
 
-        </div>
-
-
-        <!-- CONTINGUT -->
-        <div class="playerCardContent">
-
-
-            <!-- ========================= -->
-            <!-- RESUM -->
-            <!-- ========================= -->
-
-            <h3>RESUM</h3>
-
-            <div class="playerSummary">
-
-                <div class="summaryCard">
-                    <span class="summaryLabel">ESTAT</span>
-                    <span id="summaryStatus" class="summaryValue">-</span>
-                </div>
-
-                <div class="summaryCard">
-                    <span class="summaryLabel">ALERTES</span>
-                    <span id="summaryAlerts" class="summaryValue">0</span>
-                </div>
-
-                <div class="summaryCard">
-                    <span class="summaryLabel">LESIÓ</span>
-                    <span id="summaryInjury" class="summaryValue">-</span>
-                </div>
-
-                <div class="summaryCard">
-                    <span class="summaryLabel">RPE</span>
-                    <span id="summaryRPE" class="summaryValue">-</span>
-                </div>
-
-                <div class="summaryCard">
-                    <span class="summaryLabel">WELLNESS</span>
-                    <span id="summaryWellness" class="summaryValue">-</span>
-                </div>
-
-                <div class="summaryCard">
-                    <span class="summaryLabel">ÚLTIM ENTRENAMENT</span>
-                    <span id="summaryLastTraining" class="summaryValue">-</span>
-                </div>
-
-            </div>
-
-
-            <!-- ========================= -->
-            <!-- ESTAT ACTUAL -->
-            <!-- ========================= -->
-
-            <h3>ESTAT ACTUAL</h3>
-
-            <div class="dadaFila">
-                <span>ACWR</span>
-                <span id="playerACWR">-</span>
-            </div>
-
-            <div class="dadaFila">
-                <span>Càrrega 7 dies</span>
-                <span id="playerLoad7">-</span>
-            </div>
-
-            <div class="dadaFila">
-                <span>Variació càrrega</span>
-                <span id="playerVariation">-</span>
-            </div>
-
-
-            <!-- ========================= -->
-            <!-- WELLNESS -->
-            <!-- ========================= -->
-
-            <h3>WELLNESS</h3>
-
-            <div class="playerSection">
-
-                <div class="wellnessGlobal">
-
-                    <span>Global</span>
-
-                    <div class="wellnessGlobalValue">
-
-                        <span
-                            id="wellnessGlobalDot"
-                            class="dotWellness">
-                        </span>
-
-                        <span id="wellnessGlobalValue">
-                            - / 5
-                        </span>
-
+                <div class="playerSummary">
+                    <div class="summaryCard">
+                        <span class="summaryLabel">ESTAT</span>
+                        <span id="summaryStatus" class="summaryValue">-</span>
                     </div>
 
+                    <div class="summaryCard">
+                        <span class="summaryLabel">ALERTES</span>
+                        <span id="summaryAlerts" class="summaryValue">0</span>
+                    </div>
+
+                    <div class="summaryCard">
+                        <span class="summaryLabel">LESIÓ</span>
+                        <span id="summaryInjury" class="summaryValue">-</span>
+                    </div>
+
+                    <div class="summaryCard">
+                        <span class="summaryLabel">RPE</span>
+                        <span id="summaryRPE" class="summaryValue">-</span>
+                    </div>
+
+                    <div class="summaryCard">
+                        <span class="summaryLabel">WELLNESS</span>
+                        <span id="summaryWellness" class="summaryValue">-</span>
+                    </div>
+
+                    <div class="summaryCard">
+                        <span class="summaryLabel">ÚLTIM ENTRENAMENT</span>
+                        <span id="summaryLastTraining" class="summaryValue">-</span>
+                    </div>
                 </div>
 
-                <div
-                    id="wellnessVariables"
-                    class="wellnessVariables">
+                <h3>ESTAT ACTUAL</h3>
+                <div class="dadaFila">
+                    <span>ACWR</span>
+                    <span id="playerACWR">-</span>
                 </div>
 
+                <div class="dadaFila">
+                    <span>Càrrega 7 dies</span>
+                    <span id="playerLoad7">-</span>
+                </div>
+
+                <div class="dadaFila">
+                    <span>Variació càrrega</span>
+                    <span id="playerVariation">-</span>
+                </div>
+
+                <h3>WELLNESS</h3>
+                <div class="playerSection">
+                    <div class="wellnessGlobal">
+                        <span>Global</span>
+                        <div class="wellnessGlobalValue">
+                            <span id="wellnessGlobalDot" class="dotWellness"></span>
+                            <span id="wellnessGlobalValue">- / 5</span>
+                        </div>
+                    </div>
+                    <div id="wellnessVariables" class="wellnessVariables"></div>
+                </div>
+
+                <h3>ACTIVITAT</h3>
+                <div class="dadaFila">
+                    <span>Entrenaments 7 dies</span>
+                    <span id="playerSessions">-</span>
+                </div>
+
+                <div class="dadaFila">
+                    <span>Última sessió</span>
+                    <span id="playerLastPractice">-</span>
+                </div>
+
+                <div class="dadaFila">
+                    <span>Càrrega mitjana/sessió</span>
+                    <span id="playerAverageLoad">-</span>
+                </div>
+
+                <div class="dadaFila">
+                    <span>Dies sense entrenar</span>
+                    <span id="playerDaysWithoutTraining">-</span>
+                </div>
+
+                <div class="dadaFila">
+                    <span>Dies sense RPE</span>
+                    <span id="playerDaysWithoutRPE">-</span>
+                </div>
+
+                <h3>QÜESTIONARIS</h3>
+                <div id="playerQuestionnaires" class="playerDataList"></div>
+
+                <h3>VALORACIONS</h3>
+                <div id="playerEvaluations" class="playerDataList"></div>
+
+                <h3>LESIÓ</h3>
+                <div id="playerInjury"></div>
+
+                <h3>HISTORIAL LESIONS</h3>
+                <div id="playerInjuryHistory"></div>
+
+                <h3>FISIO</h3>
+                <div id="playerPhysio" class="playerDataList"></div>
+
+                <h3>ÚLTIMES SESSIONS</h3>
+                <div id="playerLastSessions"></div>
+
+                <h3>ALERTES</h3>
+                <div id="playerAlerts"></div>
             </div>
 
-
-            <!-- ========================= -->
-            <!-- ACTIVITAT -->
-            <!-- ========================= -->
-
-            <h3>ACTIVITAT</h3>
-
-            <div class="dadaFila">
-                <span>Entrenaments 7 dies</span>
-                <span id="playerSessions">-</span>
+            <!-- BOTONS -->
+            <div class="botonsJugador">
+                <button id="passarValoracioButton">PASSAR VALORACIONS</button>
+                <button id="tancarCardButtonBottom">TANCAR</button>
             </div>
-
-            <div class="dadaFila">
-                <span>Última sessió</span>
-                <span id="playerLastPractice">-</span>
-            </div>
-
-            <div class="dadaFila">
-                <span>Càrrega mitjana/sessió</span>
-                <span id="playerAverageLoad">-</span>
-            </div>
-
-            <div class="dadaFila">
-                <span>Dies sense entrenar</span>
-                <span id="playerDaysWithoutTraining">-</span>
-            </div>
-
-            <div class="dadaFila">
-                <span>Dies sense RPE</span>
-                <span id="playerDaysWithoutRPE">-</span>
-            </div>
-
-
-            <!-- ========================= -->
-            <!-- QÜESTIONARIS -->
-            <!-- ========================= -->
-
-            <h3>QÜESTIONARIS</h3>
-
-            <div
-                id="playerQuestionnaires"
-                class="playerDataList">
-            </div>
-
-
-            <!-- ========================= -->
-            <!-- VALORACIONS -->
-            <!-- ========================= -->
-
-            <h3>VALORACIONS</h3>
-
-            <div
-                id="playerEvaluations"
-                class="playerDataList">
-            </div>
-
-
-            <!-- ========================= -->
-            <!-- LESIONS -->
-            <!-- ========================= -->
-
-            <h3>LESIÓ</h3>
-
-            <div id="playerInjury">
-            </div>
-
-
-            <h3>HISTORIAL LESIONS</h3>
-
-            <div id="playerInjuryHistory">
-            </div>
-
-
-            <!-- ========================= -->
-            <!-- FISIO -->
-            <!-- ========================= -->
-
-            <h3>FISIO</h3>
-
-            <div
-                id="playerPhysio"
-                class="playerDataList">
-            </div>
-
-
-            <!-- ========================= -->
-            <!-- ÚLTIMES SESSIONS -->
-            <!-- ========================= -->
-
-            <h3>ÚLTIMES SESSIONS</h3>
-
-            <div id="playerLastSessions">
-            </div>
-
-
-            <!-- ========================= -->
-            <!-- ALERTES -->
-            <!-- ========================= -->
-
-            <h3>ALERTES</h3>
-
-            <div id="playerAlerts">
-            </div>
-
         </div>
-
-
-        <!-- BOTONS -->
-        <div class="botonsJugador">
-
-            <button
-                id="passarValoracioButton">
-                PASSAR VALORACIONS
-            </button>
-
-            <button
-                id="tancarCardButtonBottom">
-                TANCAR
-            </button>
-
-        </div>
-
     </div>
-
-</div>
 </div>
 
 <script src="js/config.js"></script>
