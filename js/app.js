@@ -868,9 +868,10 @@ if (registre.dataUltimaSessio) {
             botoFisio.addEventListener(
                 "click",
                 () => {
-                    demanarFisio(
+                    demanarFisioDesDeRPE(
                         jugador,
-                        rpe
+                        rpe,
+                        botoFisio
                     );
                 }
             );

@@ -225,10 +225,10 @@ async function demanarFisioDesDeRPE(
             rpe.molesties,
 
         tipus:
-            "molèstia",
+            "Molèstia",
 
         gravetat:
-            "lleu",
+            "Lleu",
 
         demana_fisio:
             1
