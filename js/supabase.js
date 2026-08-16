@@ -1177,12 +1177,12 @@ async function insertVisit(visit){
 
 async function insertInjury(injury){
     const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/injuries`,
+        `${SUPABASE_URL}/rest/v1/injuries?on_conflict=data_lesio,tipus,zona,gravetat,user_uuid`,
         {
             method:"POST",
             headers:{
                 "Content-Type":"application/json",
-                "Prefer": "return=representation",
+                "Prefer": "resolution=merge-duplicates,return=representation",
                 "apikey": SUPABASE_API_KEY,
                 "Authorization": "Bearer "+SUPABASE_API_KEY
             },
