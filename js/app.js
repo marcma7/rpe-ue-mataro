@@ -345,7 +345,6 @@ async function loadEstatRPE(user) {
     const visitesFisio = await getAllVisits();
     const episodesFisio = await getEpisodesByUuid([...new Set(visitesFisio.map(v => v.episode_uuid))]);
     const injuriesFisio = await getInjuriesByUuid([...new Set(episodesFisio.map(e => e.injury_uuid))]);
-    const visitesPendentsFisio = new Set();
 
     const visitesPendentsFisio = new Map();
     for (const visita of visitesFisio) {
