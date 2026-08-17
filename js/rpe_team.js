@@ -98,15 +98,33 @@ function pintarJugadorsRpeTeam() {
     div.innerHTML = "";
 
     for (const jugador of teamJugadors) {
+
         const fila = document.createElement("div");
         fila.className = "jugadorRpeTeamFila";
 
         const nom = `${capitalize(jugador.name)} ${capitalize(jugador.surname)}`;
+
+        // BOTÓ NO HA VINGUT
+        const botoNoVingut = document.createElement("button");
+        botoNoVingut.className = "jugadorNoVingutButton";
+        botoNoVingut.textContent = "✕";
+        botoNoVingut.title = "No ha vingut";
+
+        botoNoVingut.addEventListener("click", async () => {
+            await marcarJugadorNoVingut(jugador);
+        });
+
+
+        // BOTÓ RPE
         const boto = document.createElement("button");
         boto.className = "jugadorRpeTeamButton";
         boto.textContent = "RPE";
 
-        const rpe = teamRpes.find(r => r.player_uuid === jugador.uuid && r.date_practice === teamDataSeleccionada);
+        const rpe = teamRpes.find(r =>
+            r.player_uuid === jugador.uuid &&
+            r.date_practice === teamDataSeleccionada
+        );
+
         if (rpe) {
             boto.textContent = rpe.register;
             pintarColorRPE(boto, rpe.register);
@@ -119,10 +137,17 @@ function pintarJugadorsRpeTeam() {
             obrirRPEJugadorTeam(jugador);
         });
 
+
+        // NOM
         const nomElement = document.createElement("span");
         nomElement.textContent = nom;
+
+
+        // ORDRE: NOM | NO HA VINGUT | RPE
         fila.appendChild(nomElement);
+        fila.appendChild(botoNoVingut);
         fila.appendChild(boto);
+
         div.appendChild(fila);
     }
 }
@@ -175,9 +200,39 @@ async function confirmarRPETeam() {
             return (x.player_team_uuid === userTeamUuid && x.practices && x.practices.practice_date === teamDataSeleccionada);
         });
 
-    const prepfis = practTimes.filter(x => x.practice_type === "prepfis");
-    const train = practTimes.filter(x => x.practice_type === "train");
-    const game = practTimes.filter(x => x.practice_type === "game");
+    let prepfis = practTimes.filter(x => x.practice_type === "prepfis");
+let train = practTimes.filter(x => x.practice_type === "train");
+let game = practTimes.filter(x => x.practice_type === "game");
+
+const jugadorNoHaVingut =
+    practTimes.length > 0 &&
+    practTimes.every(x => Number(x.time) === 0);
+
+if (jugadorNoHaVingut) {
+
+    const moda = getModaPTPTEquip(
+        userTeamUuid,
+        teamDataSeleccionada
+    );
+
+    prepfis = [
+        {
+            time: moda.prepfis
+        }
+    ];
+
+    train = [
+        {
+            time: moda.train
+        }
+    ];
+
+    game = [
+        {
+            time: moda.game
+        }
+    ];
+}
 
     const registre = {
         player_uuid: jugador.uuid,

@@ -1603,3 +1603,156 @@ async function getAllUserTeams() {
 
     return await response.json();
 }
+
+
+async function marcarJugadorNoVingut(jugador) {
+
+    const userTeam = await getUserTeamByTeamUuidAndUserUuid(
+        teamActual.team_uuid,
+        jugador.uuid
+    );
+
+    if (userTeam.length === 0) {
+        alert("Aquest jugador no està assignat a l'equip.");
+        return;
+    }
+
+    const playerTeamUuid = userTeam[0].uuid;
+
+    // Sessions d'aquella data
+    const practices = await getPracticesByTeam(teamActual.team_uuid);
+
+    const practicesDelDia = practices.filter(
+        p => p.practice_date === teamDataSeleccionada
+    );
+
+    // ---------------------------------------------------------
+    // 1. Posem tots els temps del jugador a 0
+    // ---------------------------------------------------------
+
+    for (const practice of practicesDelDia) {
+
+        for (const tipus of ["prepfis", "train", "game"]) {
+
+            await upsertPracticeTime({
+                player_team_uuid: playerTeamUuid,
+                practice_uuid: practice.uuid,
+                practice_type: tipus,
+                time: 0
+            });
+        }
+    }
+
+    // ---------------------------------------------------------
+    // 2. RPE = 0 i weighted_register = 0
+    // ---------------------------------------------------------
+
+    const registre = {
+        player_uuid: jugador.uuid,
+        register: 0,
+        date_register: new Date().toISOString(),
+        date_practice: teamDataSeleccionada,
+        weighted_register: 0,
+        te_molesties: false,
+        molesties: ""
+    };
+
+    await upsertRPE(registre);
+
+    // ---------------------------------------------------------
+    // 3. Actualitzem les dades locals
+    // ---------------------------------------------------------
+
+    const index = teamRpes.findIndex(r =>
+        r.player_uuid === jugador.uuid &&
+        r.date_practice === teamDataSeleccionada
+    );
+
+    if (index >= 0) {
+        teamRpes[index] = {
+            ...teamRpes[index],
+            ...registre
+        };
+    } else {
+        teamRpes.push(registre);
+    }
+
+    // Actualitzem també els PTPT locals
+    const playerPractices = practicesDelDia.map(p => p.uuid);
+
+    for (const pt of teamPTPT) {
+
+        if (
+            pt.player_team_uuid === playerTeamUuid &&
+            playerPractices.includes(pt.practice_uuid)
+        ) {
+            pt.time = 0;
+        }
+    }
+
+    // ---------------------------------------------------------
+    // 4. Tornem a pintar
+    // ---------------------------------------------------------
+
+    pintarJugadorsRpeTeam();
+}
+
+
+function calcularModa(valors) {
+
+    if (valors.length === 0) {
+        return 0;
+    }
+
+    const comptador = {};
+
+    for (const valor of valors) {
+        const numero = Number(valor);
+
+        comptador[numero] = (comptador[numero] || 0) + 1;
+    }
+
+    let moda = valors[0];
+    let maxRepeticions = 0;
+
+    for (const valor in comptador) {
+
+        if (comptador[valor] > maxRepeticions) {
+            maxRepeticions = comptador[valor];
+            moda = Number(valor);
+        }
+    }
+
+    return moda;
+}
+
+
+function getModaPTPTEquip(playerTeamUuid, data) {
+
+    const altresPTPT = teamPTPT.filter(x =>
+        x.player_team_uuid !== playerTeamUuid &&
+        x.practices &&
+        x.practices.practice_date === data
+    );
+
+    const prepfis = altresPTPT
+    .filter(x => x.practice_type === "prepfis")
+    .map(x => Number(x.time) || 0)
+    .filter(x => x > 0);
+
+const train = altresPTPT
+    .filter(x => x.practice_type === "train")
+    .map(x => Number(x.time) || 0)
+    .filter(x => x > 0);
+
+const game = altresPTPT
+    .filter(x => x.practice_type === "game")
+    .map(x => Number(x.time) || 0)
+    .filter(x => x > 0);
+
+    return {
+        prepfis: calcularModa(prepfis),
+        train: calcularModa(train),
+        game: calcularModa(game)
+    };
+}
