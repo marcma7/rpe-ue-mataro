@@ -707,7 +707,6 @@ async function duplicarSessio(practiceUuid, daily, weekly, limit){
 
     while(data <= dataLimit){
         const novaData = formatData(data);
-        console.log(novaData);
         try {
             const novaPractice = await insertPractice({
                 practice_date: novaData,
@@ -754,10 +753,6 @@ function formatData(data){
     const d = String(data.getDate()).padStart(2,"0");
     const m = String(data.getMonth()+1).padStart(2,"0");
     const y = data.getFullYear();
-
-    console.log(d);
-    console.log(m);
-    console.log(y);
 
     return `${d}-${m}-${y}`;
 }

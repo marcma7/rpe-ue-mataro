@@ -1135,7 +1135,7 @@ function calcularRiscJugador(jugador, wellness, lesions, episodis) {
             afegirPunts(25, "ACWR molt elevat", `ACWR ${acwr.toFixed(2)}.`);
         } else if (acwr >= 1.3) {
             afegirPunts(15, "ACWR elevat", `ACWR ${acwr.toFixed(2)}.`);
-        } else if (acwr < 0.8) {
+        } else if (0 < acwr < 0.8) {
             afegirPunts(8, "ACWR baix", `ACWR ${acwr.toFixed(2)}.`);
         }
     }
