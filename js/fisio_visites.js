@@ -16,118 +16,42 @@ document.getElementById("dataVisitaFisio").addEventListener("change", ()=>{
 async function carregarVisitesFisio(){
 
     visitesFisio = await getAllVisits();
-
-    const episodes = await getEpisodesByUuid(
-        [...new Set(visitesFisio.map(v => v.episode_uuid))]
-    );
-
-    const injuries = await getInjuriesByUuid(
-        [...new Set(episodes.map(e => e.injury_uuid))]
-    );
-
-    const users = await getAllUsers(
-        [...new Set(injuries.map(i => i.user_uuid))]
-    );
-
+    const episodes = await getEpisodesByUuid([...new Set(visitesFisio.map(v => v.episode_uuid))]);
+    const injuries = await getInjuriesByUuid([...new Set(episodes.map(e => e.injury_uuid))]);
+    const users = await getAllUsers([...new Set(injuries.map(i => i.user_uuid))]);
     const teams = await getAllTeams();
 
-
-    // -----------------------------------------
-    // FILTRE DE PERMISOS
-    // -----------------------------------------
-
     const role = obtenirRoleLocal();
-
     if(role !== "SUPERADMIN"){
-
         const userUuid = obtenirUserUuidLocal();
-
-        // Equips on està l'usuari de l'app
-        const meusUserTeams =
-            await getUserTeamByUserUuid(userUuid);
-
-        const meusTeamUuids = [
-            ...new Set(
-                meusUserTeams.map(ut => ut.team_uuid)
-            )
-        ];
-
-        // Tots els user_teams
+        const meusUserTeams = await getUserTeamByUserUuid(userUuid);
+        const meusTeamUuids = [...new Set(meusUserTeams.map(ut => ut.team_uuid))];
         const totsUserTeams = await getAllUserTeams();
+        const usuarisVisibles = new Set(totsUserTeams.filter(ut => meusTeamUuids.includes(ut.team_uuid)).map(ut => ut.user_uuid));
 
-        // Usuaris que pertanyen als meus equips
-        const usuarisVisibles = new Set(
-            totsUserTeams
-                .filter(ut =>
-                    meusTeamUuids.includes(ut.team_uuid)
-                )
-                .map(ut => ut.user_uuid)
-        );
-
-        // Filtrar visites segons el jugador
         visitesFisio = visitesFisio.filter(v => {
-
-            const ep = episodes.find(
-                e => e.uuid === v.episode_uuid
-            );
-
-            const inj = injuries.find(
-                i => i.uuid === ep?.injury_uuid
-            );
-
+            const ep = episodes.find(e => e.uuid === v.episode_uuid);
+            const inj = injuries.find(i => i.uuid === ep?.injury_uuid);
             return usuarisVisibles.has(inj?.user_uuid);
         });
     }
 
-
-    // -----------------------------------------
-    // PREPARAR INFORMACIÓ
-    // -----------------------------------------
-
-    visitesFisio.sort((a,b) =>
-        (a.hour ?? "").localeCompare(b.hour ?? "")
-    );
-
+    visitesFisio.sort((a,b) => (a.hour ?? "").localeCompare(b.hour ?? ""));
     visitesFisio.forEach(v => {
-
-        const ep = episodes.find(
-            e => e.uuid === v.episode_uuid
-        );
-
-        const inj = injuries.find(
-            i => i.uuid === ep?.injury_uuid
-        );
-
-        const user = users.find(
-            u => u.uuid === inj?.user_uuid
-        );
-
-        const team = teams.find(
-            t => t.uuid === inj?.team_uuid
-        );
+        const ep = episodes.find(e => e.uuid === v.episode_uuid);
+        const inj = injuries.find(i => i.uuid === ep?.injury_uuid);
+        const user = users.find(u => u.uuid === inj?.user_uuid);
+        const team = teams.find(t => t.uuid === inj?.team_uuid);
 
         v.user = user;
         v.injury = inj;
         v.team = team;
 
-        v.text =
-            (v.hour ?? "") +
-            " " +
-            (user?.name ?? "") +
-            " " +
-            (user?.surname ?? "") +
-            "\n\nEquip: " +
-            (team?.team_name ?? "-") +
-            "\nData lesió: " +
-            (inj?.data_lesio ?? "");
+        v.text = (v.hour ?? "") + " " + (user?.name ?? "") + " " + (user?.surname ?? "") + "\n\nEquip: " + (team?.team_name ?? "-") + "\nData lesió: " + (inj?.data_lesio ?? "");
     });
 
-
     const avui = new Date();
-
-    document.getElementById("dataVisitaFisio").value =
-        avui.toISOString().substring(0,10);
-
+    document.getElementById("dataVisitaFisio").value = avui.toISOString().substring(0,10);
     filtrarVisitesFisio();
 }
 
