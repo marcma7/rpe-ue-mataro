@@ -940,24 +940,3 @@ document
         }
     );
 
-
-
-// =====================================================
-// DEMANAR FISIO
-// =====================================================
-
-function demanarFisio(
-    jugador,
-    rpe
-) {
-
-    console.log(
-        "Demanar fisio:",
-        jugador,
-        rpe
-    );
-
-
-    // Aquí connectarem amb el flux
-    // de fisioteràpia.
-}
