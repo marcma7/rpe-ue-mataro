@@ -341,20 +341,46 @@ async function loadEstatRPE(user) {
     let rpes = [];
     if (jugadorUuids.length > 0) rpes = await getRPEByUsers(jugadorUuids);
 
-    // 2.5. OBTENIR VISITES DE FISIO PENDENTS
+    // 2.5. OBTENIR VISITES DE FISIO
     const visitesFisio = await getAllVisits();
     const episodesFisio = await getEpisodesByUuid([...new Set(visitesFisio.map(v => v.episode_uuid))]);
     const injuriesFisio = await getInjuriesByUuid([...new Set(episodesFisio.map(e => e.injury_uuid))]);
-
+    
     const visitesPendentsFisio = new Map();
+    const visitesFisioAssignades = new Map();
+
     for (const visita of visitesFisio) {
         if (visita.visita_feta === 1) continue;
-        if (visita.date || visita.hour) continue;
+    
         const episode = episodesFisio.find(e => e.uuid === visita.episode_uuid);
         if (!episode) continue;
+
         const injury = injuriesFisio.find(i => i.uuid === episode.injury_uuid);
         if (!injury) continue;
-        visitesPendentsFisio.set(injury.user_uuid, injury.uuid);
+
+        // VISITA DEMANADA PERÒ ENCARA SENSE HORA
+        if (!visita.date || !visita.hour) {
+            visitesPendentsFisio.set(injury.user_uuid, injury.uuid);
+            continue;
+        }
+
+        // VISITA AMB HORA ASSIGNADA
+        const parts = visita.date.split("-");
+        if (parts.length !== 3) continue;
+
+        const horaParts = visita.hour.split(":");
+        const dataVisita = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]), Number(horaParts[0]), Number(horaParts[1]));
+        const ara = new Date();
+    
+        if (dataVisita > ara) {
+            visitesFisioAssignades.set(injury.user_uuid,
+                {
+                    injuryUuid: injury.uuid,
+                    date: visita.date,
+                    hour: visita.hour
+                }
+            );
+        }
     }
 
     // 3. CARREGAR PRÀCTIQUES UNA SOLA VEGADA PER EQUIP
@@ -424,7 +450,9 @@ async function loadEstatRPE(user) {
             rpe: rpe || null,
             teMolesties: !!teMolesties,
             teHoraFisioDemanada: visitesPendentsFisio.has(jugador.uuid),
-            injuryFisioDemanada: visitesPendentsFisio.get(jugador.uuid) || null
+            injuryFisioDemanada: visitesPendentsFisio.get(jugador.uuid) || null,
+            teFisioAssignada: visitesFisioAssignades.has(jugador.uuid),
+            fisioAssignada: visitesFisioAssignades.get(jugador.uuid) || null
         });
     }
 
@@ -492,30 +520,41 @@ function pintarEstatRPE() {
 
         const molesties = document.createElement("div");
         molesties.className = "molestiesJugadorEstatRPE";
-        
-        if (registre.teMolesties && rpe && rpe.molesties) {
+
+        if (registre.teFisioAssignada) {
+            const fisio = registre.fisioAssignada;
+            const parts = fisio.date.split("-");
+
+            molesties.textContent = `Fisio ${parts[0]}/${parts[1]} ${fisio.hour}`;
+
+        } else if (registre.teMolesties && rpe && rpe.molesties) {
             molesties.textContent = rpe.molesties;
-        
+
             const botoFisio = document.createElement("button");
             botoFisio.className = "botoDemanarFisio";
             botoFisio.type = "button";
             botoFisio.title = "Demanar hora de fisioteràpia";
             botoFisio.innerHTML = "🕐";
+
             botoFisio.addEventListener("click", () => {
                 demanarFisioDesDeRPE(jugador, rpe, botoFisio);
             });
+
             molesties.appendChild(botoFisio);
         } else if (registre.teHoraFisioDemanada) {
             const textHora = document.createElement("span");
             textHora.textContent = "Hora demanada";
+        
             const botoHora = document.createElement("button");
             botoHora.className = "botoDemanarFisio";
             botoHora.type = "button";
             botoHora.title = "Assignar hora de fisioteràpia";
             botoHora.innerHTML = "🕐";
+        
             botoHora.addEventListener("click", () => {
                 obrirAssignarHora(registre.injuryFisioDemanada);
             });
+        
             molesties.appendChild(textHora);
             molesties.appendChild(botoHora);
         } else {
@@ -533,11 +572,6 @@ function pintarEstatRPE() {
     }
 }
 
-
-
-// =====================================================
-// ACCÉS A MANAGEMENT
-// =====================================================
 
 document.getElementById("accedirAppEstatRPE").addEventListener("click", async () => {
     const code = obtenirCodeLocal();
