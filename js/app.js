@@ -347,17 +347,15 @@ async function loadEstatRPE(user) {
     const injuriesFisio = await getInjuriesByUuid([...new Set(episodesFisio.map(e => e.injury_uuid))]);
     const visitesPendentsFisio = new Set();
 
+    const visitesPendentsFisio = new Map();
     for (const visita of visitesFisio) {
         if (visita.visita_feta === 1) continue;
         if (visita.date || visita.hour) continue;
-    
         const episode = episodesFisio.find(e => e.uuid === visita.episode_uuid);
         if (!episode) continue;
-
         const injury = injuriesFisio.find(i => i.uuid === episode.injury_uuid);
         if (!injury) continue;
-    
-        visitesPendentsFisio.add(injury.user_uuid);
+        visitesPendentsFisio.set(injury.user_uuid, injury.uuid);
     }
 
     // 3. CARREGAR PRÀCTIQUES UNA SOLA VEGADA PER EQUIP
@@ -426,7 +424,8 @@ async function loadEstatRPE(user) {
             dataUltimaSessio: dataUltimaSessio,
             rpe: rpe || null,
             teMolesties: !!teMolesties,
-            teHoraFisioDemanada: visitesPendentsFisio.has(jugador.uuid)
+            teHoraFisioDemanada: visitesPendentsFisio.has(jugador.uuid),
+            injuryFisioDemanada: visitesPendentsFisio.get(jugador.uuid) || null
         });
     }
 
@@ -516,7 +515,7 @@ function pintarEstatRPE() {
             botoHora.title = "Assignar hora de fisioteràpia";
             botoHora.innerHTML = "🕐";
             botoHora.addEventListener("click", () => {
-                mostrarPantalla("assignarHora");
+                obrirAssignarHora(registre.injuryFisioDemanada);
             });
             molesties.appendChild(textHora);
             molesties.appendChild(botoHora);
