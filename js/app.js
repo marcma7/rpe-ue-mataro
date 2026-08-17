@@ -275,10 +275,6 @@ let estatRPEJugadors = [];
 let estatRPEActual = null;
 
 
-// =====================================================
-// CARREGAR ESTAT RPE
-// =====================================================
-
 async function loadEstatRPE(user) {
 
     estatRPEJugadors = [];
@@ -289,35 +285,28 @@ async function loadEstatRPE(user) {
     let jugadorsTeams = new Map();
 
     if (user.role === "SUPERADMIN") {
-        const totsUsuaris = await getAllUsers();
+        const [totsUsuaris, totsUserTeams] = await Promise.all([getAllUsers(), getAllUserTeams()]);
         jugadors = totsUsuaris.filter(u => u.role === "JUGADOR");
-        const resultatsTeams = await Promise.all(
-            jugadors.map(async jugador => {
-                const userTeamsJugador = await getUserTeamByUserUuid(jugador.uuid);
-                return {
-                    uuid: jugador.uuid,
-                    teams: userTeamsJugador
-                };
-            })
-        );
 
-        for (const resultat of resultatsTeams) {
-            jugadorsTeams.set(resultat.uuid, resultat.teams);
+        for (const ut of totsUserTeams) {
+            if (!jugadorsTeams.has(ut.user_uuid)) jugadorsTeams.set(ut.user_uuid, []);
+            jugadorsTeams.get(ut.user_uuid).push(ut);
         }
     } else {
         const meusUserTeams = await getUserTeamByUserUuid(user.uuid);
         const meusTeamUuids = [...new Set(meusUserTeams.map(ut => ut.team_uuid))];
 
+        const resultatsEquips = await Promise.all(meusTeamUuids.map(async teamUuid => {
+                const userTeamsEquip = await getPlayersByTeam(teamUuid);
+                return {teamUuid, userTeamsEquip};
+            })
+        );
+
         const jugadorsMap = new Map();
-
-        for (const teamUuid of meusTeamUuids) {
-            const userTeamsEquip = await getPlayersByTeam(teamUuid);
-            
-            for (const ut of userTeamsEquip) {
+        for (const resultat of resultatsEquips) {
+            for (const ut of resultat.userTeamsEquip) {
                 const jugadorUuid = ut.user_uuid;
-
                 if (!jugadorsMap.has(jugadorUuid)) jugadorsMap.set(jugadorUuid, []);
-
                 jugadorsMap.get(jugadorUuid).push(ut);
             }
         }
@@ -326,9 +315,8 @@ async function loadEstatRPE(user) {
 
         if (jugadorUuids.length > 0) {
             const users = await getUsersByUserTeam(jugadorUuids);
-            jugadors = Array.from(
-                new Map(users.filter(u => u.role === "JUGADOR").map(u => [u.uuid, u])).values()
-            );
+
+            jugadors = Array.from(new Map(users.filter(u => u.role === "JUGADOR").map(u => [u.uuid, u])).values());
 
             for (const jugador of jugadors) {
                 jugadorsTeams.set(jugador.uuid, jugadorsMap.get(jugador.uuid) || []);
@@ -336,29 +324,49 @@ async function loadEstatRPE(user) {
         }
     }
 
-    // 2. OBTENIR TOTS ELS RPE
+    // 2. UUID DELS JUGADORS
     const jugadorUuids = jugadors.map(j => j.uuid);
-    let rpes = [];
-    if (jugadorUuids.length > 0) rpes = await getRPEByUsers(jugadorUuids);
 
-    // 2.5. OBTENIR VISITES DE FISIO
-    const visitesFisio = await getAllVisits();
-    const episodesFisio = await getEpisodesByUuid([...new Set(visitesFisio.map(v => v.episode_uuid))]);
-    const injuriesFisio = await getInjuriesByUuid([...new Set(episodesFisio.map(e => e.injury_uuid))]);
+    // 3. RPE + FISIO EN PARAL·LEL
+    let rpes = [];
+    const promeses = [];
+
+    if (jugadorUuids.length > 0) promeses.push(getRPEByUsers(jugadorUuids));
+    else promeses.push(Promise.resolve([]));
     
+    promeses.push(getAllVisits());
+    const [rpesResultat, visitesFisio] = await Promise.all(promeses);
+    rpes = rpesResultat || [];
+
+    // 4. PREPARAR MAPES DE RPE
+    const rpeMap = new Map();
+    for (const rpe of rpes) {
+        rpeMap.set(`${rpe.player_uuid}_${rpe.date_practice}`, rpe);
+    }
+
+    // 5. PREPARAR FISIO
+    const episodeUuids = [...new Set(visitesFisio.map(v => v.episode_uuid).filter(Boolean))];
+    const episodesFisio = episodeUuids.length > 0 ? await getEpisodesByUuid(episodeUuids) : [];
+    const injuryUuids = [...new Set(episodesFisio.map(e => e.injury_uuid).filter(Boolean))];
+    const injuriesFisio = injuryUuids.length > 0 ? await getInjuriesByUuid(injuryUuids) : [];
+
+    // MAPES FISIO
+    const episodesMap = new Map(episodesFisio.map(e => [e.uuid, e]));
+    const injuriesMap = new Map(injuriesFisio.map(i => [i.uuid, i]));
     const visitesPendentsFisio = new Map();
     const visitesFisioAssignades = new Map();
+    const ara = new Date();
 
     for (const visita of visitesFisio) {
         if (visita.visita_feta === 1) continue;
-    
-        const episode = episodesFisio.find(e => e.uuid === visita.episode_uuid);
+        
+        const episode = episodesMap.get(visita.episode_uuid);
         if (!episode) continue;
 
-        const injury = injuriesFisio.find(i => i.uuid === episode.injury_uuid);
+        const injury = injuriesMap.get(episode.injury_uuid);
         if (!injury) continue;
 
-        // VISITA DEMANADA PERÒ ENCARA SENSE HORA
+        // VISITA DEMANADA PERÒ SENSE HORA
         if (!visita.date || !visita.hour) {
             visitesPendentsFisio.set(injury.user_uuid, injury.uuid);
             continue;
@@ -370,8 +378,6 @@ async function loadEstatRPE(user) {
 
         const horaParts = visita.hour.split(":");
         const dataVisita = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]), Number(horaParts[0]), Number(horaParts[1]));
-        const ara = new Date();
-    
         if (dataVisita > ara) {
             visitesFisioAssignades.set(injury.user_uuid,
                 {
@@ -383,34 +389,32 @@ async function loadEstatRPE(user) {
         }
     }
 
-    // 3. CARREGAR PRÀCTIQUES UNA SOLA VEGADA PER EQUIP
+    // 6. CARREGAR PRÀCTIQUES PER EQUIP EN PARAL·LEL
     const practicesPerTeam = new Map();
-    const totsElsTeamUuids = [...new Set(Array.from(jugadorsTeams.values()).flat().map(ut => ut.team_uuid))];
-
-    const resultatsPractices = await Promise.all(
-            totsElsTeamUuids.map(
-                async teamUuid => {
-                    const practices = await getPracticesByTeam(teamUuid);
-                    return {
-                        teamUuid,
-                        practices
-                    };
-                }
-            )
-        );
+    const totsElsTeamUuids = [...new Set(Array.from(jugadorsTeams.values()).flat().map(ut => ut.team_uuid).filter(Boolean))];
+    const resultatsPractices = await Promise.all(totsElsTeamUuids.map(async teamUuid => 
+        {
+            const practices = await getPracticesByTeam(teamUuid);
+            return {teamUuid, practices};
+        })
+    );
 
     for (const resultat of resultatsPractices) {
-        practicesPerTeam.set(resultat.teamUuid, resultat.practices);
+        practicesPerTeam.set(resultat.teamUuid, resultat.practices || []);
     }
 
-    // 4. BUSCAR ÚLTIMA SESSIÓ DE CADA JUGADOR
+    // 7. BUSCAR ÚLTIMA SESSIÓ DE CADA JUGADOR
+    const avui = new Date();
+    avui.setHours(0, 0, 0, 0);
+
     for (const jugador of jugadors) {
         const userTeamsJugador = jugadorsTeams.get(jugador.uuid) || [];
-        const teamUuids = [...new Set(userTeamsJugador.map(ut => ut.team_uuid))];
+        const teamUuids = [...new Set(userTeamsJugador.map(ut => ut.team_uuid).filter(Boolean))];
 
-        let practicesJugador = [];
-        
-        // SESSIONS DELS SEUS EQUIPS
+        // BUSCAR DIRECTAMENT LA SESSIÓ MÉS RECENT
+        let ultimaSessio = null;
+        let ultimaData = null;
+
         for (const teamUuid of teamUuids) {
             const practices = practicesPerTeam.get(teamUuid) || [];
 
@@ -419,44 +423,46 @@ async function loadEstatRPE(user) {
 
                 const parts = practice.practice_date.split("-");
                 if (parts.length !== 3) continue;
+
                 const data = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
                 data.setHours(0, 0, 0, 0);
-                
-                const avui = new Date();
-                avui.setHours(0, 0, 0, 0);
 
-                // Només sessions ja realitzades
-                if (data <= avui) practicesJugador.push(practice);
+                if (data > avui) continue;
+                if (!ultimaData || data > ultimaData) {
+                    ultimaData = data;
+                    ultimaSessio = practice;
+                }
             }
         }
 
-        if (practicesJugador.length === 0) continue;
+        if (!ultimaSessio) continue;
 
-        const practicesUnics = Array.from(new Map(practicesJugador.map(p => [p.uuid || p.practice_uuid || p.practice_date, p])).values());
-
-        practicesUnics.sort((a, b) => sortKey(b.practice_date).localeCompare(sortKey(a.practice_date)));
-
-        const ultimaSessio = practicesUnics[0];
         const dataUltimaSessio = ultimaSessio.practice_date;
-        const rpe = rpes.find(r => r.player_uuid === jugador.uuid && r.date_practice === dataUltimaSessio);
 
-        // COMPROVAR MOLÈSTIES
+        // RPE DIRECTAMENT DES DEL MAP
+        const rpe = rpeMap.get(`${jugador.uuid}_${dataUltimaSessio}`) || null;
+
+        // MOLÈSTIES
         const teMolesties = rpe && rpe.te_molesties === true;
+
+        // FISIO
+        const fisioDemanada = visitesPendentsFisio.get(jugador.uuid) || null;
+        const fisioAssignada = visitesFisioAssignades.get(jugador.uuid) || null;
 
         // GUARDAR RESULTAT
         estatRPEJugadors.push({
             jugador: jugador,
             dataUltimaSessio: dataUltimaSessio,
-            rpe: rpe || null,
+            rpe: rpe,
             teMolesties: !!teMolesties,
-            teHoraFisioDemanada: visitesPendentsFisio.has(jugador.uuid),
-            injuryFisioDemanada: visitesPendentsFisio.get(jugador.uuid) || null,
-            teFisioAssignada: visitesFisioAssignades.has(jugador.uuid),
-            fisioAssignada: visitesFisioAssignades.get(jugador.uuid) || null
+            teHoraFisioDemanada: !!fisioDemanada,
+            injuryFisioDemanada: fisioDemanada,
+            teFisioAssignada: !!fisioAssignada,
+            fisioAssignada: fisioAssignada
         });
     }
 
-    // 5. ORDENAR JUGADORS PER NOM
+    // 8. ORDENAR JUGADORS
     estatRPEJugadors.sort(
         (a, b) => {
             const nomA = `${a.jugador.player_first_name} ${a.jugador.player_last_name}`;
@@ -465,7 +471,7 @@ async function loadEstatRPE(user) {
         }
     );
 
-    // 6. PINTAR
+    // 9. PINTAR
     pintarEstatRPE();
 }
 
