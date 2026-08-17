@@ -284,35 +284,16 @@ async function loadEstatRPE(user) {
     estatRPEJugadors = [];
     estatRPEActual = user;
 
-    // =====================================================
     // 1. OBTENIR JUGADORS I EQUIPS
-    // =====================================================
-
     let jugadors = [];
     let jugadorsTeams = new Map();
 
-
-    // =====================================================
-    // SUPERADMIN
-    // =====================================================
-
     if (user.role === "SUPERADMIN") {
-
         const totsUsuaris = await getAllUsers();
-
-        jugadors = totsUsuaris.filter(
-            u => u.role === "JUGADOR"
-        );
-
-
+        jugadors = totsUsuaris.filter(u => u.role === "JUGADOR");
         const resultatsTeams = await Promise.all(
             jugadors.map(async jugador => {
-
-                const userTeamsJugador =
-                    await getUserTeamByUserUuid(
-                        jugador.uuid
-                    );
-
+                const userTeamsJugador = await getUserTeamByUserUuid(jugador.uuid);
                 return {
                     uuid: jugador.uuid,
                     teams: userTeamsJugador
@@ -320,170 +301,73 @@ async function loadEstatRPE(user) {
             })
         );
 
-
         for (const resultat of resultatsTeams) {
-
-            jugadorsTeams.set(
-                resultat.uuid,
-                resultat.teams
-            );
+            jugadorsTeams.set(resultat.uuid, resultat.teams);
         }
-    }
-
-
-    // =====================================================
-    // NO SUPERADMIN
-    // =====================================================
-
-    else {
-
-        const meusUserTeams =
-            await getUserTeamByUserUuid(
-                user.uuid
-            );
-
-
-        const meusTeamUuids = [
-            ...new Set(
-                meusUserTeams.map(
-                    ut => ut.team_uuid
-                )
-            )
-        ];
-
+    } else {
+        const meusUserTeams = await getUserTeamByUserUuid(user.uuid);
+        const meusTeamUuids = [...new Set(meusUserTeams.map(ut => ut.team_uuid))];
 
         const jugadorsMap = new Map();
 
-
         for (const teamUuid of meusTeamUuids) {
-
-            const userTeamsEquip =
-                await getPlayersByTeam(
-                    teamUuid
-                );
-
-
+            const userTeamsEquip = await getPlayersByTeam(teamUuid);
+            
             for (const ut of userTeamsEquip) {
+                const jugadorUuid = ut.user_uuid;
 
-                const jugadorUuid =
-                    ut.user_uuid;
+                if (!jugadorsMap.has(jugadorUuid)) jugadorsMap.set(jugadorUuid, []);
 
-
-                if (!jugadorsMap.has(jugadorUuid)) {
-
-                    jugadorsMap.set(
-                        jugadorUuid,
-                        []
-                    );
-                }
-
-
-                jugadorsMap
-                    .get(jugadorUuid)
-                    .push(ut);
+                jugadorsMap.get(jugadorUuid).push(ut);
             }
         }
 
-
-        const jugadorUuids =
-            Array.from(
-                jugadorsMap.keys()
-            );
-
+        const jugadorUuids = Array.from(jugadorsMap.keys());
 
         if (jugadorUuids.length > 0) {
-
-            const users =
-                await getUsersByUserTeam(
-                    jugadorUuids
-                );
-
-
-            jugadors =
-                Array.from(
-                    new Map(
-                        users
-                            .filter(
-                                u =>
-                                    u.role === "JUGADOR"
-                            )
-                            .map(
-                                u => [
-                                    u.uuid,
-                                    u
-                                ]
-                            )
-                    ).values()
-                );
-
+            const users = await getUsersByUserTeam(jugadorUuids);
+            jugadors = Array.from(
+                new Map(users.filter(u => u.role === "JUGADOR").map(u => [u.uuid, u])).values()
+            );
 
             for (const jugador of jugadors) {
-
-                jugadorsTeams.set(
-                    jugador.uuid,
-                    jugadorsMap.get(
-                        jugador.uuid
-                    ) || []
-                );
+                jugadorsTeams.set(jugador.uuid, jugadorsMap.get(jugador.uuid) || []);
             }
         }
     }
 
-
-    // =====================================================
     // 2. OBTENIR TOTS ELS RPE
-    // =====================================================
-
-    const jugadorUuids =
-        jugadors.map(
-            j => j.uuid
-        );
-
-
+    const jugadorUuids = jugadors.map(j => j.uuid);
     let rpes = [];
+    if (jugadorUuids.length > 0) rpes = await getRPEByUsers(jugadorUuids);
 
+    // 2.5. OBTENIR VISITES DE FISIO PENDENTS
+    const visitesFisio = await getAllVisits();
+    const episodesFisio = await getEpisodesByUuid([...new Set(visitesFisio.map(v => v.episode_uuid))]);
+    const injuriesFisio = await getInjuriesByUuid([...new Set(episodesFisio.map(e => e.injury_uuid))]);
+    const visitesPendentsFisio = new Set();
 
-    if (jugadorUuids.length > 0) {
+    for (const visita of visitesFisio) {
+        if (visita.visita_feta === 1) continue;
+        if (visita.date || visita.hour) continue;
+    
+        const episode = episodesFisio.find(e => e.uuid === visita.episode_uuid);
+        if (!episode) continue;
 
-        rpes =
-            await getRPEByUsers(
-                jugadorUuids
-            );
+        const injury = injuriesFisio.find(i => i.uuid === episode.injury_uuid);
+        if (!injury) continue;
+    
+        visitesPendentsFisio.add(injury.user_uuid);
     }
 
-
-    // =====================================================
     // 3. CARREGAR PRÀCTIQUES UNA SOLA VEGADA PER EQUIP
-    // =====================================================
-
     const practicesPerTeam = new Map();
+    const totsElsTeamUuids = [...new Set(Array.from(jugadorsTeams.values()).flat().map(ut => ut.team_uuid))];
 
-
-    const totsElsTeamUuids = [
-        ...new Set(
-            Array.from(
-                jugadorsTeams.values()
-            )
-                .flat()
-                .map(
-                    ut => ut.team_uuid
-                )
-        )
-    ];
-
-
-    const resultatsPractices =
-        await Promise.all(
-
+    const resultatsPractices = await Promise.all(
             totsElsTeamUuids.map(
                 async teamUuid => {
-
-                    const practices =
-                        await getPracticesByTeam(
-                            teamUuid
-                        );
-
-
+                    const practices = await getPracticesByTeam(teamUuid);
                     return {
                         teamUuid,
                         practices
@@ -492,404 +376,153 @@ async function loadEstatRPE(user) {
             )
         );
 
-
     for (const resultat of resultatsPractices) {
-
-        practicesPerTeam.set(
-            resultat.teamUuid,
-            resultat.practices
-        );
+        practicesPerTeam.set(resultat.teamUuid, resultat.practices);
     }
 
-
-    // =====================================================
     // 4. BUSCAR ÚLTIMA SESSIÓ DE CADA JUGADOR
-    // =====================================================
-
     for (const jugador of jugadors) {
-
-        const userTeamsJugador =
-            jugadorsTeams.get(
-                jugador.uuid
-            ) || [];
-
-
-        const teamUuids = [
-            ...new Set(
-                userTeamsJugador.map(
-                    ut => ut.team_uuid
-                )
-            )
-        ];
-
+        const userTeamsJugador = jugadorsTeams.get(jugador.uuid) || [];
+        const teamUuids = [...new Set(userTeamsJugador.map(ut => ut.team_uuid))];
 
         let practicesJugador = [];
-
-
-        // =================================================
+        
         // SESSIONS DELS SEUS EQUIPS
-        // =================================================
-
         for (const teamUuid of teamUuids) {
-
-            const practices =
-                practicesPerTeam.get(
-                    teamUuid
-                ) || [];
-
+            const practices = practicesPerTeam.get(teamUuid) || [];
 
             for (const practice of practices) {
+                if (!practice.practice_date || practice.practice_date === "-") continue;
 
-                if (
-                    !practice.practice_date ||
-                    practice.practice_date === "-"
-                ) {
-                    continue;
-                }
-
-
-                const parts =
-                    practice.practice_date.split("-");
-
-
-                if (parts.length !== 3) {
-                    continue;
-                }
-
-
-                const data =
-                    new Date(
-                        Number(parts[2]),
-                        Number(parts[1]) - 1,
-                        Number(parts[0])
-                    );
-
-
-                data.setHours(
-                    0,
-                    0,
-                    0,
-                    0
-                );
-
-
-                const avui =
-                    new Date();
-
-
-                avui.setHours(
-                    0,
-                    0,
-                    0,
-                    0
-                );
-
+                const parts = practice.practice_date.split("-");
+                if (parts.length !== 3) continue;
+                const data = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+                data.setHours(0, 0, 0, 0);
+                
+                const avui = new Date();
+                avui.setHours(0, 0, 0, 0);
 
                 // Només sessions ja realitzades
-                if (data <= avui) {
-
-                    practicesJugador.push(
-                        practice
-                    );
-                }
+                if (data <= avui) practicesJugador.push(practice);
             }
         }
 
+        if (practicesJugador.length === 0) continue;
 
-        // =================================================
-        // SI NO TÉ CAP SESSIÓ
-        // =================================================
+        const practicesUnics = Array.from(new Map(practicesJugador.map(p => [p.uuid || p.practice_uuid || p.practice_date, p])).values());
 
-        if (
-            practicesJugador.length === 0
-        ) {
+        practicesUnics.sort((a, b) => sortKey(b.practice_date).localeCompare(sortKey(a.practice_date)));
 
-            continue;
-        }
+        const ultimaSessio = practicesUnics[0];
+        const dataUltimaSessio = ultimaSessio.practice_date;
+        const rpe = rpes.find(r => r.player_uuid === jugador.uuid && r.date_practice === dataUltimaSessio);
 
-
-        // =================================================
-        // ELIMINAR DUPLICATS
-        // =================================================
-
-        const practicesUnics =
-            Array.from(
-                new Map(
-                    practicesJugador.map(
-                        p => [
-                            p.uuid ||
-                            p.practice_uuid ||
-                            p.practice_date,
-                            p
-                        ]
-                    )
-                ).values()
-            );
-
-
-        // =================================================
-        // ORDENAR MÉS RECENT -> MÉS ANTIGA
-        // =================================================
-
-        practicesUnics.sort(
-            (a, b) =>
-                sortKey(
-                    b.practice_date
-                ).localeCompare(
-                    sortKey(
-                        a.practice_date
-                    )
-                )
-        );
-
-
-        // =================================================
-        // ÚLTIMA SESSIÓ
-        // =================================================
-
-        const ultimaSessio =
-            practicesUnics[0];
-
-
-        const dataUltimaSessio =
-            ultimaSessio.practice_date;
-
-
-
-        // =================================================
-        // BUSCAR RPE D'AQUELLA DATA
-        // =================================================
-
-        const rpe =
-            rpes.find(
-
-                r =>
-                    r.player_uuid ===
-                    jugador.uuid &&
-
-                    r.date_practice ===
-                    dataUltimaSessio
-            );
-
-
-
-        // =================================================
         // COMPROVAR MOLÈSTIES
-        // =================================================
+        const teMolesties = rpe && rpe.te_molesties === true;
 
-        const teMolesties =
-            rpe &&
-            (
-                rpe.te_molesties === true ||
-                rpe.te_molesties === "true" ||
-                rpe.te_molesties === 1 ||
-                rpe.te_molesties === "1"
-            );
-
-
-        // =================================================
         // GUARDAR RESULTAT
-        // =================================================
-
         estatRPEJugadors.push({
-
             jugador: jugador,
-
-            dataUltimaSessio:
-                dataUltimaSessio,
-
-            rpe:
-                rpe || null,
-
-            teMolesties:
-                !!teMolesties
+            dataUltimaSessio: dataUltimaSessio,
+            rpe: rpe || null,
+            teMolesties: !!teMolesties,
+            teHoraFisioDemanada: visitesPendentsFisio.has(jugador.uuid)
         });
     }
 
-
-    // =====================================================
     // 5. ORDENAR JUGADORS PER NOM
-    // =====================================================
-
     estatRPEJugadors.sort(
         (a, b) => {
-
-            const nomA =
-                `${a.jugador.player_first_name} ${a.jugador.player_last_name}`;
-
-
-            const nomB =
-                `${b.jugador.player_first_name} ${b.jugador.player_last_name}`;
-
-
-            return nomA.localeCompare(
-                nomB
-            );
+            const nomA = `${a.jugador.player_first_name} ${a.jugador.player_last_name}`;
+            const nomB = `${b.jugador.player_first_name} ${b.jugador.player_last_name}`;
+            return nomA.localeCompare(nomB);
         }
     );
 
-
-    // =====================================================
     // 6. PINTAR
-    // =====================================================
-
     pintarEstatRPE();
 }
 
 
-
-// =====================================================
-// PINTAR ESTAT RPE
-// =====================================================
-
 function pintarEstatRPE() {
-
-    const contenidor =
-        document.getElementById("llistaEstatRPE");
-
+    
+    const contenidor = document.getElementById("llistaEstatRPE");
     contenidor.innerHTML = "";
 
     for (const registre of estatRPEJugadors) {
-
         const jugador = registre.jugador;
         const rpe = registre.rpe;
-
-        // =================================================
-        // FILA
-        // =================================================
 
         const fila = document.createElement("div");
         fila.className = "filaJugadorEstatRPE";
 
-
-        // =================================================
-        // NOM
-        // =================================================
-
         const nom = document.createElement("div");
         nom.className = "nomJugadorEstatRPE";
-
-        nom.textContent =
-            `${capitalize(jugador.name)} ${capitalize(jugador.surname)}`.trim();
-
-
-        // =================================================
-        // INFORMACIÓ
-        // =================================================
+        nom.textContent = `${capitalize(jugador.name)} ${capitalize(jugador.surname)}`.trim();
 
         const info = document.createElement("div");
         info.className = "infoJugadorEstatRPE";
 
-
-        // =================================================
-        // DATA
-        // =================================================
-
         const data = document.createElement("div");
         data.className = "dataJugadorEstatRPE";
+        data.textContent = registre.dataUltimaSessio || "-";
+    
+        const rpeInfo = document.createElement("div");
+        rpeInfo.className = "rpeJugadorEstatRPE";
 
-        data.textContent =
-            registre.dataUltimaSessio || "-";
+        const bola = document.createElement("span");
+        bola.className = "bolaRPE";
 
+        const textRPE = document.createElement("span");
+        textRPE.className = "textRPE";
 
-        // =================================================
-// RPE
-// =================================================
+        if (!registre.dataUltimaSessio) {
+        } else if (rpe) {
+            bola.classList.add("bolaRPEVerd");
+            bola.title = "RPE registrat";
+            textRPE.textContent = "RPE registrat";
+        } else {
+            bola.classList.add("bolaRPETvermella");
+            bola.title = "RPE pendent";
+            textRPE.textContent = "RPE pendent";
+        }
 
-const rpeInfo = document.createElement("div");
-rpeInfo.className = "rpeJugadorEstatRPE";
-
-const bola = document.createElement("span");
-bola.className = "bolaRPE";
-
-const textRPE = document.createElement("span");
-textRPE.className = "textRPE";
-
-if (!registre.dataUltimaSessio) {
-
-    // No mostrar cap rodona ni text
-
-} else if (rpe) {
-
-    bola.classList.add("bolaRPEVerd");
-    bola.title = "RPE registrat";
-
-    textRPE.textContent = "RPE registrat";
-
-} else {
-
-    bola.classList.add("bolaRPETvermella");
-    bola.title = "RPE pendent";
-
-    textRPE.textContent = "RPE pendent";
-}
-
-if (registre.dataUltimaSessio) {
-    rpeInfo.appendChild(bola);
-    rpeInfo.appendChild(textRPE);
-}
-
-
-        // =================================================
-        // MOLÈSTIES
-        // =================================================
+        if (registre.dataUltimaSessio) {
+            rpeInfo.appendChild(bola);
+            rpeInfo.appendChild(textRPE);
+        }
 
         const molesties = document.createElement("div");
         molesties.className = "molestiesJugadorEstatRPE";
-
-
-        if (
-            registre.teMolesties &&
-            rpe &&
-            rpe.molesties
-        ) {
-
-            molesties.textContent =
-                rpe.molesties;
-
-
-            // =============================================
-            // RELLOTGE
-            // =============================================
-
-            const botoFisio =
-                document.createElement("button");
-
-            botoFisio.className =
-                "botoDemanarFisio";
-
+        
+        if (registre.teMolesties && rpe && rpe.molesties) {
+            molesties.textContent = rpe.molesties;
+        
+            const botoFisio = document.createElement("button");
+            botoFisio.className = "botoDemanarFisio";
             botoFisio.type = "button";
-
-            botoFisio.title =
-                "Demanar hora de fisioteràpia";
-
+            botoFisio.title = "Demanar hora de fisioteràpia";
             botoFisio.innerHTML = "🕐";
-
-            botoFisio.addEventListener(
-                "click",
-                () => {
-                    demanarFisioDesDeRPE(
-                        jugador,
-                        rpe,
-                        botoFisio
-                    );
-                }
-            );
-
-            molesties.appendChild(
-                botoFisio
-            );
-
+            botoFisio.addEventListener("click", () => {
+                demanarFisioDesDeRPE(jugador, rpe, botoFisio);
+            });
+            molesties.appendChild(botoFisio);
+        } else if (registre.teHoraFisioDemanada) {
+            const textHora = document.createElement("span");
+            textHora.textContent = "Hora demanada";
+            const botoHora = document.createElement("button");
+            botoHora.className = "botoDemanarFisio";
+            botoHora.type = "button";
+            botoHora.title = "Assignar hora de fisioteràpia";
+            botoHora.innerHTML = "🕐";
+            botoHora.addEventListener("click", () => {
+                mostrarPantalla("assignarHora");
+            });
+            molesties.appendChild(textHora);
+            molesties.appendChild(botoHora);
         } else {
-
-            molesties.textContent =
-                "Sense molèsties";
+            molesties.textContent = "Sense molèsties";
         }
-
-
-        // =================================================
-        // AFEGIR
-        // =================================================
 
         info.appendChild(data);
         info.appendChild(rpeInfo);
@@ -908,35 +541,14 @@ if (registre.dataUltimaSessio) {
 // ACCÉS A MANAGEMENT
 // =====================================================
 
-document
-    .getElementById(
-        "accedirAppEstatRPE"
-    )
-    .addEventListener(
-        "click",
-        async () => {
+document.getElementById("accedirAppEstatRPE").addEventListener("click", async () => {
+    const code = obtenirCodeLocal();
+    const user = await fetchUserByCode(code);
+    
+    if (!user) {
+        sortir();
+        return;
+    }
 
-            const code =
-                obtenirCodeLocal();
-
-
-            const user =
-                await fetchUserByCode(
-                    code
-                );
-
-
-            if (!user) {
-
-                sortir();
-
-                return;
-            }
-
-
-            mostrarPantalla(
-                "management"
-            );
-        }
-    );
-
+    mostrarPantalla("management");
+});
