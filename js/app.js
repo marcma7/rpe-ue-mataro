@@ -344,6 +344,31 @@ async function loadEstatRPE(user) {
         rpeMap.set(`${rpe.player_uuid}_${rpe.date_practice}`, rpe);
     }
 
+    // EQUIPS QUE JA TENEN ALMENYS UN RPE REGISTRAT AVUI
+const araAvui = new Date();
+
+const avuiString =
+    String(araAvui.getDate()).padStart(2, "0") + "-" +
+    String(araAvui.getMonth() + 1).padStart(2, "0") + "-" +
+    araAvui.getFullYear();
+
+const equipsAmbRPEAvui = new Set();
+
+for (const jugador of jugadors) {
+
+    const userTeamsJugador = jugadorsTeams.get(jugador.uuid) || [];
+
+    if (!rpeMap.has(`${jugador.uuid}_${avuiString}`)) {
+        continue;
+    }
+
+    for (const ut of userTeamsJugador) {
+        if (ut.team_uuid) {
+            equipsAmbRPEAvui.add(ut.team_uuid);
+        }
+    }
+}
+
     // 5. PREPARAR FISIO
     const episodeUuids = [...new Set(visitesFisio.map(v => v.episode_uuid).filter(Boolean))];
     const episodesFisio = episodeUuids.length > 0 ? await getEpisodesByUuid(episodeUuids) : [];
@@ -403,17 +428,40 @@ async function loadEstatRPE(user) {
         practicesPerTeam.set(resultat.teamUuid, resultat.practices || []);
     }
 
+    // 6.1. CARREGAR PLAYER_TEAM_PRACTICE_TIME
+
+const totesPractices = resultatsPractices.flatMap(
+    r => r.practices || []
+);
+
+const practiceUuids = totesPractices
+    .map(p => p.uuid)
+    .filter(Boolean);
+
+const ptptResultat = await getPTPTByPractice(practiceUuids);
+
+// MAPA: player_team_uuid + practice_uuid
+const ptptMap = new Map();
+
+for (const ptpt of ptptResultat) {
+    ptptMap.set(
+        `${ptpt.player_team_uuid}_${ptpt.practice_uuid}`,
+        ptpt
+    );
+}
+
     // 7. BUSCAR ÚLTIMA SESSIÓ DE CADA JUGADOR
     const avui = new Date();
     avui.setHours(0, 0, 0, 0);
 
     for (const jugador of jugadors) {
-        const userTeamsJugador = jugadorsTeams.get(jugador.uuid) || [];
-        const teamUuids = [...new Set(userTeamsJugador.map(ut => ut.team_uuid).filter(Boolean))];
+        const userTeamsJug = jugadorsTeams.get(jugador.uuid) || [];
+        const teamUuids = [...new Set(userTeamsJug.map(ut => ut.team_uuid).filter(Boolean))];
 
         // BUSCAR DIRECTAMENT LA SESSIÓ MÉS RECENT
         let ultimaSessio = null;
-        let ultimaData = null;
+let ultimaData = null;
+let ultimaSessioTeamUuid = null;
 
         for (const teamUuid of teamUuids) {
             const practices = practicesPerTeam.get(teamUuid) || [];
@@ -427,11 +475,23 @@ async function loadEstatRPE(user) {
                 const data = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
                 data.setHours(0, 0, 0, 0);
 
-                if (data > avui) continue;
-                if (!ultimaData || data > ultimaData) {
-                    ultimaData = data;
-                    ultimaSessio = practice;
-                }
+                // NO COMPTAR SESSIONS FUTURES
+if (data > avui) continue;
+
+// LA SESSIÓ D'AVUI NOMÉS COMPTA SI
+// JA HI HA ALMENYS UN RPE REGISTRAT D'AQUELL EQUIP
+if (
+    data.getTime() === avui.getTime() &&
+    !equipsAmbRPEAvui.has(teamUuid)
+) {
+    continue;
+}
+
+if (!ultimaData || data > ultimaData) {
+    ultimaData = data;
+    ultimaSessio = practice;
+    ultimaSessioTeamUuid = teamUuid;
+}
             }
         }
 
@@ -441,6 +501,19 @@ async function loadEstatRPE(user) {
 
         // RPE DIRECTAMENT DES DEL MAP
         const rpe = rpeMap.get(`${jugador.uuid}_${dataUltimaSessio}`) || null;
+
+        // COMPROVAR SI EL JUGADOR ENTRENA EN AQUESTA SESSIÓ
+const userTeamsJug2 = jugadorsTeams.get(jugador.uuid) || [];
+
+const playerTeam = userTeamsJug2.find(
+    ut => ut.team_uuid === ultimaSessio.team_uuid
+);
+
+const tePTPT = playerTeam
+    ? ptptMap.has(`${playerTeam.uuid}_${ultimaSessio.uuid}`)
+    : false;
+
+const noEntrena = !tePTPT;
 
         // MOLÈSTIES
         const teMolesties = rpe && rpe.te_molesties === true;
@@ -454,6 +527,7 @@ async function loadEstatRPE(user) {
             jugador: jugador,
             dataUltimaSessio: dataUltimaSessio,
             rpe: rpe,
+            noEntrena: noEntrena,
             teMolesties: !!teMolesties,
             teHoraFisioDemanada: !!fisioDemanada,
             injuryFisioDemanada: fisioDemanada,
@@ -508,16 +582,31 @@ function pintarEstatRPE() {
         const textRPE = document.createElement("span");
         textRPE.className = "textRPE";
 
-        if (!registre.dataUltimaSessio) {
-        } else if (rpe) {
-            bola.classList.add("bolaRPEVerd");
-            bola.title = "RPE registrat";
-            textRPE.textContent = "RPE registrat";
-        } else {
-            bola.classList.add("bolaRPETvermella");
-            bola.title = "RPE pendent";
-            textRPE.textContent = "RPE pendent";
-        }
+        if (registre.noEntrena) {
+
+    textRPE.textContent = "No entrena";
+    rpeInfo.appendChild(textRPE);
+
+} else if (!registre.dataUltimaSessio) {
+
+} else if (rpe) {
+
+    bola.classList.add("bolaRPEVerd");
+    bola.title = "RPE registrat";
+    textRPE.textContent = "RPE registrat";
+
+    rpeInfo.appendChild(bola);
+    rpeInfo.appendChild(textRPE);
+
+} else {
+
+    bola.classList.add("bolaRPETvermella");
+    bola.title = "RPE pendent";
+    textRPE.textContent = "RPE pendent";
+
+    rpeInfo.appendChild(bola);
+    rpeInfo.appendChild(textRPE);
+}
 
         if (registre.dataUltimaSessio) {
             rpeInfo.appendChild(bola);
