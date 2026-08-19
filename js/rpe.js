@@ -10,6 +10,8 @@ let teRegla = null;
 async function loadRPE(user) {
     isFinished = false;
 
+    console.log("A");
+
     netejarMolestiesRPE();
     netejarReglaRPE();
 
@@ -18,6 +20,7 @@ async function loadRPE(user) {
     const teamUuids = userTeams.map(x => x.uuid);
 
     ptpt = await getPTPTByUserTeamUuids(teamUuids);
+    console.log("B");
 
     const practiceUuids = ptpt.map(x => x.practice_uuid);
     const practices = await getPracticesByUuids(practiceUuids);
