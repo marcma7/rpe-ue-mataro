@@ -5,28 +5,76 @@ let selectedRPE = -1;
 let isFinished = false;
 let teMolesties = null;
 let textMolesties = "";
-
+let teRegla = null;
 
 async function loadRPE(user) {
     isFinished = false;
 
     netejarMolestiesRPE();
+    netejarReglaRPE();
 
     const userTeams = await getUserTeamByUserUuid(user.uuid);
+
     const teamUuids = userTeams.map(x => x.uuid);
+
     ptpt = await getPTPTByUserTeamUuids(teamUuids);
+
     const practiceUuids = ptpt.map(x => x.practice_uuid);
     const practices = await getPracticesByUuids(practiceUuids);
+
+    // Mostrar la pregunta de regla si algun dels equips de l'usuari
+    // té asks_regla = true
+    const preguntaRegla = userTeams.some(team => team.asks_regla === true);
+
+    document.getElementById("reglaRPE").style.display =
+        preguntaRegla ? "block" : "none";
+
+    if (!preguntaRegla) {
+        teRegla = null;
+    }
+
     const avui = new Date();
     const validDates = [];
 
     for (const practice of practices) {
         const parts = practice.practice_date.split("-");
-        const data = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
-        if (data < avui) validDates.push(practice.practice_date);
+        const data = new Date(
+            Number(parts[2]),
+            Number(parts[1]) - 1,
+            Number(parts[0])
+        );
+
+        if (data < avui) {
+            validDates.push(practice.practice_date);
+        }
     }
 
     dates = validDates;
+}
+
+
+document
+    .querySelectorAll('input[name="teRegla"]')
+    .forEach(input => {
+
+        input.addEventListener("change", function () {
+
+            teRegla = this.value === "SI";
+
+        });
+
+    });
+
+
+function netejarReglaRPE() {
+
+    document
+        .querySelectorAll('input[name="teRegla"]')
+        .forEach(input => {
+            input.checked = false;
+        });
+
+    teRegla = null;
 }
 
 
@@ -173,7 +221,9 @@ textMolesties =
 
     te_molesties: teMolesties,
 
-    molesties: textMolesties
+    molesties: textMolesties,
+
+    te_regla: teRegla
 };
 
 
