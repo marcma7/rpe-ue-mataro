@@ -10,8 +10,6 @@ let teRegla = null;
 async function loadRPE(user) {
     isFinished = false;
 
-    console.log("A");
-
     netejarMolestiesRPE();
     netejarReglaRPE();
 
@@ -20,21 +18,31 @@ async function loadRPE(user) {
     const teamUuids = userTeams.map(x => x.uuid);
 
     ptpt = await getPTPTByUserTeamUuids(teamUuids);
-    console.log("B");
 
     const practiceUuids = ptpt.map(x => x.practice_uuid);
     const practices = await getPracticesByUuids(practiceUuids);
 
-    // Mostrar la pregunta de regla si algun dels equips de l'usuari
-    // té asks_regla = true
-    const preguntaRegla = userTeams.some(
-    userTeam => userTeam.teams?.asks_regla === true
-);
+   // =====================================================
+    // MIRAR SI ALGUN EQUIP DE L'USUARI DEMANA REGLA
+    // =====================================================
 
-console.log("USER TEAMS:", userTeams);
-console.log("PREGUNTA REGLA:", preguntaRegla);
+    const teams = await getAllTeams();
 
-document.getElementById("reglaRPE").style.display = preguntaRegla ? "block" : "none";
+    console.log("TEAMS:", teams);
+
+    const userTeamUuids = userTeams.map(x => x.team_uuid);
+
+    const preguntaRegla = teams.some(team =>
+        userTeamUuids.includes(team.uuid) &&
+        team.asks_regla === true
+    );
+
+    console.log("EQUIPS DE L'USUARI:", userTeamUuids);
+    console.log("PREGUNTA REGLA:", preguntaRegla);
+
+    document.getElementById("reglaRPE").style.display =
+        preguntaRegla ? "block" : "none";
+
     if (!preguntaRegla) {
         teRegla = null;
     }
