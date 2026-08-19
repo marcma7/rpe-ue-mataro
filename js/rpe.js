@@ -25,6 +25,7 @@ async function loadRPE(user) {
     // Mostrar la pregunta de regla si algun dels equips de l'usuari
     // té asks_regla = true
     const preguntaRegla = userTeams.some(team => team.asks_regla === true);
+    console.log(userTeams);
 
     document.getElementById("reglaRPE").style.display =
         preguntaRegla ? "block" : "none";
