@@ -27,12 +27,14 @@ async function loadRPE(user) {
 
     // Mostrar la pregunta de regla si algun dels equips de l'usuari
     // té asks_regla = true
-    const preguntaRegla = userTeams.some(team => team.asks_regla === true);
-    console.log(userTeams);
+    const preguntaRegla = userTeams.some(
+    userTeam => userTeam.teams?.asks_regla === true
+);
 
-    document.getElementById("reglaRPE").style.display =
-        preguntaRegla ? "block" : "none";
+console.log("USER TEAMS:", userTeams);
+console.log("PREGUNTA REGLA:", preguntaRegla);
 
+document.getElementById("reglaRPE").style.display = preguntaRegla ? "block" : "none";
     if (!preguntaRegla) {
         teRegla = null;
     }
