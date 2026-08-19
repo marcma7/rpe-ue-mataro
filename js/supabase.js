@@ -80,17 +80,19 @@ async function getQuestionarisContestats(userUuid) {
 }
 
 
-async function getUserTeamByUserUuid(userUuid) {
-    const url = SUPABASE_URL + "/rest/v1/user_teams?user_uuid=eq." + encodeURIComponent(userUuid);
-
-    const resposta = await fetch(url, {
-        headers: {
-            "Accept": "application/json",
-            "apikey": SUPABASE_API_KEY,
-            "Authorization": "Bearer " + SUPABASE_API_KEY
+async function getUserTeamByUserUuid(userUuid){
+    const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/user_teams?user_uuid=eq.${userUuid}&select=*,teams(asks_regla)`,
+        {
+            headers:{
+                "Accept":"application/json",
+                "apikey":SUPABASE_API_KEY,
+                "Authorization":"Bearer " + SUPABASE_API_KEY
+            }
         }
-    });
-    return await resposta.json();
+    );
+
+    return await response.json();
 }
 
 
