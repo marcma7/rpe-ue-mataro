@@ -118,6 +118,10 @@ async function iniciarAplicacio() {
         return;
     }
 
+    if (user && Notification.permission === "default") {
+        activarNotificacionsPush(user);
+    }
+
     await decideRoute(user);
 }
 
