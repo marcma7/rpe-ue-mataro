@@ -519,13 +519,20 @@ async function loadEstatRPE(user) {
     }
 
     // 8. ORDENAR JUGADORS
-    estatRPEJugadors.sort(
-        (a, b) => {
-            const nomA = `${a.jugador.player_first_name} ${a.jugador.player_last_name}`;
-            const nomB = `${b.jugador.player_first_name} ${b.jugador.player_last_name}`;
-            return nomA.localeCompare(nomB);
-        }
-    );
+    estatRPEJugadors.sort((a, b) => {
+        const equipsA = (a.equips || []).map(abreujarEquip).filter(Boolean).join(", ");
+        const equipsB = (b.equips || []).map(abreujarEquip).filter(Boolean).join(", ");
+        
+        // Primer: equip    
+        const comparacioEquip = equipsA.localeCompare(equipsB, "ca", { sensitivity: "base" });
+        if (comparacioEquip !== 0) return comparacioEquip;
+
+        // Després: jugador
+        const nomA = `${a.jugador.player_first_name || ""} ${a.jugador.player_last_name || ""}`.trim();
+        const nomB = `${b.jugador.player_first_name || ""} ${b.jugador.player_last_name || ""}`.trim();
+
+        return nomA.localeCompare(nomB, "ca", { sensitivity: "base" });
+    });
 
     // 9. PINTAR
     pintarEstatRPE();
