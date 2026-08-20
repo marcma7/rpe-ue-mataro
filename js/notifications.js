@@ -1,3 +1,5 @@
+const VAPID_PUBLIC_KEY = "BMunodwtCSBzKSm8e63o99tTBaw6cUnYt3pn8n1nPlYCnkSsID-tStZjw4GrZLn6BBYSSqVWTMWYq6_k-U0GEf4"; 
+
 async function activarNotificacionsPush(user) {
 
     if (!("serviceWorker" in navigator)) {
