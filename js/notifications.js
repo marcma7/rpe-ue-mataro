@@ -19,7 +19,6 @@ async function activarNotificacionsPush(user) {
 
     try {
 
-        // 1. Registrar el Service Worker
         const registration =
             await navigator.serviceWorker.register(
                 "./service-worker.js"
@@ -30,46 +29,32 @@ async function activarNotificacionsPush(user) {
             registration
         );
 
-
-        // 2. Demanar permís per a les notificacions
         let permission = Notification.permission;
 
         if (permission === "default") {
-
-            permission =
-                await Notification.requestPermission();
+            permission = await Notification.requestPermission();
         }
 
         if (permission !== "granted") {
-
             console.log(
                 "L'usuari no ha donat permís per a les notificacions."
             );
-
             return false;
         }
 
-
-        // 3. Mirar si ja existeix una subscripció
         let subscription =
             await registration.pushManager.getSubscription();
 
-
-        // 4. Si no existeix, crear-la
         if (!subscription) {
 
             subscription =
                 await registration.pushManager.subscribe({
                     userVisibleOnly: true,
-
-                    // AIXÒ HO POSAREM AL SEGÜENT PAS
                     applicationServerKey:
                         urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
                 });
         }
 
-
-        // 5. Convertir la subscripció a JSON
         const subscriptionJSON =
             subscription.toJSON();
 
@@ -78,43 +63,45 @@ async function activarNotificacionsPush(user) {
             subscriptionJSON
         );
 
-
-        // 6. Guardar-la a Supabase
-        const { error } = await supabase
-            .from("push_subscriptions")
-            .upsert(
-                {
-                    user_uuid: user.uuid,
-
-                    endpoint:
-                        subscriptionJSON.endpoint,
-
-                    p256dh:
-                        subscriptionJSON.keys.p256dh,
-
-                    auth:
-                        subscriptionJSON.keys.auth,
-
-                    updated_at:
-                        new Date().toISOString()
+        // GUARDAR A SUPABASE
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/push_subscriptions?on_conflict=user_uuid,endpoint`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Prefer": "resolution=merge-duplicates,return=representation",
+                    "apikey": SUPABASE_API_KEY,
+                    "Authorization": "Bearer " + SUPABASE_API_KEY
                 },
-                {
-                    onConflict:
-                        "user_uuid,endpoint"
-                }
-            );
+                body: JSON.stringify({
+                    user_uuid: user.uuid,
+                    endpoint: subscriptionJSON.endpoint,
+                    p256dh: subscriptionJSON.keys.p256dh,
+                    auth: subscriptionJSON.keys.auth,
+                    updated_at: new Date().toISOString()
+                })
+            }
+        );
 
+        if (!response.ok) {
 
-        if (error) {
+            const text = await response.text();
 
             console.error(
                 "Error guardant la subscripció:",
-                error
+                text
             );
 
             return false;
         }
 
+        const resultat = await response.json();
+
+        console.log(
+            "Subscripció guardada correctament:",
+            resultat
+        );
 
         console.log(
             "Notificacions push activades correctament."
