@@ -22,7 +22,7 @@ async function activarNotificacionsPush(user) {
         // 1. Registrar el Service Worker
         const registration =
             await navigator.serviceWorker.register(
-                "/service-worker.js"
+                "./service-worker.js"
             );
 
         console.log(
