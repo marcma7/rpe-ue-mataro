@@ -118,17 +118,6 @@ async function iniciarAplicacio() {
         return;
     }
 
-    if (user && Notification.permission === "default") {
-        const activades = await activarNotificacionsPush(user);
-
-        if (activades) {
-            alert("Notificacions activades correctament.");
-        } else {
-            alert("No s'han pogut activar les notificacions.");
-        }
-        
-    }
-
     await decideRoute(user);
 }
 
@@ -161,6 +150,17 @@ async function entrar() {
 
 
 async function decideRoute(user) {
+
+     if (user) {
+        const activades = await activarNotificacionsPush(user);
+
+        if (activades) {
+            alert("Notificacions activades correctament.");
+        } else {
+            alert("No s'han pogut activar les notificacions.");
+        }
+        
+    }
 
     if (user.role === "JUGADOR") {
 
