@@ -336,19 +336,13 @@ async function loadEstatRPE(user) {
     }
 
     // 1.1 OBTENIR NOMS DELS EQUIPS
-const totsElsTeamUuids = [
-    ...new Set(
-        Array.from(jugadorsTeams.values())
-            .flat()
-            .map(ut => ut.team_uuid)
-            .filter(Boolean)
-    )
-];
-
-const equips = await getTeamsByUuid(totsElsTeamUuids);
+const totsElsEquips = await getAllTeams();
 
 const equipsMap = new Map(
-    equips.map(equip => [equip.uuid, equip.name])
+    totsElsEquips.map(equip => [
+        equip.uuid,
+        equip.team_name
+    ])
 );
 
     // 2. UUID DELS JUGADORS
