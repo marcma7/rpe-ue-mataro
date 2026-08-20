@@ -158,45 +158,61 @@ document
             userUuid
         );
 
-        const {
-            data,
-            error
-        } = await supabase.functions.invoke(
-            "clever-service",
-            {
-                body: {
-                    user_uuid: userUuid,
-                    title: "🔔 Notificació de prova",
-                    body: "Perfecte! Les notificacions push funcionen.",
-                    url: "/"
+        try {
+
+            const response = await fetch(
+                `${SUPABASE_URL}/functions/v1/send-push`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "apikey": SUPABASE_API_KEY,
+                        "Authorization":
+                            "Bearer " + SUPABASE_API_KEY
+                    },
+                    body: JSON.stringify({
+                        user_uuid: userUuid,
+                        title: "🔔 Notificació de prova",
+                        body: "Perfecte! Les notificacions push funcionen.",
+                        url: "/"
+                    })
                 }
+            );
+
+            const data = await response.json();
+
+            console.log(
+                "Resposta Edge Function:",
+                data
+            );
+
+            if (!response.ok) {
+
+                console.error(
+                    "Error Edge Function:",
+                    data
+                );
+
+                alert(
+                    "Error enviant la notificació."
+                );
+
+                return;
             }
-        );
 
-        console.log(
-            "Resposta Edge Function:",
-            data
-        );
+            alert(
+                "Notificació enviada."
+            );
 
-        console.log(
-            "Error Edge Function:",
-            error
-        );
+        } catch (error) {
 
-        if (error) {
             console.error(
-                "Error enviant notificació:",
+                "Error fent la petició:",
                 error
             );
 
             alert(
-                "Error enviant la notificació. Mira la consola."
+                "Error enviant la notificació."
             );
-
-            return;
         }
-
-        alert(
-            "Notificació enviada."
-        );
     });
