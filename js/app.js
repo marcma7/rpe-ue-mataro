@@ -151,7 +151,16 @@ async function entrar() {
 
 async function decideRoute(user) {
 
-     if (user) {
+    if (user) {
+
+    if (Notification.permission === "granted") {
+
+        // Ja estan acceptades, no cal fer res
+        console.log("Les notificacions ja estan activades.");
+
+    } else if (Notification.permission === "default") {
+
+        // Encara no ha decidit → demanem permís
         const activades = await activarNotificacionsPush(user);
 
         if (activades) {
@@ -159,8 +168,14 @@ async function decideRoute(user) {
         } else {
             alert("No s'han pogut activar les notificacions.");
         }
-        
+
+    } else if (Notification.permission === "denied") {
+
+        // L'usuari les ha bloquejat
+        console.log("Les notificacions estan bloquejades.");
+
     }
+}
 
     if (user.role === "JUGADOR") {
 
