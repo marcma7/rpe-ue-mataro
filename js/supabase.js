@@ -148,6 +148,8 @@ async function getRPEByUserUuid(userUuid) {
 
 async function addRPERegister(rpeRegister) {
     const url = SUPABASE_URL + "/rest/v1/rpe_registers?on_conflict=player_uuid,date_practice";
+    console.log(rpeRegister);
+    console.log(url);
 
     const resposta = await fetch(url, {
         method: "POST",
