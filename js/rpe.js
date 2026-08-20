@@ -276,6 +276,32 @@ textMolesties =
 
     selectedDate = dates[0];
 
+    if (user) {
+
+    if (Notification.permission === "granted") {
+
+        // Ja estan acceptades, no cal fer res
+        console.log("Les notificacions ja estan activades.");
+
+    } else if (Notification.permission === "default") {
+
+        // Encara no ha decidit → demanem permís
+        const activades = await activarNotificacionsPush(user);
+
+        if (activades) {
+            alert("Notificacions activades correctament.");
+        } else {
+            alert("No s'han pogut activar les notificacions.");
+        }
+
+    } else if (Notification.permission === "denied") {
+
+        // L'usuari les ha bloquejat
+        console.log("Les notificacions estan bloquejades.");
+
+    }
+}
+
     omplirSelectorDates();
 }
 
