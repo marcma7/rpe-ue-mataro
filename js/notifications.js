@@ -162,7 +162,7 @@ document
             data,
             error
         } = await supabase.functions.invoke(
-            "send-push",
+            "clever-service",
             {
                 body: {
                     user_uuid: userUuid,
