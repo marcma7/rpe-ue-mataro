@@ -690,3 +690,44 @@ document.getElementById("accedirAppEstatRPE").addEventListener("click", async ()
 
 
 
+document
+    .getElementById("btnProvarNotificacio")
+    .addEventListener("click", async () => {
+
+        const {
+            data: { user },
+            error: userError
+        } = await supabase.auth.getUser();
+
+        if (userError || !user) {
+            alert("No hi ha cap usuari autenticat.");
+            return;
+        }
+
+        console.log("Enviant notificació a:", user.id);
+
+        const {
+            data,
+            error
+        } = await supabase.functions.invoke(
+            "send-push",
+            {
+                body: {
+                    user_uuid: user.id,
+                    title: "🔔 Notificació de prova",
+                    body: "Perfecte! Les notificacions push funcionen.",
+                    url: "/"
+                }
+            }
+        );
+
+        console.log("Resposta Edge Function:", data);
+        console.log("Error Edge Function:", error);
+
+        if (error) {
+            alert("Error enviant la notificació. Mira la consola.");
+            return;
+        }
+
+        alert("Notificació enviada.");
+    });
