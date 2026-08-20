@@ -142,22 +142,21 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 
-
 document
     .getElementById("btnProvarNotificacio")
     .addEventListener("click", async () => {
 
-        const {
-            data: { user },
-            error: userError
-        } = await supabase.auth.getUser();
+        const userUuid = obtenirUserUuidLocal();
 
-        if (userError || !user) {
-            alert("No hi ha cap usuari autenticat.");
+        if (!userUuid) {
+            alert("No hi ha cap usuari identificat.");
             return;
         }
 
-        console.log("Enviant notificació a:", user.id);
+        console.log(
+            "Enviant notificació a:",
+            userUuid
+        );
 
         const {
             data,
@@ -166,7 +165,7 @@ document
             "send-push",
             {
                 body: {
-                    user_uuid: user.id,
+                    user_uuid: userUuid,
                     title: "🔔 Notificació de prova",
                     body: "Perfecte! Les notificacions push funcionen.",
                     url: "/"
@@ -174,13 +173,30 @@ document
             }
         );
 
-        console.log("Resposta Edge Function:", data);
-        console.log("Error Edge Function:", error);
+        console.log(
+            "Resposta Edge Function:",
+            data
+        );
+
+        console.log(
+            "Error Edge Function:",
+            error
+        );
 
         if (error) {
-            alert("Error enviant la notificació. Mira la consola.");
+            console.error(
+                "Error enviant notificació:",
+                error
+            );
+
+            alert(
+                "Error enviant la notificació. Mira la consola."
+            );
+
             return;
         }
 
-        alert("Notificació enviada.");
+        alert(
+            "Notificació enviada."
+        );
     });
