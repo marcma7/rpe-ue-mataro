@@ -275,6 +275,17 @@ let estatRPEJugadors = [];
 let estatRPEActual = null;
 
 
+function abreujarEquip(nomEquip) {
+    if (!nomEquip) return "";
+
+    return nomEquip
+        .trim()
+        .split(/\s+/)
+        .map(paraula => paraula.charAt(0).toUpperCase())
+        .join("");
+}
+
+
 async function loadEstatRPE(user) {
 
     estatRPEJugadors = [];
@@ -323,6 +334,22 @@ async function loadEstatRPE(user) {
             }
         }
     }
+
+    // 1.1 OBTENIR NOMS DELS EQUIPS
+const totsElsTeamUuids = [
+    ...new Set(
+        Array.from(jugadorsTeams.values())
+            .flat()
+            .map(ut => ut.team_uuid)
+            .filter(Boolean)
+    )
+];
+
+const equips = await getTeamsByUuid(totsElsTeamUuids);
+
+const equipsMap = new Map(
+    equips.map(equip => [equip.uuid, equip.name])
+);
 
     // 2. UUID DELS JUGADORS
     const jugadorUuids = jugadors.map(j => j.uuid);
@@ -525,6 +552,9 @@ const noEntrena = !tePTPT;
         // GUARDAR RESULTAT
         estatRPEJugadors.push({
             jugador: jugador,
+            equips: userTeamsJug
+        .map(ut => equipsMap.get(ut.team_uuid))
+        .filter(Boolean),
             dataUltimaSessio: dataUltimaSessio,
             rpe: rpe,
             noEntrena: noEntrena,
@@ -563,8 +593,18 @@ function pintarEstatRPE() {
         fila.className = "filaJugadorEstatRPE";
 
         const nom = document.createElement("div");
-        nom.className = "nomJugadorEstatRPE";
-        nom.textContent = `${capitalize(jugador.name)} ${capitalize(jugador.surname)}`.trim();
+nom.className = "nomJugadorEstatRPE";
+
+const nomJugador =
+    `${capitalize(jugador.name)} ${capitalize(jugador.surname)}`.trim();
+
+const nomsEquips = (registre.equips || [])
+    .map(abreujarEquip)
+    .filter(Boolean);
+
+nom.textContent = nomsEquips.length > 0
+    ? `${nomJugador} (${nomsEquips.join(", ")})`
+    : nomJugador;
 
         const info = document.createElement("div");
         info.className = "infoJugadorEstatRPE";
