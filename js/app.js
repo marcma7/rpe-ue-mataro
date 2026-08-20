@@ -443,7 +443,6 @@ for (const jugador of jugadors) {
 
     // 6. CARREGAR PRÀCTIQUES PER EQUIP EN PARAL·LEL
     const practicesPerTeam = new Map();
-    const totsElsTeamUuids = [...new Set(Array.from(jugadorsTeams.values()).flat().map(ut => ut.team_uuid).filter(Boolean))];
     const resultatsPractices = await Promise.all(totsElsTeamUuids.map(async teamUuid => 
         {
             const practices = await getPracticesByTeam(teamUuid);
