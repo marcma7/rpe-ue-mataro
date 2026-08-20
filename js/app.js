@@ -693,15 +693,23 @@ document.getElementById("accedirAppEstatRPE").addEventListener("click", async ()
 
     } else if (Notification.permission === "default") {
 
-        // Encara no ha decidit → demanem permís
-        const activades = await activarNotificacionsPush(user);
+        if (user) {
 
-        if (activades) {
-            alert("Notificacions activades correctament.");
-        } else {
-            alert("No s'han pogut activar les notificacions.");
-        }
+    alert(
+        "Notification: " + ("Notification" in window) +
+        "\nPermission: " + Notification.permission +
+        "\nServiceWorker: " + ("serviceWorker" in navigator) +
+        "\nPushManager: " + ("PushManager" in window)
+    );
 
+    const activades = await activarNotificacionsPush(user);
+
+    if (activades) {
+        alert("Notificacions activades correctament.");
+    } else {
+        alert("No s'han pogut activar les notificacions.");
+    }
+}
     } else if (Notification.permission === "denied") {
 
         // L'usuari les ha bloquejat
