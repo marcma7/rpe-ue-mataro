@@ -119,7 +119,14 @@ async function iniciarAplicacio() {
     }
 
     if (user && Notification.permission === "default") {
-        activarNotificacionsPush(user);
+        const activades = await activarNotificacionsPush(user);
+
+        if (activades) {
+            alert("Notificacions activades correctament.");
+        } else {
+            alert("No s'han pogut activar les notificacions.");
+        }
+        
     }
 
     await decideRoute(user);
@@ -668,32 +675,3 @@ document.getElementById("accedirAppEstatRPE").addEventListener("click", async ()
 });
 
 
-document
-    .getElementById("btnActivarNotificacions")
-    .addEventListener("click", async () => {
-
-        const userUuid = obtenirUserUuidLocal();
-
-        if (!userUuid) {
-            console.error("Usuari no autenticat");
-            alert("Has d'iniciar sessió abans d'activar les notificacions.");
-            return;
-        }
-
-        // Recuperem l'usuari complet de la teva taula app_users
-        const user = await getUser(userUuid);
-
-        if (!user) {
-            console.error("No s'ha trobat l'usuari:", userUuid);
-            alert("No s'ha pogut trobar l'usuari.");
-            return;
-        }
-
-        const activades = await activarNotificacionsPush(user);
-
-        if (activades) {
-            alert("Notificacions activades correctament.");
-        } else {
-            alert("No s'han pogut activar les notificacions.");
-        }
-    });
