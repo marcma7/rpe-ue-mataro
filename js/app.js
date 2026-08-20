@@ -662,3 +662,33 @@ document.getElementById("accedirAppEstatRPE").addEventListener("click", async ()
 
     mostrarPantalla("management");
 });
+
+
+document
+    .getElementById("btnActivarNotificacions")
+    .addEventListener("click", async () => {
+
+        const { data: { user }, error } =
+            await supabase.auth.getUser();
+
+        if (error || !user) {
+            console.error("Usuari no autenticat");
+            return;
+        }
+
+        const activades =
+            await activarNotificacionsPush(user);
+
+        if (activades) {
+
+            alert(
+                "Notificacions activades correctament."
+            );
+
+        } else {
+
+            alert(
+                "No s'han pogut activar les notificacions."
+            );
+        }
+    });
