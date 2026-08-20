@@ -160,7 +160,7 @@ async function decideRoute(user) {
 
     //} else if (Notification.permission === "denied") {
 
-    }//
+    //}
 //}
 
     if (user.role === "JUGADOR") {
