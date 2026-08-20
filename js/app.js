@@ -690,37 +690,3 @@ document.getElementById("accedirAppEstatRPE").addEventListener("click", async ()
 
 
 
-function mostrarToast(missatge, durada = 3000) {
-
-    let toast = document.getElementById("toastDebug");
-
-    if (!toast) {
-        toast = document.createElement("div");
-        toast.id = "toastDebug";
-
-        toast.style.position = "fixed";
-        toast.style.bottom = "30px";
-        toast.style.left = "50%";
-        toast.style.transform = "translateX(-50%)";
-        toast.style.background = "rgba(0,0,0,0.85)";
-        toast.style.color = "white";
-        toast.style.padding = "12px 18px";
-        toast.style.borderRadius = "12px";
-        toast.style.fontSize = "14px";
-        toast.style.zIndex = "999999";
-        toast.style.maxWidth = "90%";
-        toast.style.textAlign = "center";
-        toast.style.boxShadow = "0 4px 15px rgba(0,0,0,0.3)";
-
-        document.body.appendChild(toast);
-    }
-
-    toast.textContent = missatge;
-    toast.style.display = "block";
-
-    clearTimeout(toast._timeout);
-
-    toast._timeout = setTimeout(() => {
-        toast.style.display = "none";
-    }, durada);
-}
