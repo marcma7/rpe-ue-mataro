@@ -151,31 +151,17 @@ async function entrar() {
 
 async function decideRoute(user) {
 
-    if (user) {
+  //  if (user) {
 
-    if (Notification.permission === "granted") {
+//    if (Notification.permission === "granted") {
 
-        // Ja estan acceptades, no cal fer res
-        console.log("Les notificacions ja estan activades.");
+  //  } else if (Notification.permission === "default") {
+//        const activades = await activarNotificacionsPush(user);
 
-    } else if (Notification.permission === "default") {
+    //} else if (Notification.permission === "denied") {
 
-        // Encara no ha decidit → demanem permís
-        const activades = await activarNotificacionsPush(user);
-
-        if (activades) {
-            alert("Notificacions activades correctament.");
-        } else {
-            alert("No s'han pogut activar les notificacions.");
-        }
-
-    } else if (Notification.permission === "denied") {
-
-        // L'usuari les ha bloquejat
-        console.log("Les notificacions estan bloquejades.");
-
-    }
-}
+    }//
+//}
 
     if (user.role === "JUGADOR") {
 
@@ -686,41 +672,19 @@ document.getElementById("accedirAppEstatRPE").addEventListener("click", async ()
         return;
     }
 
-    if (Notification.permission === "granted") {
+    //if (Notification.permission === "granted") {
 
-        // Ja estan acceptades, no cal fer res
-        console.log("Les notificacions ja estan activades.");
+    //} else if (Notification.permission === "default") {
 
-    } else if (Notification.permission === "default") {
-
-
-    mostrarToast("1. App carregada");
-
-if (user) {
-
-    mostrarToast("2. User carregat: " + user.name);
-
-    mostrarToast(
-        "3. Permission: " +
-        ("Notification" in window
-            ? Notification.permission
-            : "NO Notification")
-    );
-
-    const activades = await activarNotificacionsPush(user);
-
-    mostrarToast(
-        "4. Activació: " +
-        (activades ? "OK" : "ERROR")
-    );
-}
-    } else if (Notification.permission === "denied") {
-
-        // L'usuari les ha bloquejat
-        console.log("Les notificacions estan bloquejades.");
-
-    }
-
+//    if (user) {
+    
+  //      const activades = await activarNotificacionsPush(user);
+    
+    //    }
+    //}else if (Notification.permission === "denied") {
+    
+      //  }
+      
     mostrarPantalla("management");
 });
 
