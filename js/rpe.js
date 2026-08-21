@@ -47,7 +47,7 @@ async function loadRPE(user) {
         teRegla = null;
     }
 
-    const avui = new Date();
+    const ara = new Date();
     const validDates = [];
 
     for (const practice of practices) {
@@ -58,9 +58,23 @@ async function loadRPE(user) {
             Number(parts[0])
         );
 
-        if (data < avui) {
-            validDates.push(practice.practice_date);
-        }
+        // Les sessions futures no entren
+    if (data > ara) {
+        continue;
+    }
+
+    // Si és avui i encara no són les 11:00,
+    // no mostrem avui
+    const esAvui =
+        data.getFullYear() === ara.getFullYear() &&
+        data.getMonth() === ara.getMonth() &&
+        data.getDate() === ara.getDate();
+
+    if (esAvui && ara.getHours() < 14) {
+        continue;
+    }
+
+    validDates.push(practice.practice_date);
     }
 
     dates = validDates;
