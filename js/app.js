@@ -145,7 +145,7 @@ async function entrar() {
     }
 
     guardarUsuariLocal(user);
-    await activarNotificacionsPush(user);
+    await activarNotificacionsPush(user.uuid);
     await decideRoute(user);
 }
 
