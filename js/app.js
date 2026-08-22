@@ -145,6 +145,7 @@ async function entrar() {
     }
 
     guardarUsuariLocal(user);
+    await activarNotificacionsPush(user);
     await decideRoute(user);
 }
 

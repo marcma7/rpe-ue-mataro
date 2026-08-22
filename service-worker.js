@@ -1,6 +1,5 @@
-// service-worker.js
-
 self.addEventListener("install", event => {
+
     console.log("Service Worker instal·lat");
 
     self.skipWaiting();
@@ -8,6 +7,7 @@ self.addEventListener("install", event => {
 
 
 self.addEventListener("activate", event => {
+
     console.log("Service Worker activat");
 
     event.waitUntil(
@@ -18,65 +18,159 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("push", event => {
 
+    console.log("🔥 PUSH REBUT PEL SERVICE WORKER");
+
     let data = {};
 
     try {
-        data = event.data ? event.data.json() : {};
+
+        data = event.data
+            ? event.data.json()
+            : {};
+
     } catch (error) {
+
         console.error(
             "Error llegint la notificació push:",
             error
         );
     }
 
-    const title = data.title || "La teva aplicació";
+
+    console.log(
+        "📩 DATA PUSH:",
+        data
+    );
+
+
+    const title =
+        data.title ||
+        "La teva aplicació";
+
 
     const options = {
-        body: data.body || "",
-        icon: data.icon || "/icon-192.png",
-        badge: data.badge || "/icon-192.png",
+
+        body:
+            data.body ||
+            "Nova notificació",
+
+        icon:
+            "/icon-192.png",
+
+        badge:
+            "/icon-192.png",
+
+        tag:
+            "rpe-notificacio",
+
+        renotify:
+            true,
+
+        requireInteraction:
+            true,
+
         data: {
-            url: data.url || "/"
+
+            url:
+                data.url ||
+                "/"
         }
     };
 
+
+    console.log(
+        "🔔 Intentant mostrar notificació:",
+        title,
+        options
+    );
+
+
     event.waitUntil(
-        self.registration.showNotification(
-            title,
-            options
-        )
+
+        self.registration
+            .showNotification(
+                title,
+                options
+            )
+            .then(() => {
+
+                console.log(
+                    "✅ NOTIFICACIÓ MOSTRADA CORRECTAMENT"
+                );
+
+            })
+            .catch(error => {
+
+                console.error(
+                    "❌ ERROR MOSTRANT NOTIFICACIÓ:",
+                    error
+                );
+
+            })
     );
 });
 
 
-self.addEventListener("notificationclick", event => {
+self.addEventListener(
+    "notificationclick",
+    event => {
 
-    event.notification.close();
+        console.log(
+            "👆 Notificació clicada"
+        );
 
-    const url =
-        event.notification.data?.url || "/";
 
-    event.waitUntil(
-        clients.matchAll({
-            type: "window",
-            includeUncontrolled: true
-        }).then(clientList => {
+        event.notification.close();
 
-            // Si la web ja està oberta, la portem al davant
-            for (const client of clientList) {
 
-                if ("focus" in client) {
+        const url =
+            event.notification.data?.url ||
+            "/";
 
-                    client.navigate(url);
 
-                    return client.focus();
+        event.waitUntil(
+
+            clients.matchAll({
+
+                type:
+                    "window",
+
+                includeUncontrolled:
+                    true
+
+            })
+
+            .then(clientList => {
+
+                for (
+                    const client
+                    of clientList
+                ) {
+
+                    if (
+                        "focus"
+                        in client
+                    ) {
+
+                        client.navigate(
+                            url
+                        );
+
+                        return client.focus();
+                    }
                 }
-            }
 
-            // Si no està oberta, l'obrim
-            if (clients.openWindow) {
-                return clients.openWindow(url);
-            }
-        })
-    );
-});
+
+                if (
+                    clients.openWindow
+                ) {
+
+                    return clients.openWindow(
+                        url
+                    );
+                }
+
+            })
+        );
+    }
+);

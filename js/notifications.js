@@ -1,23 +1,47 @@
-const VAPID_PUBLIC_KEY = "BMunodwtCSBzKSm8e63o99tTBaw6cUnYt3pn8n1nPlYCnkSsID-tStZjw4GrZLn6BBYSSqVWTMWYq6_k-U0GEf4"; 
+const VAPID_PUBLIC_KEY =
+    "BMunodwtCSBzKSm8e63o99tTBaw6cUnYt3pn8n1nPlYCnkSsID-tStZjw4GrZLn6BBYSSqVWTMWYq6_k-U0GEf4";
 
-async function activarNotificacionsPush(user) {
+
+// ======================================================
+// ACTIVAR NOTIFICACIONS PUSH
+// ======================================================
+
+async function activarNotificacionsPush(userUuid) {
 
     if (!("serviceWorker" in navigator)) {
-        console.error("Aquest navegador no suporta Service Workers.");
+        console.error(
+            "Aquest navegador no suporta Service Workers."
+        );
         return false;
     }
 
     if (!("PushManager" in window)) {
-        console.error("Aquest navegador no suporta Push.");
+        console.error(
+            "Aquest navegador no suporta Push."
+        );
         return false;
     }
 
     if (!("Notification" in window)) {
-        console.error("Aquest navegador no suporta notificacions.");
+        console.error(
+            "Aquest navegador no suporta notificacions."
+        );
         return false;
     }
 
+    if (!userUuid) {
+        console.error(
+            "No s'ha proporcionat userUuid."
+        );
+        return false;
+    }
+
+
     try {
+
+        // ==================================================
+        // REGISTRAR SERVICE WORKER
+        // ==================================================
 
         const registration =
             await navigator.serviceWorker.register(
@@ -29,31 +53,88 @@ async function activarNotificacionsPush(user) {
             registration
         );
 
-        let permission = Notification.permission;
+
+        // ==================================================
+        // ESPERAR QUE ESTIGUI ACTIU
+        // ==================================================
+
+        await navigator.serviceWorker.ready;
+
+        console.log(
+            "Service Worker preparat."
+        );
+
+
+        // ==================================================
+        // DEMANAR PERMÍS
+        // ==================================================
+
+        let permission =
+            Notification.permission;
 
         if (permission === "default") {
-            permission = await Notification.requestPermission();
+
+            permission =
+                await Notification.requestPermission();
         }
 
+
         if (permission !== "granted") {
+
             console.log(
                 "L'usuari no ha donat permís per a les notificacions."
             );
+
             return false;
         }
+
+
+        // ==================================================
+        // BUSCAR SUBSCRIPCIÓ EXISTENT
+        // ==================================================
 
         let subscription =
             await registration.pushManager.getSubscription();
 
+
+        // ==================================================
+        // CREAR SUBSCRIPCIÓ SI NO EXISTEIX
+        // ==================================================
+
         if (!subscription) {
+
+            console.log(
+                "No existeix subscripció. Creant-ne una..."
+            );
 
             subscription =
                 await registration.pushManager.subscribe({
+
                     userVisibleOnly: true,
+
                     applicationServerKey:
-                        urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+                        urlBase64ToUint8Array(
+                            VAPID_PUBLIC_KEY
+                        )
                 });
+
+            console.log(
+                "Nova subscripció creada:",
+                subscription
+            );
+
+        } else {
+
+            console.log(
+                "Ja existeix una subscripció:",
+                subscription
+            );
         }
+
+
+        // ==================================================
+        // CONVERTIR SUBSCRIPCIÓ A JSON
+        // ==================================================
 
         const subscriptionJSON =
             subscription.toJSON();
@@ -63,30 +144,76 @@ async function activarNotificacionsPush(user) {
             subscriptionJSON
         );
 
+
+        // ==================================================
+        // COMPROVAR KEYS
+        // ==================================================
+
+        if (
+            !subscriptionJSON.endpoint ||
+            !subscriptionJSON.keys ||
+            !subscriptionJSON.keys.p256dh ||
+            !subscriptionJSON.keys.auth
+        ) {
+
+            console.error(
+                "La subscripció no conté totes les dades necessàries."
+            );
+
+            return false;
+        }
+
+
+        // ==================================================
         // GUARDAR A SUPABASE
-        const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/push_subscriptions?on_conflict=user_uuid,endpoint`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Prefer": "resolution=merge-duplicates,return=representation",
-                    "apikey": SUPABASE_API_KEY,
-                    "Authorization": "Bearer " + SUPABASE_API_KEY
-                },
-                body: JSON.stringify({
-                    user_uuid: user.uuid,
-                    endpoint: subscriptionJSON.endpoint,
-                    p256dh: subscriptionJSON.keys.p256dh,
-                    auth: subscriptionJSON.keys.auth,
-                    updated_at: new Date().toISOString()
-                })
-            }
-        );
+        // ==================================================
+
+        const response =
+            await fetch(
+                `${SUPABASE_URL}/rest/v1/push_subscriptions?on_conflict=user_uuid,endpoint`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Prefer":
+                            "resolution=merge-duplicates,return=representation",
+
+                        "apikey":
+                            SUPABASE_API_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            SUPABASE_API_KEY
+                    },
+
+                    body: JSON.stringify({
+
+                        user_uuid:
+                            userUuid,
+
+                        endpoint:
+                            subscriptionJSON.endpoint,
+
+                        p256dh:
+                            subscriptionJSON.keys.p256dh,
+
+                        auth:
+                            subscriptionJSON.keys.auth,
+
+                        updated_at:
+                            new Date().toISOString()
+                    })
+                }
+            );
+
 
         if (!response.ok) {
 
-            const text = await response.text();
+            const text =
+                await response.text();
 
             console.error(
                 "Error guardant la subscripció:",
@@ -96,18 +223,22 @@ async function activarNotificacionsPush(user) {
             return false;
         }
 
-        const resultat = await response.json();
+
+        const resultat =
+            await response.json();
 
         console.log(
             "Subscripció guardada correctament:",
             resultat
         );
 
+
         console.log(
             "Notificacions push activades correctament."
         );
 
         return true;
+
 
     } catch (error) {
 
@@ -121,12 +252,16 @@ async function activarNotificacionsPush(user) {
 }
 
 
+// ======================================================
+// CONVERTIR VAPID PUBLIC KEY
+// ======================================================
 
 function urlBase64ToUint8Array(base64String) {
 
-    const padding = "=".repeat(
-        (4 - base64String.length % 4) % 4
-    );
+    const padding =
+        "=".repeat(
+            (4 - base64String.length % 4) % 4
+        );
 
     const base64 =
         (base64String + padding)
@@ -137,82 +272,215 @@ function urlBase64ToUint8Array(base64String) {
         window.atob(base64);
 
     return Uint8Array.from(
-        [...rawData].map(char => char.charCodeAt(0))
+        [...rawData].map(
+            char => char.charCodeAt(0)
+        )
     );
 }
 
 
+// ======================================================
+// BOTÓ EN PROVES
+// ======================================================
+
 document
     .getElementById("btnProvarNotificacio")
-    .addEventListener("click", async () => {
+    .addEventListener(
+        "click",
+        async () => {
 
-        const userUuid = obtenirUserUuidLocal();
+            const userUuid =
+                obtenirUserUuidLocal();
 
-        if (!userUuid) {
-            alert("No hi ha cap usuari identificat.");
-            return;
-        }
 
-        console.log(
-            "Enviant notificació a:",
-            userUuid
-        );
+            // ==================================================
+            // COMPROVAR USUARI
+            // ==================================================
 
-        try {
-
-            const response = await fetch(
-                `${SUPABASE_URL}/functions/v1/send-push`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "apikey": SUPABASE_API_KEY,
-                        "Authorization":
-                            "Bearer " + SUPABASE_API_KEY
-                    },
-                    body: JSON.stringify({
-                        user_uuid: userUuid,
-                        title: "🔔 Notificació de prova",
-                        body: "Perfecte! Les notificacions push funcionen.",
-                        url: "/"
-                    })
-                }
-            );
-
-            const data = await response.json();
-
-            console.log(
-                "Resposta Edge Function:",
-                data
-            );
-
-            if (!response.ok) {
-
-                console.error(
-                    "Error Edge Function:",
-                    data
-                );
+            if (!userUuid) {
 
                 alert(
-                    "Error enviant la notificació."
+                    "No hi ha cap usuari identificat."
                 );
 
                 return;
             }
 
-            alert(
-                "Notificació enviada."
+
+            console.log(
+                "Usuari:",
+                userUuid
             );
 
-        } catch (error) {
 
-            console.error(
-                "Error fent la petició:",
-                error
+            // ==================================================
+            // ACTIVAR PUSH EN AQUEST DISPOSITIU
+            // ==================================================
+
+            console.log(
+                "Activant notificacions Push..."
             );
 
-            alert(
-                "Error enviant la notificació."
+
+            const pushActivat =
+                await activarNotificacionsPush(
+                    userUuid
+                );
+
+
+            if (!pushActivat) {
+
+                alert(
+                    "No s'han pogut activar les notificacions Push."
+                );
+
+                return;
+            }
+
+
+            console.log(
+                "Push activat correctament."
             );
+
+
+            // ==================================================
+            // ENVIAR NOTIFICACIÓ
+            // ==================================================
+
+            console.log(
+                "Enviant notificació a:",
+                userUuid
+            );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${SUPABASE_URL}/functions/v1/clever-service`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                "apikey":
+                                    SUPABASE_API_KEY,
+
+                                "Authorization":
+                                    "Bearer " +
+                                    SUPABASE_API_KEY
+                            },
+
+                            body: JSON.stringify({
+
+                                user_uuid:
+                                    userUuid,
+
+                                title:
+                                    "🔔 Notificació de prova",
+
+                                body:
+                                    "Perfecte! Les notificacions push funcionen.",
+
+                                url:
+                                    "/"
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "Resposta Edge Function:",
+                    data
+                );
+
+
+                // ==================================================
+                // ERROR HTTP
+                // ==================================================
+
+                if (!response.ok) {
+
+                    console.error(
+                        "Error Edge Function:",
+                        data
+                    );
+
+                    alert(
+                        "Error enviant la notificació."
+                    );
+
+                    return;
+                }
+
+
+                // ==================================================
+                // COMPTAR RESULTATS
+                // ==================================================
+
+                const enviades =
+                    data.results
+                        ?.filter(
+                            r => r.success
+                        )
+                        .length || 0;
+
+
+                const errors =
+                    data.results
+                        ?.filter(
+                            r => !r.success
+                        )
+                        .length || 0;
+
+
+                console.log(
+                    "Push enviats:",
+                    enviades
+                );
+
+                console.log(
+                    "Errors:",
+                    errors
+                );
+
+
+                // ==================================================
+                // RESULTAT
+                // ==================================================
+
+                if (enviades > 0) {
+
+                    alert(
+                        "✅ Notificació enviada."
+                    );
+
+                } else {
+
+                    alert(
+                        "❌ No s'ha enviat cap notificació.\n\n" +
+                        "Errors: " +
+                        errors
+                    );
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Error fent la petició:",
+                    error
+                );
+
+                alert(
+                    "Error enviant la notificació."
+                );
+            }
         }
-    });
+    );
