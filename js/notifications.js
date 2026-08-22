@@ -283,75 +283,112 @@ function urlBase64ToUint8Array(base64String) {
 // BOTÓ EN PROVES
 // ======================================================
 
-document
-    .getElementById("btnProvarNotificacio")
-    .addEventListener(
-        "click",
-        async () => {
 
-            const userUuid =
-                obtenirUserUuidLocal();
+async function getUsuarisPerNotificarFisio(jugadorUuid) {
+
+    // ---------------------------------------------------------
+    // 1. Equips als quals pertany el jugador
+    // ---------------------------------------------------------
+
+    const userTeamsJugador = await getUserTeamByUserUuid(jugadorUuid);
+
+    if (!userTeamsJugador || userTeamsJugador.length === 0) {
+        return [];
+    }
+
+    const teamUuids = [
+        ...new Set(
+            userTeamsJugador.map(ut => ut.team_uuid)
+        )
+    ];
+
+    // ---------------------------------------------------------
+    // 2. Tots els usuaris
+    // ---------------------------------------------------------
+
+    const usuaris = await getAllUsers();
+
+    if (!usuaris || usuaris.length === 0) {
+        return [];
+    }
+
+    // ---------------------------------------------------------
+    // 3. Tots els user_teams
+    // ---------------------------------------------------------
+
+    const userTeams = await getAllUserTeams();
+
+    // ---------------------------------------------------------
+    // 4. Filtrar usuaris
+    //
+    //    - SUPERADMIN -> sempre
+    //    - No JUGADOR -> si està relacionat amb algun dels
+    //      equips del jugador
+    // ---------------------------------------------------------
+
+    const usuarisNotificar = usuaris.filter(user => {
+
+        // SUPERADMIN sempre rep la notificació
+        if (user.role === "SUPERADMIN") {
+            return true;
+        }
+
+        // Els jugadors no reben aquestes notificacions
+        if (user.role === "JUGADOR") {
+            return false;
+        }
+
+        // Buscar els equips d'aquest usuari
+        const equipsUsuari = userTeams
+            .filter(ut => ut.user_uuid === user.uuid)
+            .map(ut => ut.team_uuid);
+
+        // Ha d'estar relacionat amb algun equip del jugador
+        return equipsUsuari.some(teamUuid =>
+            teamUuids.includes(teamUuid)
+        );
+    });
+
+    console.log(usuarisNotificar);
+
+    return usuarisNotificar;
+}
 
 
-            // ==================================================
-            // COMPROVAR USUARI
-            // ==================================================
+async function enviarNotificacioFisio(
+    jugador,
+    teamUuid
+) {
 
-            if (!userUuid) {
+    try {
 
-                alert(
-                    "No hi ha cap usuari identificat."
-                );
-
-                return;
-            }
-
-
-            console.log(
-                "Usuari:",
-                userUuid
+        const usuaris =
+            await getUsuarisPerNotificarFisio(
+                jugador.uuid
             );
 
-
-            // ==================================================
-            // ACTIVAR PUSH EN AQUEST DISPOSITIU
-            // ==================================================
+        if (!usuaris || usuaris.length === 0) {
 
             console.log(
-                "Activant notificacions Push..."
+                "No hi ha usuaris als quals enviar la notificació de fisioteràpia."
             );
 
+            return;
+        }
 
-            const pushActivat =
-                await activarNotificacionsPush(
-                    userUuid
-                );
+        console.log(
+            "Usuaris que rebran notificació de fisioteràpia:",
+            usuaris
+        );
 
+        const nomJugador =
+            `${capitalize(jugador.name)} ${capitalize(jugador.surname)}`;
 
-            if (!pushActivat) {
+        // ---------------------------------------------------------
+        // Enviar a cada usuari
+        // ---------------------------------------------------------
 
-                alert(
-                    "No s'han pogut activar les notificacions Push."
-                );
-
-                return;
-            }
-
-
-            console.log(
-                "Push activat correctament."
-            );
-
-
-            // ==================================================
-            // ENVIAR NOTIFICACIÓ
-            // ==================================================
-
-            console.log(
-                "Enviant notificació a:",
-                userUuid
-            );
-
+        for (const user of usuaris) {
 
             try {
 
@@ -376,13 +413,13 @@ document
                             body: JSON.stringify({
 
                                 user_uuid:
-                                    userUuid,
+                                    user.uuid,
 
                                 title:
-                                    "🔔 Notificació de prova",
+                                    "🏥 Petició de fisioteràpia",
 
                                 body:
-                                    "Perfecte! Les notificacions push funcionen.",
+                                    `${nomJugador} ha sol·licitat fisioteràpia.`,
 
                                 url:
                                     "/"
@@ -390,97 +427,36 @@ document
                         }
                     );
 
-
                 const data =
                     await response.json();
 
-
                 console.log(
-                    "Resposta Edge Function:",
+                    `Notificació enviada a ${user.name} ${user.surname}:`,
                     data
                 );
-
-
-                // ==================================================
-                // ERROR HTTP
-                // ==================================================
 
                 if (!response.ok) {
 
                     console.error(
-                        "Error Edge Function:",
+                        `Error notificant ${user.uuid}:`,
                         data
                     );
-
-                    alert(
-                        "Error enviant la notificació."
-                    );
-
-                    return;
                 }
-
-
-                // ==================================================
-                // COMPTAR RESULTATS
-                // ==================================================
-
-                const enviades =
-                    data.results
-                        ?.filter(
-                            r => r.success
-                        )
-                        .length || 0;
-
-
-                const errors =
-                    data.results
-                        ?.filter(
-                            r => !r.success
-                        )
-                        .length || 0;
-
-
-                console.log(
-                    "Push enviats:",
-                    enviades
-                );
-
-                console.log(
-                    "Errors:",
-                    errors
-                );
-
-
-                // ==================================================
-                // RESULTAT
-                // ==================================================
-
-                if (enviades > 0) {
-
-                    alert(
-                        "✅ Notificació enviada."
-                    );
-
-                } else {
-
-                    alert(
-                        "❌ No s'ha enviat cap notificació.\n\n" +
-                        "Errors: " +
-                        errors
-                    );
-                }
-
 
             } catch (error) {
 
                 console.error(
-                    "Error fent la petició:",
+                    `Error enviant notificació a ${user.uuid}:`,
                     error
-                );
-
-                alert(
-                    "Error enviant la notificació."
                 );
             }
         }
-    );
+
+    } catch (error) {
+
+        console.error(
+            "Error preparant notificacions de fisioteràpia:",
+            error
+        );
+    }
+}

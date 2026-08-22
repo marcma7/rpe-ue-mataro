@@ -45,6 +45,11 @@ async function guardarLesio(){
             last_visit:0,
             visita_feta:0
         });
+
+        await enviarNotificacioFisio(
+    jugadorActualLesio,
+    injury.team_uuid
+);
     }
 
     mostrarPantalla("teams");
@@ -129,6 +134,11 @@ async function demanarFisioDesDeRPE(jugador, rpe, boto) {
             last_visit: 0,
             visita_feta: 0
         });
+
+await enviarNotificacioFisio(
+    jugador,
+    teamUuid
+);
 
         boto.innerHTML = "✓";
         boto.classList.add("botoFisioDemanat");
