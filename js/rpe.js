@@ -70,7 +70,7 @@ async function loadRPE(user) {
         data.getMonth() === ara.getMonth() &&
         data.getDate() === ara.getDate();
 
-    if (esAvui && ara.getHours() < 14) {
+    if (esAvui && ara.getHours() < 12) {
         continue;
     }
 
