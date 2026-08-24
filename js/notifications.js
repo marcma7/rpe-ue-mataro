@@ -145,35 +145,49 @@ async function enviarNotificacioFisio(jugador, teamUuid) {
 
         for (const user of usuaris) {
             try {
-                const response = await fetch(
-                        `${SUPABASE_URL}/functions/v1/clever-service`,
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "apikey": SUPABASE_API_KEY,
-                                "Authorization": "Bearer " + SUPABASE_API_KEY
-                            },
-
-                            body: JSON.stringify({
-                                user_uuid: user.uuid,
-                                title: "🏥 Petició de fisioteràpia",
-                                body: `${nomJugador} ha sol·licitat fisioteràpia.`,
-                                url: "/"
-                            })
-                        }
-                    );
-
-                const data = await response.json();
-                console.log(`Notificació enviada a ${user.name} ${user.surname}:`, data);
-                if (!response.ok) {
-                    console.error(`Error notificant ${user.uuid}:`, data);
-                }
+                await enviarNotificacio(user.uuid, "🏥 Petició de fisioteràpia", `${nomJugador} ha sol·licitat fisioteràpia.`, "/");
             } catch (error) {
                 console.error(`Error enviant notificació a ${user.uuid}:`, error);
             }
         }
     } catch (error) {
         console.error("Error preparant notificacions de fisioteràpia:", error);
+    }
+}
+
+
+async function enviarNotificacio(userUuid, title, body, url = "/") {
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/functions/v1/clever-service`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "apikey": SUPABASE_API_KEY,
+                    "Authorization": "Bearer " + SUPABASE_API_KEY
+                },
+                body: JSON.stringify({
+                    user_uuid: userUuid,
+                    title,
+                    body,
+                    url
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error(`Error enviant notificació a ${userUuid}:`, data);
+            return false;
+        }
+
+        console.log("Notificació enviada:", data);
+        return true;
+
+    } catch (error) {
+        console.error("Error enviant notificació:", error);
+        return false;
     }
 }
