@@ -201,38 +201,16 @@ async function confirmarRPETeam() {
         });
 
     let prepfis = practTimes.filter(x => x.practice_type === "prepfis");
-let train = practTimes.filter(x => x.practice_type === "train");
-let game = practTimes.filter(x => x.practice_type === "game");
+    let train = practTimes.filter(x => x.practice_type === "train");
+    let game = practTimes.filter(x => x.practice_type === "game");
 
-const jugadorNoHaVingut =
-    practTimes.length > 0 &&
-    practTimes.every(x => Number(x.time) === 0);
-
-if (jugadorNoHaVingut) {
-
-    const moda = getModaPTPTEquip(
-        userTeamUuid,
-        teamDataSeleccionada
-    );
-
-    prepfis = [
-        {
-            time: moda.prepfis
-        }
-    ];
-
-    train = [
-        {
-            time: moda.train
-        }
-    ];
-
-    game = [
-        {
-            time: moda.game
-        }
-    ];
-}
+    const jugadorNoHaVingut = practTimes.length > 0 && practTimes.every(x => Number(x.time) === 0);
+    if (jugadorNoHaVingut) {
+        const moda = getModaPTPTEquip(userTeamUuid, teamDataSeleccionada);
+        prepfis = [{time: moda.prepfis}];
+        train = [{time: moda.train}];
+        game = [{time: moda.game}];
+    }
 
     const registre = {
         player_uuid: jugador.uuid,
@@ -245,6 +223,10 @@ if (jugadorNoHaVingut) {
     };
 
     await addRPERegister([registre]);
+
+    if (teMolesties) {
+        await enviarNotificacioMolestia(jugador, textMolesties);
+    }
 
     const index = teamRpes.findIndex(r => r.player_uuid === registre.player_uuid && r.date_practice === registre.date_practice);
     if (index >= 0) { 
