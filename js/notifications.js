@@ -252,3 +252,75 @@ async function enviarNotificacio(userUuid, title, body, url = "/") {
         return false;
     }
 }
+
+
+async function getUsuarisPerNotificarHoraFisio(jugadorUuid) {
+    const userTeamsJugador = await getUserTeamByUserUuid(jugadorUuid);
+    if (!userTeamsJugador || userTeamsJugador.length === 0) return [];
+
+    const teamUuids = [...new Set(userTeamsJugador.map(ut => ut.team_uuid))];
+
+    const usuaris = await getAllUsers();
+    if (!usuaris || usuaris.length === 0) return [];
+
+    const userTeams = await getAllUserTeams();
+
+    const usuarisNotificar = usuaris.filter(user => {
+        if (user.role === "SUPERADMIN") return true;
+        if (user.uuid === jugadorUuid) return true;
+        if (user.role === "JUGADOR") return false;
+        
+        const equipsUsuari = userTeams.filter(ut => ut.user_uuid === user.uuid).map(ut => ut.team_uuid);
+        return equipsUsuari.some(teamUuid =>teamUuids.includes(teamUuid));
+    });
+
+    console.log("Usuaris que rebran notificació d'hora de fisio:", usuarisNotificar);
+    return usuarisNotificar;
+}
+
+
+async function enviarNotificacioHoraFisio(jugador, data, hora) {
+    try {
+        const usuaris = await getUsuarisPerNotificarHoraFisio(jugador.uuid);
+        if (!usuaris || usuaris.length === 0) return;
+
+        const nomJugador = `${capitalize(jugador.name)} ${capitalize(jugador.surname)}`;
+
+        for (const user of usuaris) {
+            try {
+                const esJugador = user.uuid === jugador.uuid;
+                const title = esJugador ? "🏥 Hora de fisioteràpia" : "🏥 Fisioteràpia assignada";
+                const body = esJugador ? `T'han assignat fisioteràpia el ${data} a les ${hora}.` : `${nomJugador} té fisioteràpia el ${data} a les ${hora}.`;
+
+                const response = await fetch(
+                    `${SUPABASE_URL}/functions/v1/clever-service`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "apikey": SUPABASE_API_KEY,
+                            "Authorization": "Bearer " + SUPABASE_API_KEY
+                        },
+                        body: JSON.stringify({
+                            user_uuid: user.uuid,
+                            title: title,
+                            body: body,
+                            url: "/"
+                        })
+                    }
+                );
+
+                const resultat = await response.json();
+                console.log(`Notificació d'hora de fisio enviada a ${user.name} ${user.surname}:`, resultat);
+
+                if (!response.ok) {
+                    console.error(`Error notificant ${user.uuid}:`, resultat);
+                }
+            } catch (error) {
+                console.error(`Error enviant notificació a ${user.uuid}:`, error);
+            }
+        }
+    } catch (error) {
+        console.error("Error preparant notificacions d'hora de fisio:", error);
+    }
+}
