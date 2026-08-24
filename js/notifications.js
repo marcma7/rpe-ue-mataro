@@ -133,6 +133,29 @@ async function getUsuarisPerNotificarFisio(jugadorUuid) {
 }
 
 
+async function getUsuarisPerNotificarMolestia(jugadorUuid) {
+    const userTeamsJugador = await getUserTeamByUserUuid(jugadorUuid);
+    if (!userTeamsJugador || userTeamsJugador.length === 0) return [];
+
+    const teamUuids = [...new Set(userTeamsJugador.map(ut => ut.team_uuid))];
+
+    const usuaris = await getAllUsers();
+    if (!usuaris || usuaris.length === 0) return [];
+
+    const userTeams = await getAllUserTeams();
+
+    const usuarisNotificar = usuaris.filter(user => {
+        if (user.role === "SUPERADMIN") return true;
+        if (user.role === "JUGADOR") return false;
+
+        const equipsUsuari = userTeams.filter(ut => ut.user_uuid === user.uuid).map(ut => ut.team_uuid);
+        return equipsUsuari.some(teamUuid => teamUuids.includes(teamUuid));
+    });
+
+    return usuarisNotificar;
+}
+
+
 async function enviarNotificacioFisio(jugador, teamUuid) {
     try {
         const usuaris = await getUsuarisPerNotificarFisio(jugador.uuid);
@@ -152,6 +175,44 @@ async function enviarNotificacioFisio(jugador, teamUuid) {
         }
     } catch (error) {
         console.error("Error preparant notificacions de fisioteràpia:", error);
+    }
+}
+
+
+async function enviarNotificacioMolestia(jugador, molestia) {
+    try {
+        const usuaris = await getUsuarisPerNotificarMolestia(jugador.uuid);
+        if (!usuaris || usuaris.length === 0) return;
+
+        const nomJugador = `${capitalize(jugador.name)} ${capitalize(jugador.surname)}`;
+
+        for (const user of usuaris) {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/functions/v1/clever-service`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "apikey": SUPABASE_API_KEY,
+                            "Authorization": "Bearer " + SUPABASE_API_KEY
+                        },
+                        body: JSON.stringify({
+                            user_uuid: user.uuid,
+                            title: "⚠️ Molèstia registrada",
+                            body: `${nomJugador} ha registrat una molèstia: ${molestia}`,
+                            url: "/"
+                        })
+                    }
+                );
+                const data = await response.json();
+                console.log(`Notificació de molèstia enviada a ${user.name} ${user.surname}:`, data);
+            } catch (error) {
+                console.error(`Error enviant notificació a ${user.uuid}:`, error);
+            }
+        }
+    } catch (error) {
+        console.error("Error preparant notificacions de molèstia:", error);
     }
 }
 
