@@ -110,8 +110,12 @@ async function acabarLoadRPE(user) {
 
     const rpes = await getRPEByUserUuid(user.uuid);
     const rpeDates = rpes.map(x => x.date_practice);
+
     dates = dates.filter(x => !rpeDates.includes(x));
-    dates.sort((a, b) => sortKey(b).localeCompare(sortKey(a)));
+
+    // De més antiga a més recent
+    dates.sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
+
     if (dates.length === 0) {
         isFinished = true;
         actualitzarEstatRPE();
@@ -120,8 +124,17 @@ async function acabarLoadRPE(user) {
     }
 
     selectedDate = dates[0];
+
     omplirSelectorDates();
     actualitzarEstatRPE();
+
+    // AVÍS SI HI HA MÉS D'UNA SESSIÓ PENDENT
+    if (dates.length > 1) {
+        alert(
+            "Tens RPE de sessions anteriors pendents.\n\n" +
+            "Comprova bé que la data correspongui a la sessió que vols registrar."
+        );
+    }
 }
 
 
