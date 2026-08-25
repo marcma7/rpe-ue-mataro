@@ -155,12 +155,23 @@ document.getElementById("confirmarHoraFisioButton").addEventListener("click", as
     }
 
     const ultimaVisita = visits.sort((a,b)=>b.num_visit-a.num_visit)[0];
+    
+    const dataFisio = diesFilterFisio[horaSeleccionadaFisio.index];
+    const horaFisio = horaSeleccionadaFisio.hora;
 
-    await upsertPhysioHour([{
-        uuid: ultimaVisita.uuid,
-        date: diesFilterFisio[horaSeleccionadaFisio.index],
-        hour: horaSeleccionadaFisio.hora
-    }]);
+    await upsertPhysioHour([
+        {
+            uuid: ultimaVisita.uuid,
+            date: dataFisio,
+            hour: horaFisio
+        }
+    ]);
+
+    const injury = await getInjuriesByUuid([injuryAssignada]);
+    if (injury.length > 0) {
+        const jugador = await getUser(injury[0].user_uuid);
+        if (jugador) await enviarNotificacioHoraFisio(jugador, dataFisio, horaFisio);
+    }
 
     document.getElementById("pantallaAssignarHora").style.display="none";
     alert("HORA ASSIGNADA");

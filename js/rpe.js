@@ -25,7 +25,6 @@ async function loadRPE(user) {
    // =====================================================
     // MIRAR SI ALGUN EQUIP DE L'USUARI DEMANA REGLA
     // =====================================================
-
     const teams = await getAllTeams();
 
     console.log("TEAMS:", teams);
@@ -59,22 +58,22 @@ async function loadRPE(user) {
         );
 
         // Les sessions futures no entren
-    if (data > ara) {
-        continue;
-    }
-
-    // Si és avui i encara no són les 11:00,
-    // no mostrem avui
-    const esAvui =
-        data.getFullYear() === ara.getFullYear() &&
-        data.getMonth() === ara.getMonth() &&
-        data.getDate() === ara.getDate();
-
-    if (esAvui && ara.getHours() < 12) {
-        continue;
-    }
-
-    validDates.push(practice.practice_date);
+        if (data > ara) {
+            continue;
+        }
+    
+        // Si és avui i encara no són les 11:00,
+        // no mostrem avui
+        const esAvui =
+            data.getFullYear() === ara.getFullYear() &&
+            data.getMonth() === ara.getMonth() &&
+            data.getDate() === ara.getDate();
+    
+        if (esAvui && ara.getHours() < 11) {
+            continue;
+        }
+    
+        validDates.push(practice.practice_date);
     }
 
     dates = validDates;
@@ -176,159 +175,77 @@ document.querySelectorAll(".rpeButton").forEach(button => {
 
 
 async function confirmarRPE(user) {
-
     if (isFinished) return;
 
-
     if (selectedRPE === -1) {
-
         alert("Cal registrar un RPE");
-
         return;
     }
 
-    const molestiesSeleccionada =
-    document.querySelector(
-        'input[name="teMolesties"]:checked'
-    );
-
-teMolesties =
-    molestiesSeleccionada?.value === "SI";
-
-textMolesties =
-    teMolesties
-        ? document.getElementById("textMolesties").value.trim()
-        : "";
-
-    // =================================================
-    // TEAM REGISTRANT L'RPE D'UN JUGADOR
-    // =================================================
+    const molestiesSeleccionada = document.querySelector('input[name="teMolesties"]:checked');
+    teMolesties = molestiesSeleccionada?.value === "SI";
+    textMolesties = teMolesties ? document.getElementById("textMolesties").value.trim() : "";
 
     if (venimDeRpeTeam) {
-
         await confirmarRPETeam();
-
         return;
     }
 
-
-    // =================================================
-    // RPE NORMAL DEL JUGADOR
-    // =================================================
-
     const practTimes = ptpt.filter(x => {
-
-        if (!x.practices)
-            return false;
-
+        if (!x.practices) return false;
         return x.practices.practice_date === selectedDate;
     });
 
-
-    const prepfis =
-        practTimes.filter(
-            x => x.practice_type === "prepfis"
-        );
-
-    const train =
-        practTimes.filter(
-            x => x.practice_type === "train"
-        );
-
-    const game =
-        practTimes.filter(
-            x => x.practice_type === "game"
-        );
-
+    const prepfis = practTimes.filter(x => x.practice_type === "prepfis");
+    const train = practTimes.filter(x => x.practice_type === "train");
+    const game = practTimes.filter(x => x.practice_type === "game");
 
     const registre = {
-
-    player_uuid: user.uuid,
-
-    register: selectedRPE,
-
-    date_register:
-        new Date().toISOString(),
-
-    date_practice: selectedDate,
-
-    weighted_register:
-        getRPEWeight(
-            selectedRPE,
-            prepfis,
-            train,
-            game
-        ),
-
-    te_molesties: teMolesties,
-
-    molesties: textMolesties,
-
-    te_regla: teRegla
-};
-
+        player_uuid: user.uuid,
+        register: selectedRPE,
+        date_register: new Date().toISOString(),
+        date_practice: selectedDate,
+        weighted_register: getRPEWeight(selectedRPE, prepfis, train, game),
+        te_molesties: teMolesties,
+        molesties: textMolesties,
+        te_regla: teRegla
+    };
 
     await addRPERegister([registre]);
 
-
-    dates =
-        dates.filter(
-            x => x !== selectedDate
-        );
-
-
-    selectedRPE = -1;
-
-
-    document
-        .querySelectorAll(".rpeButton")
-        .forEach(b =>
-            b.classList.remove("rpeSelected")
-        );
-
-        netejarMolestiesRPE();
-
-
-    if (dates.length === 0) {
-
-        isFinished = true;
-
-        actualitzarEstatRPE();
-
-        alert("No tens sessions pendents");
-
-        return;
+    if (teMolesties) {
+        await enviarNotificacioMolestia(user, textMolesties);
     }
 
+    dates = dates.filter(x => x !== selectedDate);
+    selectedRPE = -1;
+    
+    document.querySelectorAll(".rpeButton").forEach(b => b.classList.remove("rpeSelected"));
+    netejarMolestiesRPE();
+
+    if (dates.length === 0) {
+        isFinished = true;
+        actualitzarEstatRPE();
+        alert("No tens sessions pendents");
+        return;
+    }
 
     selectedDate = dates[0];
 
     if (user) {
-
-    if (Notification.permission === "granted") {
-
-        // Ja estan acceptades, no cal fer res
-        console.log("Les notificacions ja estan activades.");
-
-    } else if (Notification.permission === "default") {
-
-        // Encara no ha decidit → demanem permís
-        const activades = await activarNotificacionsPush(user);
-
-        if (activades) {
-            alert("Notificacions activades correctament.");
-        } else {
-            alert("No s'han pogut activar les notificacions.");
+        if (Notification.permission === "granted") {
+            console.log("Les notificacions ja estan activades.");
+        } else if (Notification.permission === "default") {
+            const activades = await activarNotificacionsPush(user);
+            if (activades) {
+                alert("Notificacions activades correctament.");
+            } else {
+                alert("No s'han pogut activar les notificacions.");
+            }
+        } else if (Notification.permission === "denied") {
+            console.log("Les notificacions estan bloquejades.");
         }
-
-    } else if (Notification.permission === "denied") {
-
-        // L'usuari les ha bloquejat
-        console.log("Les notificacions estan bloquejades.");
-
     }
-}
-
     omplirSelectorDates();
 }
 
