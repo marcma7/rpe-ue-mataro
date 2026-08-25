@@ -570,17 +570,82 @@ async function eliminarSessions() {
 async function eliminarSessio(practice) {
 
     const practiceTimes = await getPTPTByPractice([practice.uuid]);
-
-    if (practiceTimes.length > 0) {
-        await deletePracticeTime(practiceTimes.map(x => x.uuid));
+    if (practiceTimes.length === 0) {
+        await deletePractice(practice.uuid);
+        alert("SESSIÓ ELIMINADA CORRECTAMENT");
+        await loadDeleteSessions();
+        return;
     }
 
-    const rpes = await getRPEByDate(practice.practice_date);
-    if (rpes.length > 0) {
-        await deleteRPE(rpes.map(x => x.uuid));
+    const playerTeamUuids = [...new Set(practiceTimes.map(x => x.player_team_uuid))];
+    const playerPTPT = await getPTPTByUserTeamUuids(playerTeamUuids);
+
+    const altresPTPT = playerPTPT.filter(x => x.practices && x.practices.practice_date === practice.practice_date && x.practice_uuid !== practice.uuid && Number(x.time) > 0);
+
+    const playerTeamUuidsAmbAltraSessio = [...new Set(altresPTPT.map(x => x.player_team_uuid))];
+
+    const playerTeamUuidsSenseSessio = playerTeamUuids.filter(uuid => !playerTeamUuidsAmbAltraSessio.includes(uuid));
+
+    const userTeams = await getAllUserTeams();
+
+    const playerUuidsAmbAltraSessio = playerTeamUuidsAmbAltraSessio
+            .filter(uuid => playerTeamUuids.includes(uuid))
+            .map(uuid => {
+                const userTeam = userTeams.find(x => x.uuid === uuid);
+                return userTeam?.user_uuid;
+            })
+            .filter(Boolean);
+
+    const playerUuidsSenseSessio = playerTeamUuidsSenseSessio
+            .map(uuid => {
+                const userTeam = userTeams.find(x => x.uuid === uuid);
+                return userTeam?.user_uuid;
+            })
+            .filter(Boolean);
+
+    if (playerUuidsSenseSessio.length > 0) {
+        const rpes = await getRPEByUsersAndDate(playerUuidsSenseSessio, practice.practice_date);
+
+        if (rpes.length > 0) await deleteRPE(rpes.map(x => x.uuid));
     }
+
+    if (playerUuidsAmbAltraSessio.length > 0) {
+        const rpes = await getRPEByUsersAndDate(playerUuidsAmbAltraSessio, practice.practice_date);
+        const rpesActualitzar = [];
+
+        for (const playerUuid of playerUuidsAmbAltraSessio) {
+            const rpe = rpes.find(x => x.player_uuid === playerUuid);
+            if (!rpe) continue;
+
+            const userTeam = userTeams.find(x => x.user_uuid === playerUuid);
+            if (!userTeam) continue;
+
+            const ptptJugador = altresPTPT.filter(x => x.player_team_uuid === userTeam.uuid);
+            const prepfis = ptptJugador.filter(x => x.practice_type === "prepfis");
+            const train = ptptJugador.filter(x => x.practice_type === "train");
+            const game = ptptJugador.filter(x => x.practice_type === "game");
+
+            const weighted = getWeight(rpe.register, prepfis, train, game);
+
+            rpesActualitzar.push({
+                player_uuid: playerUuid,
+                register: rpe.register,
+                date_register: new Date().toISOString(),
+                date_practice: practice.practice_date,
+                weighted_register: weighted,
+                te_molesties: rpe.te_molesties,
+                molesties: rpe.molesties,
+                te_regla: rpe.te_regla
+            });
+        }
+
+
+        if (rpesActualitzar.length > 0) {
+            await upsertRPE(rpesActualitzar);
+        }
+    }
+
     await deletePractice(practice.uuid);
-
     alert("SESSIÓ ELIMINADA CORRECTAMENT");
     await loadDeleteSessions();
 }
