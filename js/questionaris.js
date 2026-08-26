@@ -50,18 +50,26 @@ async function loadQuestionarisPendents(user, pendents) {
 
 
 async function loadQuestions() {
-
     if (questionaris.length === 0) {
-        mostrarPantalla("rpe");
         const code = obtenirCodeLocal();
         const user = await fetchUserByCode(code);
-        await loadRPE(user);
-        await acabarLoadRPE(user);
+        if (!user) {
+            sortir();
+            return;
+        }
+        if (user.role === "JUGADOR") {
+            mostrarPantalla("rpe");
+            await loadRPE(user);
+            await acabarLoadRPE(user);
+        } else {
+            mostrarPantalla("management");
+        }
         return;
     }
 
     questions = await getQuestionsFromQuestionari(questionaris[0].questionari_uuid);
     respostes = {};
+
     for (const q of questions) {
         respostes[q.uuid] = "";
     }
