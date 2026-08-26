@@ -151,67 +151,29 @@ async function entrar() {
 
 
 async function decideRoute(user) {
+    if (user.role === "TEAM") {
+        venimDeRpeTeam = false;
+        mostrarPantalla("rpeTeam");
+        await loadRPETeam(user);
+        return;
+    }
 
-  //  if (user) {
-
-//    if (Notification.permission === "granted") {
-
-  //  } else if (Notification.permission === "default") {
-//        const activades = await activarNotificacionsPush(user);
-
-    //} else if (Notification.permission === "denied") {
-
-    //}
-//}
+    const questionaris = await getQuestionarisPerContestar(user.uuid);
+    if (questionaris.length > 0) {
+        mostrarPantalla("questionaris");
+        await loadQuestionarisPendents(user, questionaris);
+        return;
+    }
 
     if (user.role === "JUGADOR") {
-
         venimDeRpeTeam = false;
-
-        const questionaris =
-            await getQuestionarisPerContestar(
-                user.uuid
-            );
-
-        if (questionaris.length === 0) {
-
-            mostrarPantalla("rpe");
-
-            await loadRPE(user);
-            await acabarLoadRPE(user);
-
-        } else {
-
-            mostrarPantalla("questionaris");
-
-            await loadQuestionarisPendents(
-                user,
-                questionaris
-            );
-        }
-
+        mostrarPantalla("rpe");
+        await loadRPE(user);
+        await acabarLoadRPE(user);
         return;
     }
-
-
-    if (user.role === "TEAM") {
-
-        venimDeRpeTeam = false;
-
-        mostrarPantalla("rpeTeam");
-
-        await loadRPETeam(user);
-
-        return;
-    }
-
-
-    // =================================================
-    // TOTS ELS NO JUGADORS
-    // =================================================
 
     mostrarPantalla("estatRPE");
-
     await loadEstatRPE(user);
 }
 
@@ -460,22 +422,25 @@ async function loadEstatRPE(user) {
     // 7. BUSCAR ÚLTIMA SESSIÓ DE CADA JUGADOR
     const avui = new Date();
     avui.setHours(0, 0, 0, 0);
-
+    
     for (const jugador of jugadors) {
         const userTeamsJug = jugadorsTeams.get(jugador.uuid) || [];
         const teamUuids = [...new Set(userTeamsJug.map(ut => ut.team_uuid).filter(Boolean))];
 
-        // BUSCAR DIRECTAMENT LA SESSIÓ MÉS RECENT
         let ultimaSessio = null;
         let ultimaData = null;
         let ultimaSessioTeamUuid = null;
+        let ultimaSessioEntrena = false;
 
         for (const teamUuid of teamUuids) {
             const practices = practicesPerTeam.get(teamUuid) || [];
 
+            // User_team del jugador en aquest equip
+            const playerTeam = userTeamsJug.find(ut => ut.team_uuid === teamUuid);
+    
             for (const practice of practices) {
                 if (!practice.practice_date || practice.practice_date === "-") continue;
-
+                
                 const parts = practice.practice_date.split("-");
                 if (parts.length !== 3) continue;
 
@@ -484,38 +449,53 @@ async function loadEstatRPE(user) {
 
                 // NO COMPTAR SESSIONS FUTURES
                 if (data > avui) continue;
-
                 // LA SESSIÓ D'AVUI NOMÉS COMPTA SI JA HI HA ALMENYS UN RPE REGISTRAT D'AQUELL EQUIP
                 if (data.getTime() === avui.getTime() && !equipsAmbRPEAvui.has(teamUuid)) continue;
-                
-                if (!ultimaData || data > ultimaData) {
+
+                // COMPROVAR SI EL JUGADOR ENTRENA
+                let entrena = false;
+                if (playerTeam) {
+                    const ptpt = ptptMap.get(`${playerTeam.uuid}_${practice.uuid}`);
+
+                    if (ptpt && Number(ptpt.time) > 0) entrena = true;
+                }
+    
+                // DECIDIR SI AQUESTA ÉS LA SESSIÓ A MOSTRAR
+                if (!ultimaData) {
                     ultimaData = data;
                     ultimaSessio = practice;
                     ultimaSessioTeamUuid = teamUuid;
+                    ultimaSessioEntrena = entrena;
+                } else if (data > ultimaData) {
+                    ultimaData = data;
+                    ultimaSessio = practice;
+                    ultimaSessioTeamUuid = teamUuid;
+                    ultimaSessioEntrena = entrena;
+                } else if (data.getTime() === ultimaData.getTime() && entrena && !ultimaSessioEntrena) {
+                    ultimaData = data;
+                    ultimaSessio = practice;
+                    ultimaSessioTeamUuid = teamUuid;
+                    ultimaSessioEntrena = true;
                 }
             }
         }
 
         if (!ultimaSessio) continue;
-
         const dataUltimaSessio = ultimaSessio.practice_date;
 
         // RPE DIRECTAMENT DES DEL MAP
         const rpe = rpeMap.get(`${jugador.uuid}_${dataUltimaSessio}`) || null;
-
-        // COMPROVAR SI EL JUGADOR ENTRENA EN AQUESTA SESSIÓ
-        const userTeamsJug2 = jugadorsTeams.get(jugador.uuid) || [];
-        const playerTeam = userTeamsJug2.find(ut => ut.team_uuid === ultimaSessio.team_uuid);
-        const tePTPT = playerTeam ? ptptMap.has(`${playerTeam.uuid}_${ultimaSessio.uuid}`) : false;
-        const noEntrena = !tePTPT;
+    
+        // JA HO HEM CALCULAT QUAN BUSCÀVEM LA SESSIÓ
+        const noEntrena = !ultimaSessioEntrena;
 
         // MOLÈSTIES
         const teMolesties = rpe && rpe.te_molesties === true;
-
+        
         // FISIO
         const fisioDemanada = visitesPendentsFisio.get(jugador.uuid) || null;
         const fisioAssignada = visitesFisioAssignades.get(jugador.uuid) || null;
-
+    
         // GUARDAR RESULTAT
         estatRPEJugadors.push({
             jugador: jugador,
@@ -673,21 +653,13 @@ document.getElementById("accedirAppEstatRPE").addEventListener("click", async ()
         return;
     }
 
-    //if (Notification.permission === "granted") {
-
-    //} else if (Notification.permission === "default") {
-
-//    if (user) {
-    
-  //      const activades = await activarNotificacionsPush(user);
-    
-    //    }
-    //}else if (Notification.permission === "denied") {
-    
-      //  }
-      
+    if (Notification.permission === "granted") {
+    } else if (Notification.permission === "default") {
+        if (user) {
+            const activades = await activarNotificacionsPush(user);
+        }
+    }else if (Notification.permission === "denied") {
+    }
+     
     mostrarPantalla("management");
 });
-
-
-
