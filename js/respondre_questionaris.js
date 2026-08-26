@@ -31,15 +31,20 @@ function pintarQuestionaris(){
 
     const div = document.getElementById("llistaQuestionaris");
     div.innerHTML="";
+
     questionaris.forEach(q=>{
+
         const fila = document.createElement("div");
         fila.className = "questionariFila";
+
         fila.innerHTML = `
             <div class="nomQuestionari">${q.name}</div>
             <div class="infoQuestionari">${q.nQuestions} preguntes</div>
+
             <div class="botonsQuestionari">
                 <button class="editar">✎ Modificar</button>
                 <button class="enviar">➤ Enviar</button>
+                <button class="respostes">☷ Veure respostes</button>
                 <button class="eliminar">✕ Eliminar</button>
             </div>
         `;
@@ -52,6 +57,11 @@ function pintarQuestionaris(){
         fila.querySelector(".enviar").onclick=()=>{
             questionariSeleccionat=q;
             obrirEnviar(q);
+        };
+
+        fila.querySelector(".respostes").onclick=()=>{
+            questionariSeleccionat=q;
+            veureRespostesQuestionari(q);
         };
 
         fila.querySelector(".eliminar").onclick=()=>{
