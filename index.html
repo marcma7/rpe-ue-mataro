@@ -106,6 +106,47 @@
             </div>
     </div>
 
+    <!-- RESPOSTES QÜESTIONARIS -->
+    <div id="pantallaRespostesQuestionari" class="pantalla">
+
+    <div class="capcaleraPantalla">
+        <button onclick="tornarGestQuestionaris()">←</button>
+
+        <div>
+            <h1 id="titolRespostesQuestionari"></h1>
+            <div class="subtitolRespostes">Respostes</div>
+        </div>
+    </div>
+
+
+    <div class="filtresRespostes">
+
+        <div class="filtre">
+            <label>Data d'enviament</label>
+            <input type="date" id="filtreDataRespostes">
+        </div>
+
+        <div class="filtre">
+            <label>Equip</label>
+            <select id="filtreEquipRespostes">
+                <option value="">Tots els equips</option>
+            </select>
+        </div>
+
+        <div class="filtre">
+            <label>Jugador</label>
+            <select id="filtreJugadorRespostes">
+                <option value="">Tots els jugadors</option>
+            </select>
+        </div>
+
+    </div>
+
+
+    <div id="taulaRespostesQuestionari"></div>
+
+</div>
+
     <!-- QUESTIONARIS -->
     <div id="pantallaQuestionaris" class="container" style="display:none;">
         <h1 id="questionariNom"></h1>
