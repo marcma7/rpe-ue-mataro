@@ -87,7 +87,7 @@ function pintarOpcionsPregunta(){
         op=>{
             const fila = document.createElement("div");
             fila.innerHTML=`
-                ${op}
+                <span>${op}</span>
                 <button>✕</button>
             `;
 
