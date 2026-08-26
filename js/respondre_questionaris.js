@@ -49,6 +49,17 @@ function pintarQuestionaris(){
             </div>
         `;
 
+        fila.innerHTML = `
+            <div class="nomQuestionari">${q.name}</div>
+            <div class="infoQuestionari">${q.nQuestions} preguntes</div>
+
+            <div class="botonsQuestionari">
+                <button class="editar">✎ Modificar</button>
+                <button class="enviar">➤ Enviar</button>
+                <button class="eliminar">✕ Eliminar</button>
+            </div>
+        `;
+
         fila.querySelector(".editar").onclick=()=>{
             questionariSeleccionat=q;
             obrirPreguntes(q);
