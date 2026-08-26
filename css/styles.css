@@ -3553,3 +3553,49 @@ p {
     justify-content: flex-start;
     padding-bottom: 40px;
 }
+
+#llistaOpcions > div {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:8px;
+}
+
+#llistaOpcions > div button {
+    width:36px !important;
+    min-width:36px !important;
+    height:36px;
+    min-height:36px;
+    margin:0;
+    padding:0;
+    flex-shrink:0;
+    background:#ef4444 !important;
+    color:white !important;
+    border:none;
+    border-radius:8px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+#llistaOpcions > div button:hover {
+    background:#dc2626 !important;
+}
+
+#llistaOpcions > div {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+#llistaOpcions > div {
+    background:#f4f4f4;
+    border-radius:8px;
+    padding:6px 8px;
+}
+
+#llistaOpcions > div > span {
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
