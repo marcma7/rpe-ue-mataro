@@ -207,6 +207,7 @@ function mostrarPantalla(pantalla) {
     document.getElementById("pantallaRpeTeam").style.display = "none";
     document.getElementById("pantallaEnviarValoracionsJugador").style.display="none";
     document.getElementById("pantallaEstatRPE").style.display = "none";
+    document.getElementById("pantallaRespostesQuestionari").style.display = "none";
 
     if (pantalla === "login") document.getElementById("pantallaLogin").style.display = "flex";
     if (pantalla === "questionariJugadors") document.getElementById("pantallaEnviarQuestionarisJugador").style.display = "flex";
@@ -236,6 +237,7 @@ function mostrarPantalla(pantalla) {
     if(pantalla==="addValoracioItem") document.getElementById("pantallaAddValoracioItem").style.display="flex";
     if (pantalla === "rpeTeam") document.getElementById("pantallaRpeTeam").style.display = "flex";
     if (pantalla === "estatRPE") document.getElementById("pantallaEstatRPE").style.display = "flex";
+    if (pantalla === "pantallaRespostesQuestionari") document.getElementById("pantallaRespostesQuestionari").style.display = "flex";
 }
 
 
