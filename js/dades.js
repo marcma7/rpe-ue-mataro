@@ -653,10 +653,10 @@ async function carregarQuestionarisJugador(userUuid) {
 
     const questionaris = await getQuestionarisPerUsuari(userUuid);
 
-    if (!questionaris || questionaris.length === 0) {
-        return [];
-    }
+    if (!questionaris || questionaris.length === 0) return [];
 
+    const allQuestionaris = await getAllQuestionaris();
+    
     const questionariUserUuids = questionaris.map(q => q.uuid);
 
     const respostes = await getAnswersByQuestionari(questionariUserUuids);
@@ -670,6 +670,9 @@ async function carregarQuestionarisJugador(userUuid) {
                 const numB = Number(b.questions?.num_pregunta ?? 999);
                 return numA - numB;
             });
+
+        const thisQuestionari = allQuestionaris
+            .filter(r => r.uuid === q.questionari_uuid);
 
         return {
             ...q,
