@@ -54,7 +54,8 @@ document.getElementById("enrereLesions").addEventListener("click", ()=>{
 });
 
 document.getElementById("enrereVeureRespostes").addEventListener("click", ()=>{
-    mostrarPantalla("pantallaGestioQuestionaris");
+    mostrarPantalla("gestioQuestionaris");
+    await loadGestQuestionaris();
 });
 
 const botoSortir = document.getElementById("botoSortir");
