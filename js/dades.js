@@ -654,17 +654,35 @@ function ordenarPerDataDesc(array, camp) {
 async function carregarQuestionarisJugador(userUuid) {
 
     const questionaris = await getQuestionarisPerUsuari(userUuid);
-    if (!questionaris || questionaris.length === 0) return [];
 
-    const resultat = [];
-    for (const q of questionaris) {
-        const respostes = await getAnswersByQuestionari([q.uuid]);
-        resultat.push({
-            ...q,
-            preguntesRespostes: respostes
-        });
+    if (!questionaris || questionaris.length === 0) {
+        return [];
     }
-    return ordenarPerDataDesc(resultat, "data_resposta");
+
+    const questionariUuids = questionaris.map(q => q.uuid);
+
+    const respostes = await getAnswersByQuestionari(questionariUuids);
+
+        .map(q => {
+
+            const respostesQuestionari = respostes.filter(
+                r => r.questionari_user_uuid === q.uuid
+            );
+
+            return {
+                ...q,
+                preguntesRespostes: respostesQuestionari
+            };
+        })
+        .sort((a, b) => {
+            const da = parseData(a.data_resposta);
+            const db = parseData(b.data_resposta);
+
+            if (!da) return 1;
+            if (!db) return -1;
+
+            return db - da;
+        });
 }
 
 
