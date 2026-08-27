@@ -53,6 +53,10 @@ document.getElementById("enrereLesions").addEventListener("click", ()=>{
     mostrarPantalla("teams");
 });
 
+document.getElementById("enrereVeureRespostes").addEventListener("click", ()=>{
+    mostrarPantalla("pantallaGestioQuestionaris");
+});
+
 const botoSortir = document.getElementById("botoSortir");
 botoSortir.addEventListener("click", sortir);
 
