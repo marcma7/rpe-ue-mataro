@@ -683,9 +683,8 @@ async function carregarQuestionarisJugador(userUuid) {
 
 function pintarQuestionarisTargeta(questionaris) {
     const container = document.getElementById("playerQuestionnaires");
-    console.log(container);
     if (!container) return;
-    console.log(questionaris);
+
     container.innerHTML = "";
     if (!questionaris.length) {
         container.innerHTML =
@@ -705,7 +704,7 @@ function pintarQuestionarisTargeta(questionaris) {
         item.innerHTML = `
             <div class="dataItemLeft">
                 <span class="dataItemTitle">${escaparHTML(nom)}</span>
-                <span class="dataItemDate">${contestat ? "Última resposta: " + formatData(data) : "Enviat: " + formatData(q.data_enviament)}</span>
+                <span class="dataItemDate">${contestat ? "Última resposta: " + data : "Enviat: " + q.data_enviament}</span>
             </div>
 
             <span class="dataItemStatus ${contestat ? "statusDone" : "statusPending"}">${contestat ? "CONTESTAT" : "PENDENT"}</span>
