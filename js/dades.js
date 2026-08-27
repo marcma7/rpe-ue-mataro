@@ -700,7 +700,7 @@ function pintarQuestionarisTargeta(questionaris) {
 
     console.log(questionaris);
     questionaris.forEach(q => {
-        const nom = q.thisQuestionari?.name || "Qüestionari";
+        const nom = q.thisQuestionari[0]?.name || "Qüestionari";
         const contestat = Number(q.contestat) === 1;
         const data = q.data_resposta || q.data_enviament;
         const item = document.createElement("div");
