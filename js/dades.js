@@ -652,8 +652,19 @@ function ordenarPerDataDesc(array, camp) {
 
 
 async function carregarQuestionarisJugador(userUuid) {
-    const questionaris = await getQuestionarisPerUsuari( userUuid ); 
-    return ordenarPerDataDesc( questionaris, "data_resposta" );
+
+    const questionaris = await getQuestionarisPerUsuari(userUuid);
+    if (!questionaris || questionaris.length === 0) return [];
+
+    const resultat = [];
+    for (const q of questionaris) {
+        const respostes = await getAnswersByQuestionari([q.uuid]);
+        resultat.push({
+            ...q,
+            preguntesRespostes: respostes
+        });
+    }
+    return ordenarPerDataDesc(resultat, "data_resposta");
 }
 
 
