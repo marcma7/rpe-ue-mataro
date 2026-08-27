@@ -49,6 +49,11 @@ function pintarQuestionaris(){
             </div>
         `;
 
+        fila.querySelector(".respostes").onclick=()=>{
+            questionariSeleccionat=q;
+            veureRespostesQuestionari(q);
+        };
+
         fila.innerHTML = `
             <div class="nomQuestionari">${q.name}</div>
             <div class="infoQuestionari">${q.nQuestions} preguntes</div>
@@ -68,11 +73,6 @@ function pintarQuestionaris(){
         fila.querySelector(".enviar").onclick=()=>{
             questionariSeleccionat=q;
             obrirEnviar(q);
-        };
-
-        fila.querySelector(".respostes").onclick=()=>{
-            questionariSeleccionat=q;
-            veureRespostesQuestionari(q);
         };
 
         fila.querySelector(".eliminar").onclick=()=>{
