@@ -56,38 +56,40 @@ function pintarQuestionaris() {
         const fila = document.createElement("div");
 
         fila.className = "questionariFila";
-
+        
         fila.innerHTML = `
             <div class="nomQuestionari">
                 ${q.name}
             </div>
-
+        
             <div class="infoQuestionari">
                 ${q.nQuestions} preguntes
             </div>
-
+        
             <div class="botonsQuestionari">
-
+        
                 <button class="editar">
                     ✎ Modificar
                 </button>
-
+        
                 <button class="enviar">
                     ➤ Enviar
                 </button>
-
-            </div>
-
-            <div class="botonsQuestionari">
-
-                <button class="respostes">
-                    ☷ Veure respostes
-                </button>
-
-                <button class="eliminar">
-                    ✕ Eliminar
-                </button>
-
+        
+                ${
+                    userActual.role === "SUPERADMIN"
+                    ? `
+                        <button class="respostes">
+                            ☷ Veure respostes
+                        </button>
+        
+                        <button class="eliminar">
+                            ✕ Eliminar
+                        </button>
+                    `
+                    : ""
+                }
+        
             </div>
         `;
 
