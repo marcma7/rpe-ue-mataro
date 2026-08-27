@@ -79,9 +79,7 @@ function calcularACWR(users,rpes){
     mes.setDate(avui.getDate()-28);
 
     return users.filter(u=>u.role==="JUGADOR").map(user=>{
-            const rpeJugador = rpes
-                .filter(r=>r.player_uuid===user.uuid)
-                .map(r=>{
+            const rpeJugador = rpes.filter(r=>r.player_uuid===user.uuid).map(r=>{
                     return {
                         ...r,
                         data: r.date_practice ? convertirDataRPE(r.date_practice) : null,
@@ -654,6 +652,7 @@ function ordenarPerDataDesc(array, camp) {
 
 async function carregarQuestionarisJugador(userUuid) {
     const questionaris = await getQuestionarisPerUsuari( userUuid ); 
+    console.log(questionaris);
     return ordenarPerDataDesc( questionaris, "data_resposta" );
 }
 
