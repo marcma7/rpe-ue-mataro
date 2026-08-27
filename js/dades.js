@@ -210,7 +210,7 @@ async function mostrarCardJugador(jugador) {
 
         /* QÜESTIONARIS */
         const questionaris = await carregarQuestionarisJugador(jugador.uuid);
-        pintarQuestionaris(questionaris);
+        pintarQuestionarisTargeta(questionaris);
 
         /* VALORACIONS */
         const respostesValoracions = await carregarValoracionsJugador(jugador.uuid);
@@ -681,7 +681,7 @@ async function carregarQuestionarisJugador(userUuid) {
 }
 
 
-function pintarQuestionaris(questionaris) {
+function pintarQuestionarisTargeta(questionaris) {
     const container = document.getElementById("playerQuestionnaires");
     console.log(container);
     if (!container) return;
