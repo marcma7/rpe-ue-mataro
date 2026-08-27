@@ -210,7 +210,6 @@ async function mostrarCardJugador(jugador) {
 
         /* QÜESTIONARIS */
         const questionaris = await carregarQuestionarisJugador(jugador.uuid);
-        console.log(questionaris);
         pintarQuestionaris(questionaris);
 
         /* VALORACIONS */
@@ -235,7 +234,6 @@ async function mostrarCardJugador(jugador) {
         jugador.daysWithoutRPE = diesRPE;
 
         const risc = calcularRiscJugador(jugador, wellness, lesionsPreparades, episodis);
-        console.log(risc);
         jugador.risc = risc;
 
         const estat = calcularEstatJugador(risc);
@@ -685,6 +683,7 @@ async function carregarQuestionarisJugador(userUuid) {
 
 function pintarQuestionaris(questionaris) {
     const container = document.getElementById("playerQuestionnaires");
+    console.log(container);
     if (!container) return;
     console.log(questionaris);
     container.innerHTML = "";
