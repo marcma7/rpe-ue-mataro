@@ -821,26 +821,44 @@ async function getQuestionarisUser(questionariUuids, userUuids){
 }
 
 
-async function getAnswersByQuestionari(questionariUserUuids){
+async function getAnswersByQuestionari(questionariUserUuids) {
 
-    if(questionariUserUuids.length === 0) return [];
+    if (questionariUserUuids.length === 0) return [];
 
     const joined = questionariUserUuids.join(",");
 
-    const response = await fetch(
+    const url =
         `${SUPABASE_URL}/rest/v1/questionari_respostes` +
         `?questionari_user_uuid=in.(${joined})` +
-        `&select=*,questions(*)`,
-        {
-            headers:{
-                "Accept":"application/json",
-                "apikey":SUPABASE_API_KEY,
-                "Authorization":"Bearer " + SUPABASE_API_KEY
-            }
-        }
-    );
+        `&select=*,questions(*)` +
+        `&order=question_uuid`;
 
-    return await response.json();
+    try {
+
+        const response = await fetch(url, {
+            headers: {
+                "Accept": "application/json",
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY
+            }
+        });
+
+        if (!response.ok) {
+            console.error(
+                "Error obtenint respostes:",
+                response.status,
+                await response.text()
+            );
+            return [];
+        }
+
+        return await response.json();
+
+    } catch (error) {
+
+        console.error("Error obtenint respostes:", error);
+        return [];
+    }
 }
 
 
