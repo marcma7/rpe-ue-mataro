@@ -210,6 +210,7 @@ async function mostrarCardJugador(jugador) {
 
         /* QÜESTIONARIS */
         const questionaris = await carregarQuestionarisJugador(jugador.uuid);
+        console.log(questionaris);
         pintarQuestionaris(questionaris);
 
         /* VALORACIONS */
@@ -652,7 +653,6 @@ function ordenarPerDataDesc(array, camp) {
 
 async function carregarQuestionarisJugador(userUuid) {
     const questionaris = await getQuestionarisPerUsuari( userUuid ); 
-    console.log(questionaris);
     return ordenarPerDataDesc( questionaris, "data_resposta" );
 }
 
