@@ -663,6 +663,7 @@ async function carregarQuestionarisJugador(userUuid) {
 
     const respostes = await getAnswersByQuestionari(questionariUuids);
 
+    return questionaris
         .map(q => {
 
             const respostesQuestionari = respostes.filter(
