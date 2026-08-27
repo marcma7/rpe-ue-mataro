@@ -686,6 +686,7 @@ async function carregarQuestionarisJugador(userUuid) {
 function pintarQuestionaris(questionaris) {
     const container = document.getElementById("playerQuestionnaires");
     if (!container) return;
+    console.log(questionaris);
     container.innerHTML = "";
     if (!questionaris.length) {
         container.innerHTML =
