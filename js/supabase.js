@@ -822,19 +822,24 @@ async function getQuestionarisUser(questionariUuids, userUuids){
 
 
 async function getAnswersByQuestionari(questionariUserUuids){
-    if(questionariUserUuids.length===0) return [];
+
+    if(questionariUserUuids.length === 0) return [];
 
     const joined = questionariUserUuids.join(",");
+
     const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/questionari_respostes?questionari_user_uuid=in.(${joined})`,
+        `${SUPABASE_URL}/rest/v1/questionari_respostes` +
+        `?questionari_user_uuid=in.(${joined})` +
+        `&select=*,questions(*)`,
         {
             headers:{
                 "Accept":"application/json",
                 "apikey":SUPABASE_API_KEY,
-                "Authorization": "Bearer "+SUPABASE_API_KEY
+                "Authorization":"Bearer " + SUPABASE_API_KEY
             }
         }
     );
+
     return await response.json();
 }
 
