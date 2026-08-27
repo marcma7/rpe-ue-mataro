@@ -3599,3 +3599,21 @@ p {
     overflow:hidden;
     text-overflow:ellipsis;
 }
+
+
+#taulaRespostesQuestionari {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+#taulaRespostesQuestionari .taulaRespostes {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#taulaRespostesQuestionari .taulaRespostes thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
