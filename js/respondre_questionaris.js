@@ -76,9 +76,6 @@ function pintarQuestionaris() {
                     ➤ Enviar
                 </button>
         
-                ${
-                    userActual.role === "SUPERADMIN"
-                    ? `
                         <button class="respostes">
                             ☷ Veure respostes
                         </button>
@@ -86,9 +83,7 @@ function pintarQuestionaris() {
                         <button class="eliminar">
                             ✕ Eliminar
                         </button>
-                    `
-                    : ""
-                }
+                
         
             </div>
         `;
