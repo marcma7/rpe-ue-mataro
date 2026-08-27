@@ -659,31 +659,27 @@ async function carregarQuestionarisJugador(userUuid) {
         return [];
     }
 
-    const questionariUuids = questionaris.map(q => q.uuid);
+    const questionariUserUuids = questionaris.map(q => q.uuid);
 
-    const respostes = await getAnswersByQuestionari(questionariUuids);
+    const respostes = await getAnswersByQuestionari(questionariUserUuids);
 
-    return questionaris
-        .map(q => {
+    const resultat = questionaris.map(q => {
 
-            const respostesQuestionari = respostes.filter(
-                r => r.questionari_user_uuid === q.uuid
-            );
+        const preguntesRespostes = respostes
+            .filter(r => r.questionari_user_uuid === q.uuid)
+            .sort((a, b) => {
+                const numA = Number(a.questions?.num_pregunta ?? 999);
+                const numB = Number(b.questions?.num_pregunta ?? 999);
+                return numA - numB;
+            });
 
-            return {
-                ...q,
-                preguntesRespostes: respostesQuestionari
-            };
-        })
-        .sort((a, b) => {
-            const da = parseData(a.data_resposta);
-            const db = parseData(b.data_resposta);
+        return {
+            ...q,
+            preguntesRespostes
+        };
+    });
 
-            if (!da) return 1;
-            if (!db) return -1;
-
-            return db - da;
-        });
+    return ordenarPerDataDesc(resultat, "data_resposta");
 }
 
 
