@@ -53,7 +53,7 @@ document.getElementById("enrereLesions").addEventListener("click", ()=>{
     mostrarPantalla("teams");
 });
 
-document.getElementById("enrereVeureRespostes").addEventListener("click", ()=>{
+document.getElementById("enrereVeureRespostes").addEventListener("click", async ()=>{
     mostrarPantalla("gestioQuestionaris");
     await loadGestQuestionaris();
 });
