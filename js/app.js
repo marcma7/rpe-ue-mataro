@@ -660,13 +660,7 @@ document.getElementById("accedirAppEstatRPE").addEventListener("click", async ()
         return;
     }
 
-    if (Notification.permission === "granted") {
-    } else if (Notification.permission === "default") {
-        if (user) {
-            const activades = await activarNotificacionsPush(user);
-        }
-    }else if (Notification.permission === "denied") {
-    }
+
      
     mostrarPantalla("management");
 });
