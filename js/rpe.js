@@ -232,7 +232,7 @@ async function confirmarRPE(user) {
 
     selectedDate = dates[0];
 
-    if (user) {
+    /*if (user) {
         if (Notification.permission === "granted") {
             console.log("Les notificacions ja estan activades.");
         } else if (Notification.permission === "default") {
@@ -245,7 +245,7 @@ async function confirmarRPE(user) {
         } else if (Notification.permission === "denied") {
             console.log("Les notificacions estan bloquejades.");
         }
-    }
+    }*/
     omplirSelectorDates();
 }
 
