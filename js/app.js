@@ -660,7 +660,18 @@ document.getElementById("accedirAppEstatRPE").addEventListener("click", async ()
         return;
     }
 
+    if (Notification.permission === "granted") {
+        console.log("Les notificacions ja estan activades.");
+    } else if (Notification.permission === "default") {
+        const activades = await activarNotificacionsPush(user);
+        if (activades) {
+            alert("Notificacions activades correctament.");
+        } else {
+            alert("No s'han pogut activar les notificacions.");
+        }
+    } else if (Notification.permission === "denied") {
+        console.log("Les notificacions estan bloquejades.");
+    }
 
-     
     mostrarPantalla("management");
 });
