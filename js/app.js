@@ -411,8 +411,6 @@ async function loadEstatRPE(user) {
         })
     );
 
-    console.log(resultatsPractices);
-
     for (const resultat of resultatsPractices) {
         practicesPerTeam.set(resultat.teamUuid, resultat.practices || []);
     }
@@ -421,6 +419,8 @@ async function loadEstatRPE(user) {
 const totesPractices = resultatsPractices.flatMap(r => r.practices || []);
 const practiceUuids = totesPractices.map(p => p.uuid).filter(Boolean);
 const ptptResultat = await getPTPTByPractice(practiceUuids);
+
+    
 
 // MAPA MÉS SEGUR: Guardem tant per (player_team_uuid + practice) com per (player_uuid + practice)
 const ptptMap = new Map();
