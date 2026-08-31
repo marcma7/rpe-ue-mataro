@@ -551,21 +551,41 @@ async function upsertPracticeTime(data){
 }
 
 
-async function getPTPTByPractice(practiceUuids){
-    if(practiceUuids.length===0) return [];
+async function getPTPTByPractice(practiceUuids) {
+    if (!practiceUuids || practiceUuids.length === 0) return [];
 
-    const joined = practiceUuids.join(",");
-    const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/player_team_practice_time?practice_uuid=in.(${joined})&select=*,practices(*)`,
-        {
-            headers:{
-                "Accept":"application/json",
-                "apikey":SUPABASE_API_KEY,
-                "Authorization":"Bearer " + SUPABASE_API_KEY
+    // Netegem duplicats
+    const uuidsUnics = [...new Set(practiceUuids)];
+    
+    // Dividim en blocs de 50 UUIDs per evitar superar la mida màxima de la URL
+    const MIDA_BLOC = 50;
+    const blocs = [];
+    
+    for (let i = 0; i < uuidsUnics.length; i += MIDA_BLOC) {
+        blocs.push(uuidsUnics.slice(i, i + MIDA_BLOC));
+    }
+
+    // Executem totes les peticions en paral·lel
+    const promeses = blocs.map(async (bloc) => {
+        const joined = bloc.join(",");
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/player_team_practice_time?practice_uuid=in.(${joined})&select=*,practices(*)`,
+            {
+                headers: {
+                    "Accept": "application/json",
+                    "apikey": SUPABASE_API_KEY,
+                    "Authorization": "Bearer " + SUPABASE_API_KEY,
+                    "Range": "0-9999" // Demanem tots els registres d'aquell bloc d'UUIDs
+                }
             }
-        }
-    );
-    return await response.json();
+        );
+        return await response.json();
+    });
+
+    const resultats = await Promise.all(promeses);
+    
+    // Unifiquem tots els blocs en un únic array
+    return resultats.flat().filter(Boolean);
 }
 
 
