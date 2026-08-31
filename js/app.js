@@ -426,7 +426,7 @@ async function loadEstatRPE(user) {
         ptptMap.set(`${ptpt.player_team_uuid}_${ptpt.practice_uuid}`, ptpt);
     }
 
-    // 7. BUSCAR ÚLTIMA SESSIÓ DE CADA JUGADOR
+    // 7. BUSCAR ÚLTIMA SESSIÓ DEL JUGADOR
     const avui = new Date();
     avui.setHours(0, 0, 0, 0);
     
@@ -434,76 +434,72 @@ async function loadEstatRPE(user) {
         const userTeamsJug = jugadorsTeams.get(jugador.uuid) || [];
         const teamUuids = [...new Set(userTeamsJug.map(ut => ut.team_uuid).filter(Boolean))];
 
-        let ultimaSessio = null;
-        let ultimaData = null;
-        let ultimaSessioTeamUuid = null;
-        let ultimaSessioEntrena = false;
-
+        // Última sessió de cada equip
+        const ultimesSessionsEquips = [];
         for (const teamUuid of teamUuids) {
             const practices = practicesPerTeam.get(teamUuid) || [];
-
-            // User_team del jugador en aquest equip
             const playerTeam = userTeamsJug.find(ut => ut.team_uuid === teamUuid);
-    
+
+            let ultimaSessio = null;
+            let ultimaData = null;
+            let entrenaUltimaSessio = false;
+
             for (const practice of practices) {
                 if (!practice.practice_date || practice.practice_date === "-") continue;
-                
+
                 const parts = practice.practice_date.split("-");
                 if (parts.length !== 3) continue;
-
+    
                 const data = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
                 data.setHours(0, 0, 0, 0);
 
-                // NO COMPTAR SESSIONS FUTURES
                 if (data > avui) continue;
-                // LA SESSIÓ D'AVUI NOMÉS COMPTA SI JA HI HA ALMENYS UN RPE REGISTRAT D'AQUELL EQUIP
                 if (data.getTime() === avui.getTime() && !equipsAmbRPEAvui.has(teamUuid)) continue;
 
-                // COMPROVAR SI EL JUGADOR ENTRENA
                 let entrena = false;
                 if (playerTeam) {
                     const ptpt = ptptMap.get(`${playerTeam.uuid}_${practice.uuid}`);
-
                     if (ptpt && Number(ptpt.time) > 0) entrena = true;
                 }
-    
-                // DECIDIR SI AQUESTA ÉS LA SESSIÓ A MOSTRAR
-                if (!ultimaData) {
+
+                if (!ultimaData || data > ultimaData) {
                     ultimaData = data;
                     ultimaSessio = practice;
-                    ultimaSessioTeamUuid = teamUuid;
-                    ultimaSessioEntrena = entrena;
-                } else if (data > ultimaData) {
-                    ultimaData = data;
+                    entrenaUltimaSessio = entrena;
+                } else if (data.getTime() === ultimaData.getTime() && entrena && !entrenaUltimaSessio) {
                     ultimaSessio = practice;
-                    ultimaSessioTeamUuid = teamUuid;
-                    ultimaSessioEntrena = entrena;
-                } else if (data.getTime() === ultimaData.getTime() && entrena && !ultimaSessioEntrena) {
-                    ultimaData = data;
-                    ultimaSessio = practice;
-                    ultimaSessioTeamUuid = teamUuid;
-                    ultimaSessioEntrena = true;
+                    entrenaUltimaSessio = true;
                 }
             }
+
+            if (ultimaSessio) {
+                ultimesSessionsEquips.push({
+                    teamUuid: teamUuid,
+                    practice: ultimaSessio,
+                    data: ultimaData,
+                    entrena: entrenaUltimaSessio
+                });
+            }
         }
+        if (ultimesSessionsEquips.length === 0) continue;
 
-        if (!ultimaSessio) continue;
-        const dataUltimaSessio = ultimaSessio.practice_date;
-
-        // RPE DIRECTAMENT DES DEL MAP
-        const rpe = rpeMap.get(`${jugador.uuid}_${dataUltimaSessio}`) || null;
+        const sessionsOnEntrena = ultimesSessionsEquips.filter(s => s.entrena);
+        let sessioSeleccionada = null;
+        let noEntrena = false;
+        if (sessionsOnEntrena.length > 0) {
+            sessioSeleccionada = sessionsOnEntrena.reduce((mesRecent, actual) => actual.data > mesRecent.data ? actual : mesRecent);
+            noEntrena = false;
+        } else {
+            noEntrena = true;
+            sessioSeleccionada = ultimesSessionsEquips.reduce((mesRecent, actual) => actual.data > mesRecent.data ? actual : mesRecent);
+        }
     
-        // JA HO HEM CALCULAT QUAN BUSCÀVEM LA SESSIÓ
-        const noEntrena = !ultimaSessioEntrena;
-
-        // MOLÈSTIES
+        const dataUltimaSessio = sessioSeleccionada.practice.practice_date;
+        const rpe = rpeMap.get(`${jugador.uuid}_${dataUltimaSessio}`) || null;
         const teMolesties = rpe && rpe.te_molesties === true;
-        
-        // FISIO
         const fisioDemanada = visitesPendentsFisio.get(jugador.uuid) || null;
         const fisioAssignada = visitesFisioAssignades.get(jugador.uuid) || null;
-    
-        // GUARDAR RESULTAT
+
         estatRPEJugadors.push({
             jugador: jugador,
             equips: userTeamsJug.map(ut => equipsMap.get(ut.team_uuid)).filter(Boolean),
@@ -517,7 +513,7 @@ async function loadEstatRPE(user) {
             fisioAssignada: fisioAssignada
         });
     }
-
+    
     // 8. ORDENAR JUGADORS
     estatRPEJugadors.sort((a, b) => {
         const equipsA = (a.equips || []).map(abreujarEquip).filter(Boolean).join(", ");
