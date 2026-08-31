@@ -414,113 +414,116 @@ async function loadEstatRPE(user) {
     for (const resultat of resultatsPractices) {
         practicesPerTeam.set(resultat.teamUuid, resultat.practices || []);
     }
-
-    // 6.1. CARREGAR PLAYER_TEAM_PRACTICE_TIME
-    const totesPractices = resultatsPractices.flatMap(r => r.practices || []);
-    const practiceUuids = totesPractices.map(p => p.uuid).filter(Boolean);
-    const ptptResultat = await getPTPTByPractice(practiceUuids);
     
-    // MAPA: player_team_uuid + practice_uuid
-    const ptptMap = new Map();
-    for (const ptpt of ptptResultat) {
+// 6.1. CARREGAR PLAYER_TEAM_PRACTICE_TIME (PTPT)
+const totesPractices = resultatsPractices.flatMap(r => r.practices || []);
+const practiceUuids = totesPractices.map(p => p.uuid).filter(Boolean);
+const ptptResultat = await getPTPTByPractice(practiceUuids);
+
+// MAPA MÉS SEGUR: Guardem tant per (player_team_uuid + practice) com per (player_uuid + practice)
+const ptptMap = new Map();
+for (const ptpt of ptptResultat) {
+    // Clau 1: Per player_team_uuid
+    if (ptpt.player_team_uuid) {
         ptptMap.set(`${ptpt.player_team_uuid}_${ptpt.practice_uuid}`, ptpt);
     }
+    // Clau 2: Per player_uuid (si existeix a l'objecte ptpt, per si de cas)
+    if (ptpt.player_uuid) {
+        ptptMap.set(`${ptpt.player_uuid}_${ptpt.practice_uuid}`, ptpt);
+    }
+}
 
-    console.log(ptptMap);
+// 7. BUSCAR ÚLTIMA SESSIÓ DEL JUGADOR
+const avui = new Date();
+avui.setHours(23, 59, 59, 999);
 
-    // 7. BUSCAR ÚLTIMA SESSIÓ DEL JUGADOR
-    const avui = new Date();
-    avui.setHours(0, 0, 0, 0);
-    
-    for (const jugador of jugadors) {
-        console.log(jugador);
+for (const jugador of jugadors) {
+    const userTeamsJug = jugadorsTeams.get(jugador.uuid) || [];
+    const ultimesSessionsPerEquip = [];
+
+    // Per a cada equip del jugador, trobem quina és la SEVA última sessió
+    for (const playerTeam of userTeamsJug) {
+        const practices = practicesPerTeam.get(playerTeam.team_uuid) || [];
         
-        const userTeamsJug = jugadorsTeams.get(jugador.uuid) || [];
-        const teamUuids = [...new Set(userTeamsJug.map(ut => ut.team_uuid).filter(Boolean))];
+        let ultimaSessioEquip = null;
+        let ultimaDataEquip = null;
 
-        // Última sessió de cada equip
-        const ultimesSessionsEquips = [];
-        for (const teamUuid of teamUuids) {
-            const practices = practicesPerTeam.get(teamUuid) || [];
-            const playerTeam = userTeamsJug.find(ut => ut.team_uuid === teamUuid);
+        for (const practice of practices) {
+            if (!practice.practice_date || practice.practice_date === "-") continue;
 
-            let ultimaSessio = null;
-            let ultimaData = null;
-            let entrenaUltimaSessio = false;
+            const parts = practice.practice_date.split("-");
+            if (parts.length !== 3) continue;
 
-            for (const practice of practices) {
-                console.log(practice);
-                if (!practice.practice_date || practice.practice_date === "-") continue;
+            const dataPrac = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+            dataPrac.setHours(0, 0, 0, 0);
 
-                const parts = practice.practice_date.split("-");
-                if (parts.length !== 3) continue;
-    
-                const data = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
-                data.setHours(0, 0, 0, 0);
+            if (dataPrac > avui) continue;
 
-                if (data > avui) continue;
-                if (data.getTime() === avui.getTime() && !equipsAmbRPEAvui.has(teamUuid)) continue;
-
-                let entrena = false;
-                if (playerTeam) {
-                    const ptpt = ptptMap.get(`${playerTeam.uuid}_${practice.uuid}`);
-                    console.log(ptpt);
-                    if (ptpt && Number(ptpt.time) > 0) entrena = true;
-                }
-
-                if (!ultimaData || data > ultimaData) {
-                    ultimaData = data;
-                    ultimaSessio = practice;
-                    entrenaUltimaSessio = entrena;
-                } else if (data.getTime() === ultimaData.getTime() && entrena && !entrenaUltimaSessio) {
-                    ultimaSessio = practice;
-                    entrenaUltimaSessio = true;
-                }
-            }
-
-            if (ultimaSessio) {
-                ultimesSessionsEquips.push({
-                    teamUuid: teamUuid,
-                    practice: ultimaSessio,
-                    data: ultimaData,
-                    entrena: entrenaUltimaSessio
-                });
+            if (!ultimaDataEquip || dataPrac > ultimaDataEquip) {
+                ultimaDataEquip = dataPrac;
+                ultimaSessioEquip = practice;
             }
         }
-        if (ultimesSessionsEquips.length === 0) continue;
 
-        const sessionsOnEntrena = ultimesSessionsEquips.filter(s => s.entrena);
-        let sessioSeleccionada = null;
-        let noEntrena = false;
-        if (sessionsOnEntrena.length > 0) {
-            sessioSeleccionada = sessionsOnEntrena.reduce((mesRecent, actual) => actual.data > mesRecent.data ? actual : mesRecent);
-            noEntrena = false;
-        } else {
-            noEntrena = true;
-            sessioSeleccionada = ultimesSessionsEquips.reduce((mesRecent, actual) => actual.data > mesRecent.data ? actual : mesRecent);
+        if (ultimaSessioEquip) {
+            // BUSQUEM EL PTPT PROVANT LES DUES CLAUS PER SI DE CAS
+            const ptpt = ptptMap.get(`${playerTeam.uuid}_${ultimaSessioEquip.uuid}`) || 
+                         ptptMap.get(`${jugador.uuid}_${ultimaSessioEquip.uuid}`);
+
+            // Validem si el temps és > 0 (convertint a Number de forma segura)
+            const tempsEntrenat = ptpt ? Number(ptpt.time || ptpt.minutes || 0) : 0;
+            const entrena = tempsEntrenat > 0;
+
+            console.log(`Jugador: ${jugador.name}, Equip: ${playerTeam.team_uuid}, Data: ${ultimaSessioEquip.practice_date}, Minuts: ${tempsEntrenat}, Entrena: ${entrena}`);
+
+            ultimesSessionsPerEquip.push({
+                practice: ultimaSessioEquip,
+                data: ultimaDataEquip,
+                entrena: entrena,
+                teamUuid: playerTeam.team_uuid
+            });
         }
-    
-        const dataUltimaSessio = sessioSeleccionada.practice.practice_date;
-        const rpe = rpeMap.get(`${jugador.uuid}_${dataUltimaSessio}`) || null;
-        const teMolesties = rpe && rpe.te_molesties === true;
-        const fisioDemanada = visitesPendentsFisio.get(jugador.uuid) || null;
-        const fisioAssignada = visitesFisioAssignades.get(jugador.uuid) || null;
-
-        estatRPEJugadors.push({
-            jugador: jugador,
-            equips: userTeamsJug.map(ut => equipsMap.get(ut.team_uuid)).filter(Boolean),
-            dataUltimaSessio: dataUltimaSessio,
-            rpe: rpe,
-            noEntrena: noEntrena,
-            teMolesties: !!teMolesties,
-            teHoraFisioDemanada: !!fisioDemanada,
-            injuryFisioDemanada: fisioDemanada,
-            teFisioAssignada: !!fisioAssignada,
-            fisioAssignada: fisioAssignada
-        });
     }
 
-    console.log(estatRPEJugadors);
+    if (ultimesSessionsPerEquip.length === 0) continue;
+
+    // Triar la sessió segons la regla
+    const sessionsOnEntrena = ultimesSessionsPerEquip.filter(s => s.entrena);
+
+    let sessioSeleccionada = null;
+    let noEntrena = false;
+
+    if (sessionsOnEntrena.length > 0) {
+        sessioSeleccionada = sessionsOnEntrena.reduce((mesRecent, actual) => 
+            actual.data > mesRecent.data ? actual : mesRecent
+        );
+        noEntrena = false;
+    } else {
+        sessioSeleccionada = ultimesSessionsPerEquip.reduce((mesRecent, actual) => 
+            actual.data > mesRecent.data ? actual : mesRecent
+        );
+        noEntrena = true;
+    }
+
+    const dataUltimaSessio = sessioSeleccionada.practice.practice_date;
+    const rpe = rpeMap.get(`${jugador.uuid}_${dataUltimaSessio}`) || null;
+    const teMolesties = rpe && rpe.te_molesties === true;
+    const fisioDemanada = visitesPendentsFisio.get(jugador.uuid) || null;
+    const fisioAssignada = visitesFisioAssignades.get(jugador.uuid) || null;
+
+    estatRPEJugadors.push({
+        jugador: jugador,
+        equips: userTeamsJug.map(ut => equipsMap.get(ut.team_uuid)).filter(Boolean),
+        dataUltimaSessio: dataUltimaSessio,
+        rpe: rpe,
+        noEntrena: noEntrena,
+        teMolesties: !!teMolesties,
+        teHoraFisioDemanada: !!fisioDemanada,
+        injuryFisioDemanada: fisioDemanada,
+        teFisioAssignada: !!fisioAssignada,
+        fisioAssignada: fisioAssignada
+    });
+}
     
     // 8. ORDENAR JUGADORS
     estatRPEJugadors.sort((a, b) => {
