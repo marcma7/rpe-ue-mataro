@@ -420,6 +420,8 @@ const totesPractices = resultatsPractices.flatMap(r => r.practices || []);
 const practiceUuids = totesPractices.map(p => p.uuid).filter(Boolean);
 const ptptResultat = await getPTPTByPractice(practiceUuids);
 
+    console.log(ptptResultat);
+
     
 
 // MAPA MÉS SEGUR: Guardem tant per (player_team_uuid + practice) com per (player_uuid + practice)
