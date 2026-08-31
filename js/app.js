@@ -513,6 +513,8 @@ async function loadEstatRPE(user) {
             fisioAssignada: fisioAssignada
         });
     }
+
+    console.log(estatRPEJugadors);
     
     // 8. ORDENAR JUGADORS
     estatRPEJugadors.sort((a, b) => {
