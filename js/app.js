@@ -431,6 +431,8 @@ async function loadEstatRPE(user) {
     avui.setHours(0, 0, 0, 0);
     
     for (const jugador of jugadors) {
+        console.log(jugador);
+        
         const userTeamsJug = jugadorsTeams.get(jugador.uuid) || [];
         const teamUuids = [...new Set(userTeamsJug.map(ut => ut.team_uuid).filter(Boolean))];
 
@@ -459,6 +461,7 @@ async function loadEstatRPE(user) {
                 let entrena = false;
                 if (playerTeam) {
                     const ptpt = ptptMap.get(`${playerTeam.uuid}_${practice.uuid}`);
+                    console.log(ptpt);
                     if (ptpt && Number(ptpt.time) > 0) entrena = true;
                 }
 
