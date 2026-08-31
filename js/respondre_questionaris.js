@@ -793,153 +793,84 @@ function pintarFiltresRespostes(dades) {
 // SELECTOR DE PREGUNTA
 // ============================================================
 
-function pintarSelectorPreguntaRespostes(
-    preguntes
-) {
+// ============================================================
+// SELECTOR DE PREGUNTA (AMB DESPLEGABLE I FLETXES)
+// ============================================================
 
-    const contenidor =
-        document.querySelector(
-            ".filtresRespostes"
-        );
+function pintarSelectorPreguntaRespostes(preguntes) {
 
+    const contenidor = document.querySelector(".filtresRespostes");
 
-    if (!contenidor) {
-        return;
-    }
+    if (!contenidor) return;
 
+    // Eliminar selector anterior si existeix
+    const anterior = document.getElementById("selectorPreguntaRespostes");
+    if (anterior) anterior.remove();
 
-    // Eliminar selector anterior
-    const anterior =
-        document.getElementById(
-            "selectorPreguntaRespostes"
-        );
+    if (!preguntes || preguntes.length === 0) return;
 
-
-    if (anterior) {
-        anterior.remove();
-    }
-
-
-    if (
-        !preguntes ||
-        preguntes.length === 0
-    ) {
-        return;
-    }
-
-
-    const filtre =
-        document.createElement("div");
-
-    filtre.className =
-        "filtre filtrePreguntaRespostes";
-
+    const filtre = document.createElement("div");
+    filtre.className = "filtre filtrePreguntaRespostes";
 
     filtre.innerHTML = `
-
         <label>Pregunta</label>
-
-        <div
-            id="selectorPreguntaRespostes"
-            class="selectorPreguntaRespostes"
-        >
-
-            <button
-                type="button"
-                id="preguntaAnteriorRespostes"
-                class="fletxaPregunta"
-            >
+        <div id="selectorPreguntaRespostes" class="selectorPreguntaRespostes">
+            <button type="button" id="preguntaAnteriorRespostes" class="fletxaPregunta">
                 ←
             </button>
 
-            <div
-                id="preguntaActualRespostes"
-                class="preguntaActualRespostes"
-            ></div>
+            <select id="selectPreguntaRespostes" class="selectPreguntaRespostes">
+                ${preguntes.map((p, index) => `
+                    <option value="${index}">
+                        ${index + 1}. ${escaparHTML(p.pregunta)}
+                    </option>
+                `).join('')}
+            </select>
 
-            <button
-                type="button"
-                id="preguntaSeguentRespostes"
-                class="fletxaPregunta"
-            >
+            <button type="button" id="preguntaSeguentRespostes" class="fletxaPregunta">
                 →
             </button>
-
         </div>
     `;
 
+    contenidor.appendChild(filtre);
 
-    contenidor.appendChild(
-        filtre
-    );
-
-
-    document.getElementById(
-        "preguntaAnteriorRespostes"
-    ).onclick = () => {
-
-        if (!window.preguntesQuestionariActuals) {
-            return;
-        }
-
-
-        const total =
-            window.preguntesQuestionariActuals.length;
-
-
-        if (total === 0) {
-            return;
-        }
-
-
-        window.indexPreguntaRespostes--;
-
-        if (
-            window.indexPreguntaRespostes < 0
-        ) {
-            window.indexPreguntaRespostes =
-                total - 1;
-        }
-
-
-        actualitzarPreguntaRespostes();
-
+    // Event de canvi directament des del Select
+    const select = document.getElementById("selectPreguntaRespostes");
+    select.onchange = (e) => {
+        window.indexPreguntaRespostes = parseInt(e.target.value, 10);
         aplicarFiltresRespostes();
     };
 
+    // Event Fletxa Anterior
+    document.getElementById("preguntaAnteriorRespostes").onclick = () => {
+        if (!window.preguntesQuestionariActuals) return;
+        const total = window.preguntesQuestionariActuals.length;
+        if (total === 0) return;
 
-    document.getElementById(
-        "preguntaSeguentRespostes"
-    ).onclick = () => {
-
-        if (!window.preguntesQuestionariActuals) {
-            return;
+        window.indexPreguntaRespostes--;
+        if (window.indexPreguntaRespostes < 0) {
+            window.indexPreguntaRespostes = total - 1;
         }
 
+        actualitzarPreguntaRespostes();
+        aplicarFiltresRespostes();
+    };
 
-        const total =
-            window.preguntesQuestionariActuals.length;
-
-
-        if (total === 0) {
-            return;
-        }
-
+    // Event Fletxa Següent
+    document.getElementById("preguntaSeguentRespostes").onclick = () => {
+        if (!window.preguntesQuestionariActuals) return;
+        const total = window.preguntesQuestionariActuals.length;
+        if (total === 0) return;
 
         window.indexPreguntaRespostes++;
-
-        if (
-            window.indexPreguntaRespostes >= total
-        ) {
+        if (window.indexPreguntaRespostes >= total) {
             window.indexPreguntaRespostes = 0;
         }
 
-
         actualitzarPreguntaRespostes();
-
         aplicarFiltresRespostes();
     };
-
 
     actualitzarPreguntaRespostes();
 }
@@ -949,47 +880,18 @@ function pintarSelectorPreguntaRespostes(
 // ACTUALITZAR TEXT DE LA PREGUNTA
 // ============================================================
 
+// ============================================================
+// ACTUALITZAR SELECT DE LA PREGUNTA
+// ============================================================
+
 function actualitzarPreguntaRespostes() {
 
-    const div =
-        document.getElementById(
-            "preguntaActualRespostes"
-        );
+    const select = document.getElementById("selectPreguntaRespostes");
+    if (!select) return;
 
-
-    if (!div) {
-        return;
-    }
-
-
-    const preguntes =
-        window.preguntesQuestionariActuals;
-
-
-    if (
-        !preguntes ||
-        preguntes.length === 0
-    ) {
-
-        div.textContent =
-            "No hi ha preguntes";
-
-        return;
-    }
-
-
-    const index =
-        window.indexPreguntaRespostes || 0;
-
-
-    const pregunta =
-        preguntes[index];
-
-
-    div.textContent =
-        `${index + 1}. ${pregunta.pregunta}`;
+    const index = window.indexPreguntaRespostes || 0;
+    select.value = index;
 }
-
 
 // ============================================================
 // APLICAR FILTRES
