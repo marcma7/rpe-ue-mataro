@@ -429,39 +429,53 @@ function moda(valors){
 }
 
 
-async function assignarSessionsExistents(userUuid, teamUuid){
+async function assignarSessionsExistents(userUuid, teamUuid) {
 
     const userTeam = await getUserTeamByTeamUuidAndUserUuid(teamUuid, userUuid);
     const practices = await getPracticesByTeam(teamUuid);
 
-    if(practices.length === 0) return;
+    if (!practices || practices.length === 0) return;
 
-    if(!confirm("Aquest equip ja té sessions creades.\n\nVols assignar-les també a aquest jugador?")){
+    // 1. FILTRAR SESSIONS: Només avui o dates futures
+    // -------------------------------------------------------------
+    const avuiStr = new Date().toISOString().split('T')[0]; // Format "YYYY-MM-DD"
+
+    const sessionsFutures = practices.filter(p => {
+        // Assegura't de fer servir el nom del camp de data de la teva BD (ex: p.date, p.fecha, etc.)
+        const dataSessioStr = String(p.date || p.fecha || "").substring(0, 10);
+        return dataSessioStr >= avuiStr;
+    });
+
+    // Si no hi ha sessions d'avui o futures, sortim directament
+    if (sessionsFutures.length === 0) return;
+
+    if (!confirm("Aquest equip ja té sessions creades per a avui o pròximes dates.\n\nVols assignar-les també a aquest jugador?")) {
         return;
     }
 
+    // 2. OBTENIR TIS DE LES SESSIONS FILTRADES
+    // -------------------------------------------------------------
     const ptpt = await getPTPTByPractice(
-        practices.map(p => p.uuid)
+        sessionsFutures.map(p => p.uuid)
     );
 
     const perSessio = {};
 
-    for(const fila of ptpt){
-
-        if(!perSessio[fila.practice_uuid]){
+    for (const fila of ptpt) {
+        if (!perSessio[fila.practice_uuid]) {
             perSessio[fila.practice_uuid] = [];
         }
-
         perSessio[fila.practice_uuid].push(fila);
-
     }
 
-    for(const [practiceUuid, files] of Object.entries(perSessio)){
+    // 3. INSERIR ELS TEMPS PER AL NOU JUGADOR
+    // -------------------------------------------------------------
+    for (const [practiceUuid, files] of Object.entries(perSessio)) {
         const train = moda(files.filter(f => f.practice_type === "train").map(f => f.time));
         const pf = moda(files.filter(f => f.practice_type === "prepfis").map(f => f.time));
         const game = moda(files.filter(f => f.practice_type === "game").map(f => f.time));
 
-        if(train > 0) {
+        if (train > 0) {
             await insertPracticeTime({
                 practice_uuid: practiceUuid,
                 player_team_uuid: userTeam[0].uuid,
@@ -470,7 +484,7 @@ async function assignarSessionsExistents(userUuid, teamUuid){
             });
         }
 
-        if(pf > 0) {
+        if (pf > 0) {
             await insertPracticeTime({
                 practice_uuid: practiceUuid,
                 player_team_uuid: userTeam[0].uuid,
@@ -479,7 +493,7 @@ async function assignarSessionsExistents(userUuid, teamUuid){
             });
         }
 
-        if(game > 0) {
+        if (game > 0) {
             await insertPracticeTime({
                 practice_uuid: practiceUuid,
                 player_team_uuid: userTeam[0].uuid,
