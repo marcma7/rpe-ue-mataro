@@ -411,6 +411,7 @@ async function loadEstatRPE(user) {
         })
     );
 
+    console.log(resultatsPractices);
     for (const resultat of resultatsPractices) {
         practicesPerTeam.set(resultat.teamUuid, resultat.practices || []);
     }
@@ -447,6 +448,7 @@ async function loadEstatRPE(user) {
             let entrenaUltimaSessio = false;
 
             for (const practice of practices) {
+                console.log(practice);
                 if (!practice.practice_date || practice.practice_date === "-") continue;
 
                 const parts = practice.practice_date.split("-");
