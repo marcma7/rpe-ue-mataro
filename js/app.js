@@ -411,6 +411,8 @@ async function loadEstatRPE(user) {
         })
     );
 
+    console.log(resultatsPractices);
+
     for (const resultat of resultatsPractices) {
         practicesPerTeam.set(resultat.teamUuid, resultat.practices || []);
     }
