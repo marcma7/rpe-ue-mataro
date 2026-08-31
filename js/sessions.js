@@ -475,7 +475,9 @@ async function updateModifySession() {
     if (upserts.length > 0) await upsertPracticeTime(upserts);
     if (deletes.length > 0) await deletePracticeTime(deletes);
 
+    // Recalculem RPE tenint en compte totes les sessions del mateix dia
     await recalcularRPE(practice.uuid);
+
     alert("SESSIÓ ACTUALITZADA CORRECTAMENT");
     await loadModifySessions();
     await loadModifyPractice(selectedPracticeDate);
@@ -486,34 +488,47 @@ async function updateModifySession() {
     
         const userTeams = await getPlayersByTeam(window.teamSeleccionat.uuid);
         const playerUuids = userTeams.map(x => x.user_uuid);
+
+        // 1. Obtenir tots els RPEs existents per a aquests jugadors en la data de la sessió
         const rpes = await getRPEByUsersAndDate(playerUuids, practice.practice_date);
         if (rpes.length === 0) return;
     
-        const practiceTimes = await getPTPTByPractice([practiceUuid]);
+        // 2. Obtenir TOTES les sessions de l'equip en aquesta mateixa data
+        const allTeamPractices = await getPracticesByTeam(window.teamSeleccionat.uuid);
+        const sameDayPractices = allTeamPractices.filter(p => p.practice_date === practice.practice_date);
+        const sameDayPracticeUuids = sameDayPractices.map(p => p.uuid);
+
+        // 3. Obtenir tots els temps de totes les sessions d'aquell dia
+        const sameDayTimes = await getPTPTByPractice(sameDayPracticeUuids);
+
         const actualitzacions = [];
 
         for (const rpe of rpes) {
             const userTeam = userTeams.find(x => x.user_uuid === rpe.player_uuid);
             if (!userTeam) continue;
 
-            const meusTemps = practiceTimes.filter(x => x.player_team_uuid === userTeam.uuid);
-            const train = meusTemps.filter(x => x.practice_type === "train").reduce((s, x) => s + x.time, 0);
-            const pf = meusTemps.filter(x => x.practice_type === "prepfis").reduce((s, x) => s + x.time, 0);
-            const game = meusTemps.filter(x => x.practice_type === "game").reduce((s, x) => s + x.time, 0);
+            // Filterm tots els temps del jugador EN TOTS ELS ENTRENAMENTS D'AQUELL DIA
+            const meusTempsDelDia = sameDayTimes.filter(x => x.player_team_uuid === userTeam.uuid);
+
+            const trainTotal = meusTempsDelDia.filter(x => x.practice_type === "train").reduce((s, x) => s + Number(x.time), 0);
+            const pfTotal = meusTempsDelDia.filter(x => x.practice_type === "prepfis").reduce((s, x) => s + Number(x.time), 0);
+            const gameTotal = meusTempsDelDia.filter(x => x.practice_type === "game").reduce((s, x) => s + Number(x.time), 0);
     
             actualitzacions.push({
                 player_uuid: rpe.player_uuid,
                 register: rpe.register,
                 date_register: rpe.date_register,
                 date_practice: rpe.date_practice,
-                weighted_register: getWeight(rpe.register, pf, train, game)
+                weighted_register: getWeight(rpe.register, pfTotal, trainTotal, gameTotal),
+                te_molesties: rpe.te_molesties,
+                molesties: rpe.molesties,
+                te_regla: rpe.te_regla
             });
         }
 
         if (actualitzacions.length > 0) await upsertRPE(actualitzacions);
     }
 }
-
 
 function getWeight(rpe, pf, train, game) {
     return rpe * (pf * 0.5 + train + game * 2.5);
