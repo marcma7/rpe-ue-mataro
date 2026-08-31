@@ -588,7 +588,7 @@ function pintarEstatRPE() {
         } else if (rpe) {
             bola.classList.add("bolaRPEVerd");
             bola.title = "RPE registrat";
-            textRPE.textContent = "RPE registrat";
+            textRPE.textContent = "RPE " + rpe.register;
             rpeInfo.appendChild(bola);
             rpeInfo.appendChild(textRPE);
         } else {
