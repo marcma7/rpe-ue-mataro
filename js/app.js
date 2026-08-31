@@ -411,7 +411,6 @@ async function loadEstatRPE(user) {
         })
     );
 
-    console.log(resultatsPractices);
     for (const resultat of resultatsPractices) {
         practicesPerTeam.set(resultat.teamUuid, resultat.practices || []);
     }
@@ -426,6 +425,8 @@ async function loadEstatRPE(user) {
     for (const ptpt of ptptResultat) {
         ptptMap.set(`${ptpt.player_team_uuid}_${ptpt.practice_uuid}`, ptpt);
     }
+
+    console.log(ptptMap);
 
     // 7. BUSCAR ÚLTIMA SESSIÓ DEL JUGADOR
     const avui = new Date();
