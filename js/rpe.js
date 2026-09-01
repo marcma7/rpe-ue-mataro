@@ -22,52 +22,26 @@ async function loadRPE(user) {
     const practiceUuids = ptpt.map(x => x.practice_uuid);
     const practices = await getPracticesByUuids(practiceUuids);
 
-   // =====================================================
-    // MIRAR SI ALGUN EQUIP DE L'USUARI DEMANA REGLA
-    // =====================================================
     const teams = await getAllTeams();
-
     const userTeamUuids = userTeams.map(x => x.team_uuid);
+    const preguntaRegla = teams.some(team => userTeamUuids.includes(team.uuid) && team.asks_regla === true);
 
-    const preguntaRegla = teams.some(team =>
-        userTeamUuids.includes(team.uuid) &&
-        team.asks_regla === true
-    );
+    document.getElementById("reglaRPE").style.display = preguntaRegla ? "block" : "none";
 
-    document.getElementById("reglaRPE").style.display =
-        preguntaRegla ? "block" : "none";
-
-    if (!preguntaRegla) {
-        teRegla = null;
-    }
+    if (!preguntaRegla) teRegla = null;
 
     const ara = new Date();
     const validDates = [];
 
     for (const practice of practices) {
         const parts = practice.practice_date.split("-");
-        const data = new Date(
-            Number(parts[2]),
-            Number(parts[1]) - 1,
-            Number(parts[0])
-        );
+        const data = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
 
-        // Les sessions futures no entren
-        if (data > ara) {
-            continue;
-        }
-    
-        // Si és avui i encara no són les 11:00,
-        // no mostrem avui
-        const esAvui =
-            data.getFullYear() === ara.getFullYear() &&
-            data.getMonth() === ara.getMonth() &&
-            data.getDate() === ara.getDate();
-    
-        if (esAvui && ara.getHours() < 11) {
-            continue;
-        }
-    
+        if (data > ara) continue;
+
+        const esAvui = data.getFullYear() === ara.getFullYear() && data.getMonth() === ara.getMonth() && data.getDate() === ara.getDate();
+        if (esAvui && ara.getHours() < 11) continue;
+
         validDates.push(practice.practice_date);
     }
 
@@ -75,27 +49,17 @@ async function loadRPE(user) {
 }
 
 
-document
-    .querySelectorAll('input[name="teRegla"]')
-    .forEach(input => {
-
-        input.addEventListener("change", function () {
-
-            teRegla = this.value === "SI";
-
-        });
-
+document.querySelectorAll('input[name="teRegla"]').forEach(input => {
+    input.addEventListener("change", function () {
+        teRegla = this.value === "SI";
     });
+});
 
 
 function netejarReglaRPE() {
-
-    document
-        .querySelectorAll('input[name="teRegla"]')
-        .forEach(input => {
-            input.checked = false;
-        });
-
+    document.querySelectorAll('input[name="teRegla"]').forEach(input => {
+        input.checked = false;
+    });
     teRegla = null;
 }
 
@@ -107,7 +71,6 @@ async function acabarLoadRPE(user) {
 
     dates = dates.filter(x => !rpeDates.includes(x));
 
-    // De més antiga a més recent
     dates.sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
 
     if (dates.length === 0) {
@@ -122,18 +85,13 @@ async function acabarLoadRPE(user) {
     omplirSelectorDates();
     actualitzarEstatRPE();
 
-    // AVÍS SI HI HA MÉS D'UNA SESSIÓ PENDENT
     if (dates.length > 1) {
-        alert(
-            "Tens RPE de sessions anteriors pendents.\n\n" +
-            "Comprova bé que la data correspongui a la sessió que vols registrar."
-        );
+        alert("Tens RPE de sessions anteriors pendents.\n\nComprova bé que la data correspongui a la sessió que vols registrar.");
     }
 }
 
 
 function omplirSelectorDates() {
-
     const selector = document.getElementById("selectorData");
     selector.innerHTML = "";
 
@@ -157,6 +115,7 @@ function sortKey(date) {
 document.getElementById("selectorData").addEventListener("change", function () {
     selectedDate = this.value;
 });
+
 
 document.querySelectorAll(".rpeButton").forEach(button => {
     button.addEventListener("click", function () {
@@ -247,17 +206,13 @@ function actualitzarEstatRPE() {
 
     botoConfirmar.disabled = isFinished;
 
-    // Si venim del TEAM, el selector sempre està deshabilitat
     selector.disabled = venimDeRpeTeam || isFinished;
 
     document.querySelectorAll(".rpeButton").forEach(button => {
         button.disabled = isFinished;
 
-        if (isFinished) {
-            button.style.opacity = "0.35";
-        } else {
-            button.style.opacity = "1";
-        }
+        if (isFinished) button.style.opacity = "0.35";
+        else button.style.opacity = "1";
     });
 }
 
@@ -274,16 +229,11 @@ function tancarSessioRPE() {
 }
 
 
-
 function actualitzarMolestiesRPE() {
 
-    const seleccionada =
-        document.querySelector(
-            'input[name="teMolesties"]:checked'
-        );
+    const seleccionada = document.querySelector('input[name="teMolesties"]:checked');
 
-    const textarea =
-        document.getElementById("textMolesties");
+    const textarea = document.getElementById("textMolesties");
 
     if (!seleccionada) {
         textarea.disabled = true;
@@ -293,15 +243,10 @@ function actualitzarMolestiesRPE() {
         return;
     }
 
-    teMolesties =
-        seleccionada.value === "SI";
-
+    teMolesties = seleccionada.value === "SI";
     if (teMolesties) {
-
         textarea.disabled = false;
-
     } else {
-
         textarea.disabled = true;
         textarea.value = "";
         textMolesties = "";
@@ -309,37 +254,23 @@ function actualitzarMolestiesRPE() {
 }
 
 
-document
-    .querySelectorAll('input[name="teMolesties"]')
-    .forEach(input => {
-
-        input.addEventListener("change", function () {
-
-            actualitzarMolestiesRPE();
-
-        });
-
+document.querySelectorAll('input[name="teMolesties"]').forEach(input => {
+    input.addEventListener("change", function () {
+        actualitzarMolestiesRPE();
     });
+});
+
 
 function netejarMolestiesRPE() {
 
-    const radioNo =
-        document.querySelector(
-            'input[name="teMolesties"][value="NO"]'
-        );
+    const radioNo = document.querySelector('input[name="teMolesties"][value="NO"]');
+    const textarea = document.getElementById("textMolesties");
 
-    const textarea =
-        document.getElementById("textMolesties");
+    if (radioNo) radioNo.checked = true;
 
-    if (radioNo) {
-        radioNo.checked = true;
-    }
-
-    document
-        .querySelectorAll('input[name="teMolesties"][value="SI"]')
-        .forEach(input => {
-            input.checked = false;
-        });
+    document.querySelectorAll('input[name="teMolesties"][value="SI"]').forEach(input => {
+        input.checked = false;
+    });
 
     textarea.value = "";
     textarea.disabled = true;
