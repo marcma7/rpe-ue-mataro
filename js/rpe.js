@@ -217,6 +217,7 @@ async function confirmarRPE(user) {
     
     document.querySelectorAll(".rpeButton").forEach(b => b.classList.remove("rpeSelected"));
     netejarMolestiesRPE();
+    await activarNotificacionsPush(user.uuid);
 
     if (dates.length === 0) {
         isFinished = true;
@@ -226,8 +227,6 @@ async function confirmarRPE(user) {
     }
 
     selectedDate = dates[0];
-
-    await activarNotificacionsPush(user.uuid);
 
     omplirSelectorDates();
 }
