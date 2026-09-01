@@ -109,35 +109,36 @@
     <!-- RESPOSTES QÜESTIONARIS -->
     <div id="pantallaRespostesQuestionari" class="container" style="display:none;">
 
-    <div class="capcaleraPantalla">
-        <div>
-            <h1 id="titolRespostesQuestionari"></h1>
+        <div class="capcaleraPantalla">
+            <div>
+                <h1 id="titolRespostesQuestionari"></h1>
+            </div>
         </div>
-    </div>
-
-
-    <div class="barraBotons">
-        <div class="filtre">
-            <label>Data d'enviament</label>
-            <input type="date" id="filtreDataRespostes">
-        </div>
-
-        <div class="filtre">
-            <label>Equip</label>
-            <select id="filtreEquipRespostes">
-                <option value="">Tots els equips</option>
-            </select>
-        </div>
-    </div>
-
-
-    <div id="taulaRespostesQuestionari"></div>
 
         <div class="barraBotons">
-    <button id="enrereVeureRespostes">ENRERE</button>
-</div>
+            <div class="filtre">
+                <label>Data d'enviament</label>
+                <!-- Substituïm l'input date per aquest select -->
+                <select id="filtreDataRespostes">
+                    <option value="">Totes les dates</option>
+                </select>
+            </div>
 
-</div>
+            <div class="filtre">
+                <label>Equip</label>
+                <select id="filtreEquipRespostes">
+                    <option value="">Tots els equips</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="taulaRespostesQuestionari"></div>
+
+        <div class="barraBotons">
+            <button id="enrereVeureRespostes">ENRERE</button>
+        </div>
+
+    </div>
 
     <!-- QUESTIONARIS -->
     <div id="pantallaQuestionaris" class="container" style="display:none;">

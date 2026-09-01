@@ -312,8 +312,6 @@ function pintarTaulaRespostes(q, respostes) {
         <thead>
             <tr>
                 <th>Jugador</th>
-                <th>Equip</th>
-                <th>Data enviament</th>
                 <th style="text-align: center;">Estat / Resposta</th>
             </tr>
         </thead>
@@ -336,12 +334,7 @@ function pintarTaulaRespostes(q, respostes) {
             <td class="colNomJugador">
                 <strong>${escaparHTML(nomJugadorFormatat)}</strong>
             </td>
-            <td>
-                <span class="badgeEquip">${escaparHTML(r.equip || "Sense equip")}</span>
-            </td>
-            <td class="colData">
-                ${formatejarDataResposta(r.dataEnviament)}
-            </td>
+
             <td class="colResposta" style="text-align: center;">
                 ${teResposta
                     ? `<div class="caixaRespostaCompletada">${escaparHTML(String(valor))}</div>`
@@ -481,6 +474,8 @@ async function carregarRespostesQuestionari(q) {
         window.preguntesQuestionariActuals = preguntes;
         window.indexPreguntaRespostes = 0;
 
+        carregarFiltreDatesRespostes(dades);
+
         pintarFiltresRespostes(dades);
         pintarSelectorPreguntaRespostes(preguntes);
 
@@ -566,4 +561,53 @@ function formatejarDataResposta(data) {
     if (match) return valor.substring(0, 10);
 
     return valor;
+}
+
+
+
+// Funció per carregar les dates úniques al desplegable
+function carregarFiltreDatesRespostes(respostes) {
+    const selectData = document.getElementById("filtreDataRespostes");
+    if (!selectData) return;
+
+    // Guardem la selecció actual per si s'està re-pintant
+    const valorSeleccionat = selectData.value;
+
+    selectData.innerHTML = '<option value="">Totes les dates</option>';
+
+    if (!respostes || respostes.length === 0) return;
+
+    // Extreiem les dates en format YYYY-MM-DD i les filtrem perquè siguin úniques
+    const datesUniques = [...new Set(respostes.map(r => {
+        if (!r.dataEnviament) return null;
+        // Obtenim només la part de la data YYYY-MM-DD (per si ve amb hora)
+        return r.dataEnviament.split("T")[0];
+    }))].filter(Boolean);
+
+    // Les ordenem de més recent a més antiga
+    datesUniques.sort((a, b) => new Date(b) - new Date(a));
+
+    // Generem les opcions del desplegable
+    datesUniques.forEach(dataIso => {
+        const option = document.createElement("option");
+        option.value = dataIso;
+
+        // Formatejem la data per mostrar-la clarament (ex: 28/05/2026)
+        option.textContent = formatejarDataVista(dataIso);
+
+        selectData.appendChild(option);
+    });
+
+    // Mantenim el valor que l'usuari tenia seleccionat (si encara existeix)
+    selectData.value = valorSeleccionat;
+}
+
+// Funció auxiliar per mostrar la data formatejada DD/MM/YYYY
+function formatejarDataVista(dataIso) {
+    if (!dataIso) return "";
+    const parts = dataIso.split("-");
+    if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    return dataIso;
 }
