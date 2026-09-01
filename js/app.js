@@ -677,18 +677,35 @@ document.getElementById("accedirAppEstatRPE").addEventListener("click", async ()
         return;
     }
 
-    /*if (Notification.permission === "granted") {
-        console.log("Les notificacions ja estan activades.");
-    } else if (Notification.permission === "default") {
-        const activades = await activarNotificacionsPush(user);
-        if (activades) {
-            alert("Notificacions activades correctament.");
-        } else {
-            alert("No s'han pogut activar les notificacions.");
-        }
-    } else if (Notification.permission === "denied") {
-        console.log("Les notificacions estan bloquejades.");
-    }*/
-
+    // 1. Canviem de pantalla immediatament per donar sensació de fluïdesa
     mostrarPantalla("management");
+
+    // 2. Gestionem les notificacions en segon pla (sense 'await' al flux principal)
+    gestionarNotificacions(user);
 });
+
+
+// Funció auxiliar asíncrona aïllada per no bloquejar la interfície
+async function gestionarNotificacions(user) {
+    try {
+        if (!("Notification" in window)) {
+            console.warn("Aquest navegador no suporta notificacions.");
+            return;
+        }
+
+        if (Notification.permission === "granted") {
+            console.log("Les notificacions ja estan activades.");
+        } else if (Notification.permission === "default") {
+            const activades = await activarNotificacionsPush(user.uuid);
+            if (activades) {
+                alert("Notificacions activades correctament.");
+            } else {
+                alert("No s'han pogut activar les notificacions.");
+            }
+        } else if (Notification.permission === "denied") {
+            console.log("Les notificacions estan bloquejades de l'usuari.");
+        }
+    } catch (error) {
+        console.error("Error durant l'activació de notificacions:", error);
+    }
+}
