@@ -595,13 +595,6 @@ async function carregarRespostesQuestionari(q) {
 
         });
 
-
-        console.log(
-            "RESPOSTES QUESTIONARI:",
-            dades
-        );
-
-
         // =====================================================
         // 8. GUARDAR DADES
         // =====================================================

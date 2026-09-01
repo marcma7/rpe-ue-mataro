@@ -698,7 +698,6 @@ function pintarQuestionarisTargeta(questionaris) {
         return;
     }
 
-    console.log(questionaris);
     questionaris.forEach(q => {
         const nom = q.thisQuestionari[0]?.name || "Qüestionari";
         const contestat = Number(q.contestat) === 1;

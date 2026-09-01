@@ -27,17 +27,12 @@ async function loadRPE(user) {
     // =====================================================
     const teams = await getAllTeams();
 
-    console.log("TEAMS:", teams);
-
     const userTeamUuids = userTeams.map(x => x.team_uuid);
 
     const preguntaRegla = teams.some(team =>
         userTeamUuids.includes(team.uuid) &&
         team.asks_regla === true
     );
-
-    console.log("EQUIPS DE L'USUARI:", userTeamUuids);
-    console.log("PREGUNTA REGLA:", preguntaRegla);
 
     document.getElementById("reglaRPE").style.display =
         preguntaRegla ? "block" : "none";
@@ -232,20 +227,8 @@ async function confirmarRPE(user) {
 
     selectedDate = dates[0];
 
-    /*if (user) {
-        if (Notification.permission === "granted") {
-            console.log("Les notificacions ja estan activades.");
-        } else if (Notification.permission === "default") {
-            const activades = await activarNotificacionsPush(user);
-            if (activades) {
-                alert("Notificacions activades correctament.");
-            } else {
-                alert("No s'han pogut activar les notificacions.");
-            }
-        } else if (Notification.permission === "denied") {
-            console.log("Les notificacions estan bloquejades.");
-        }
-    }*/
+    await activarNotificacionsPush(user.uuid);
+
     omplirSelectorDates();
 }
 

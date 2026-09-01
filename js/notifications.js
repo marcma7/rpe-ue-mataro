@@ -22,7 +22,6 @@ async function activarNotificacionsPush(userUuid) {
         return false;
     }
 
-    console.log("OK");
 
     try {
         const registration = await navigator.serviceWorker.register("./service-worker.js");

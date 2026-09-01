@@ -149,8 +149,6 @@ async function entrar() {
         return;
     }
 
-    console.log("OK");
-
     guardarUsuariLocal(user);
     await activarNotificacionsPush(user.uuid);
     await decideRoute(user);
@@ -485,8 +483,6 @@ for (const jugador of jugadors) {
             // Validem si el temps és > 0 (convertint a Number de forma segura)
             const tempsEntrenat = ptpt ? Number(ptpt.time || ptpt.minutes || 0) : 0;
             const entrena = tempsEntrenat > 0;
-
-            console.log(`Jugador: ${jugador.name}, Equip: ${playerTeam.team_uuid}, Data: ${ultimaSessioEquip.practice_date}, Minuts: ${tempsEntrenat}, Entrena: ${entrena}`);
 
             ultimesSessionsPerEquip.push({
                 practice: ultimaSessioEquip,
