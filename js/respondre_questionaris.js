@@ -46,367 +46,372 @@ async function loadPantallaValoracionsJugador(user, teamUuid) {
 // ============================================================
 
 function pintarQuestionaris() {
-
     const div = document.getElementById("llistaQuestionaris");
-
     div.innerHTML = "";
-
     questionaris.forEach(q => {
-
         const fila = document.createElement("div");
-
         fila.className = "questionariFila";
-        
         fila.innerHTML = `
-            <div class="nomQuestionari">
-                ${q.name}
-            </div>
-        
-            <div class="infoQuestionari">
-                ${q.nQuestions} preguntes
-            </div>
-        
+            <div class="nomQuestionari">${q.name}</div>
+            <div class="infoQuestionari">${q.nQuestions} preguntes</div>
             <div class="botonsQuestionari">
-        
-                <button class="editar">
-                    ✎ Modificar
-                </button>
-        
-                <button class="enviar">
-                    ➤ Enviar
-                </button>
-        
-                        <button class="respostes">
-                            ☷ Veure respostes
-                        </button>
-        
-                        <button class="eliminar">
-                            ✕ Eliminar
-                        </button>
-                
-        
+                <button class="editar">✎ Modificar</button>
+                <button class="enviar">➤ Enviar</button>
+            </div>
+            <div class="botonsQuestionari">
+                <button class="respostes">☷ Veure respostes</button>
+                <button class="eliminar">✕ Eliminar</button>
             </div>
         `;
 
-
         fila.querySelector(".respostes").onclick = () => {
-
             questionariSeleccionat = q;
-
             veureRespostesQuestionari(q);
         };
 
-
         fila.querySelector(".editar").onclick = () => {
-
             questionariSeleccionat = q;
-
             obrirPreguntes(q);
         };
 
-
         fila.querySelector(".enviar").onclick = () => {
-
             questionariSeleccionat = q;
-
             obrirEnviar(q);
         };
 
-
         fila.querySelector(".eliminar").onclick = () => {
-
             eliminarQuestionari(q.uuid);
         };
 
-
         div.appendChild(fila);
     });
 }
 
 
-// ============================================================
-// QÜESTIONARIS DES DE JUGADOR
-// ============================================================
 
 function pintarQuestionarisJugador(user, questionaris) {
 
-    const div = document.getElementById(
-        "llistaQuestionarisJugador"
-    );
-
+    const div = document.getElementById("llistaQuestionarisJugador");
     div.innerHTML = "";
-
     questionaris.forEach(q => {
-
         const fila = document.createElement("div");
-
         fila.className = "questionariFila";
-
         fila.innerHTML = `
-            <div class="nomQuestionari">
-                ${q.name}
-            </div>
-
+            <div class="nomQuestionari">${q.name}</div>
             <div class="botonsQuestionari">
-
-                <button class="enviar">
-                    ➤ Enviar
-                </button>
-
+                <button class="enviar">➤ Enviar</button>
             </div>
         `;
 
-
         fila.querySelector(".enviar").onclick = () => {
-
             obrirEnviarJugador(q);
         };
 
-
         div.appendChild(fila);
     });
 }
 
 
-// ============================================================
-// VALORACIONS DES DE JUGADOR
-// ============================================================
-
-function pintarValoracionsJugador(
-    user,
-    questionaris,
-    teamUuid
-) {
-
-    const div = document.getElementById(
-        "llistaValoracionsJugador"
-    );
-
+function pintarValoracionsJugador(user, questionaris,teamUuid) {
+    const div = document.getElementById("llistaValoracionsJugador");
     div.innerHTML = "";
-
     questionaris.forEach(q => {
-
         const fila = document.createElement("div");
-
         fila.className = "questionariFila";
-
         fila.innerHTML = `
-            <div class="nomQuestionari">
-                ${q.name}
-            </div>
-
+            <div class="nomQuestionari">${q.name}</div>
             <div class="botonsQuestionari">
-
-                <button class="enviar">
-                    ➤ Passar
-                </button>
-
+                <button class="enviar">➤ Passar</button>
             </div>
         `;
 
-
         fila.querySelector(".enviar").onclick = () => {
-
-            obrirEnviarValoracionsJugador(
-                user,
-                q,
-                teamUuid
-            );
+            obrirEnviarValoracionsJugador(user, q, teamUuid);
         };
-
 
         div.appendChild(fila);
     });
 }
 
 
-// ============================================================
-// OBRIR PANTALLA RESPOSTES
-// ============================================================
-
 function veureRespostesQuestionari(q) {
-
     questionariSeleccionat = q;
+    document.getElementById("titolRespostesQuestionari").textContent = q.name;
 
-    document.getElementById(
-        "titolRespostesQuestionari"
-    ).textContent = q.name;
+    const filtreData = document.getElementById("filtreDataRespostes");
+    if (filtreData) filtreData.value = "";
 
-    document.getElementById(
-        "filtreDataRespostes"
-    ).value = "";
+    const filtreEquip = document.getElementById("filtreEquipRespostes");
+    if (filtreEquip) filtreEquip.value = "";
 
-    document.getElementById(
-        "filtreEquipRespostes"
-    ).value = "";
-
-    document.getElementById(
-        "filtreJugadorRespostes"
-    ).value = "";
-
-
-    mostrarPantalla(
-        "pantallaRespostesQuestionari"
-    );
-
-
+    mostrarPantalla("pantallaRespostesQuestionari");
     carregarRespostesQuestionari(q);
 }
 
 
-// ============================================================
-// TORNAR A GESTIÓ
-// ============================================================
+function pintarFiltresRespostes(dades) {
+    const selectEquip = document.getElementById("filtreEquipRespostes");
+    const inputData = document.getElementById("filtreDataRespostes");
 
-function tornarGestQuestionaris() {
+    if (selectEquip) {
+        selectEquip.innerHTML = `<option value="">Tots els equips</option>`;
 
-    mostrarPantalla(
-        "pantallaGestioQuestionaris"
-    );
+        const equipsMap = new Map();
+        dades.forEach(x => {
+            if (x.equipUuid && x.equip) {
+                equipsMap.set(x.equipUuid, x.equip);
+            }
+        });
+
+        Array.from(equipsMap.entries())
+            .sort((a, b) => a[1].localeCompare(b[1], "ca"))
+            .forEach(([uuid, nom]) => {
+                const option = document.createElement("option");
+                option.value = uuid;
+                option.textContent = nom;
+                selectEquip.appendChild(option);
+            });
+
+        selectEquip.onchange = aplicarFiltresRespostes;
+    }
+
+    if (inputData) {
+        inputData.onchange = aplicarFiltresRespostes;
+    }
 }
 
 
-// ============================================================
-// COMPATIBILITAT AMB L'ANTIGA FUNCIÓ
-// ============================================================
+function pintarSelectorPreguntaRespostes(preguntes) {
+    let contenidorPregunta = document.getElementById("contenidorNavegacioPregunta");
 
-async function obrirRespostesQuestionari(q) {
+    if (!contenidorPregunta) {
+        const zonaFiltres = document.querySelector(".filtresRespostes");
+        contenidorPregunta = document.createElement("div");
+        contenidorPregunta.id = "contenidorNavegacioPregunta";
+        contenidorPregunta.className = "zonaNavegacioPregunta";
 
-    veureRespostesQuestionari(q);
-}
+        if (zonaFiltres && zonaFiltres.parentNode) {
+            zonaFiltres.parentNode.insertBefore(contenidorPregunta, zonaFiltres.nextSibling);
+        } else {
+            // Si no troba zonaFiltres, el posa directament abans de la taula
+            const taulaDiv = document.getElementById("taulaRespostesQuestionari");
+            if (taulaDiv && taulaDiv.parentNode) {
+                taulaDiv.parentNode.insertBefore(contenidorPregunta, taulaDiv);
+            }
+        }
+    }
 
+    contenidorPregunta.innerHTML = "";
 
-// ============================================================
-// CARREGAR TOTES LES RESPOSTES
-// ============================================================
+    if (!preguntes || preguntes.length === 0) {
+        contenidorPregunta.innerHTML = `<div class="sensePreguntes">Aquest qüestionari no té preguntes</div>`;
+        return;
+    }
 
-async function carregarRespostesQuestionari(q) {
+    const indexActual = window.indexPreguntaRespostes || 0;
+    const preguntaActual = preguntes[indexActual];
 
-    const div = document.getElementById(
-        "taulaRespostesQuestionari"
-    );
-
-
-    div.innerHTML = `
-        <div style="padding:20px;">
-            Carregant respostes...
+    // Injectem el contingut HTML
+    contenidorPregunta.innerHTML = `
+        <div class="visorPreguntaBox">
+            <button type="button" id="btnPreguntaPrev" class="botoFletxaPregunta" title="Pregunta anterior">
+                &#10094;
+            </button>
+            <div class="detallPreguntaCentral">
+                <span class="comptadorPregunta">Pregunta ${indexActual + 1} de ${preguntes.length}</span>
+                <h3 class="textPreguntaActual">${escaparHTML(preguntaActual.pregunta)}</h3>
+            </div>
+            <button type="button" id="btnPreguntaNext" class="botoFletxaPregunta" title="Pregunta següent">
+                &#10095;
+            </button>
         </div>
     `;
 
+    // Recuperem els botons creats explícitament
+    const btnPrev = document.getElementById("btnPreguntaPrev");
+    const btnNext = document.getElementById("btnPreguntaNext");
+
+    // Validem que existeixen abans d'assignar els esdeveniments
+    if (btnPrev) {
+        btnPrev.onclick = () => {
+            const total = window.preguntesQuestionariActuals.length;
+            window.indexPreguntaRespostes = (window.indexPreguntaRespostes - 1 + total) % total;
+            pintarSelectorPreguntaRespostes(window.preguntesQuestionariActuals);
+            aplicarFiltresRespostes();
+        };
+    }
+
+    if (btnNext) {
+        btnNext.onclick = () => {
+            const total = window.preguntesQuestionariActuals.length;
+            window.indexPreguntaRespostes = (window.indexPreguntaRespostes + 1) % total;
+            pintarSelectorPreguntaRespostes(window.preguntesQuestionariActuals);
+            aplicarFiltresRespostes();
+        };
+    }
+}
+
+
+function aplicarFiltresRespostes() {
+    const dades = window.respostesQuestionariActuals || [];
+    const inputData = document.getElementById("filtreDataRespostes");
+    const selectEquip = document.getElementById("filtreEquipRespostes");
+
+    const dataSeleccionada = inputData ? inputData.value : "";
+    const equipSeleccionat = selectEquip ? selectEquip.value : "";
+
+    const dadesFiltrades = dades.filter(r => {
+        if (dataSeleccionada && !dataRespostaCoincideix(r.dataEnviament, dataSeleccionada)) {
+            return false;
+        }
+        if (equipSeleccionat && r.equipUuid !== equipSeleccionat) {
+            return false;
+        }
+        return true;
+    });
+
+    pintarTaulaRespostes(questionariSeleccionat, dadesFiltrades);
+}
+
+
+function majusculaInicials(text) {
+    if (!text) return "";
+    return text
+        .toLowerCase()
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
+
+
+function pintarTaulaRespostes(q, respostes) {
+    const div = document.getElementById("taulaRespostesQuestionari");
+    div.innerHTML = "";
+
+    if (!respostes || respostes.length === 0) {
+        div.innerHTML = `
+            <div class="senseRespostes">
+                No s'han trobat respostes amb els filtres seleccionats.
+            </div>
+        `;
+        return;
+    }
+
+    const preguntes = window.preguntesQuestionariActuals || [];
+    if (preguntes.length === 0) return;
+
+    let index = window.indexPreguntaRespostes || 0;
+    if (index < 0 || index >= preguntes.length) index = 0;
+
+    const preguntaActual = preguntes[index];
+
+    const taula = document.createElement("table");
+    taula.className = "taulaRespostesDissenyada";
+
+    taula.innerHTML = `
+        <thead>
+            <tr>
+                <th>Jugador</th>
+                <th>Equip</th>
+                <th>Data enviament</th>
+                <th style="text-align: center;">Estat / Resposta</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    `;
+
+    const tbody = taula.querySelector("tbody");
+
+    respostes.forEach(r => {
+        const tr = document.createElement("tr");
+
+        const respostaObj = r.respostes.find(x => x.preguntaUuid === preguntaActual.uuid);
+        const valor = respostaObj ? respostaObj.resposta : "";
+        const teResposta = valor !== null && valor !== undefined && String(valor).trim() !== "";
+
+        // Apliquem la transformació de majúscules al nom del jugador
+        const nomJugadorFormatat = majusculaInicials(r.jugador);
+
+        tr.innerHTML = `
+            <td class="colNomJugador">
+                <strong>${escaparHTML(nomJugadorFormatat)}</strong>
+            </td>
+            <td>
+                <span class="badgeEquip">${escaparHTML(r.equip || "Sense equip")}</span>
+            </td>
+            <td class="colData">
+                ${formatejarDataResposta(r.dataEnviament)}
+            </td>
+            <td class="colResposta" style="text-align: center;">
+                ${teResposta
+                    ? `<div class="caixaRespostaCompletada">${escaparHTML(String(valor))}</div>`
+                    : `<span class="tagPendent">Pendent</span>`
+                }
+            </td>
+        `;
+
+        tbody.appendChild(tr);
+    });
+
+    div.appendChild(taula);
+}
+
+
+function tornarGestQuestionaris() {
+    mostrarPantalla("pantallaGestioQuestionaris");
+}
+
+
+async function carregarRespostesQuestionari(q) {
+
+    const div = document.getElementById("taulaRespostesQuestionari");
+    div.innerHTML = `
+        <div style="padding:20px;">Carregant respostes...</div>
+    `;
 
     try {
-
-        // =====================================================
-        // 1. ASSIGNACIONS DEL QÜESTIONARI
-        // =====================================================
-
         const responseQU = await fetch(
             `${SUPABASE_URL}/rest/v1/questionaris_contestar?questionari_uuid=eq.${q.uuid}`,
             {
                 headers: {
                     "Accept": "application/json",
                     "apikey": SUPABASE_API_KEY,
-                    "Authorization":
-                        "Bearer " + SUPABASE_API_KEY
+                    "Authorization": "Bearer " + SUPABASE_API_KEY
                 }
             }
         );
 
+        if (!responseQU.ok) throw new Error(await responseQU.text());
 
-        if (!responseQU.ok) {
+        const assignacions = await responseQU.json();
 
-            throw new Error(
-                await responseQU.text()
-            );
-        }
-
-
-        const assignacions =
-            await responseQU.json();
-
-
-        // =====================================================
-        // 2. USUARIS
-        // =====================================================
-
-        const userUuids = [
-            ...new Set(
-                assignacions
-                    .map(x => x.user_uuid)
-                    .filter(Boolean)
-            )
-        ];
-
+        const userUuids = [...new Set(assignacions.map(x => x.user_uuid).filter(Boolean))];
 
         let usuaris = [];
-
-
         if (userUuids.length > 0) {
-
             const responseUsers = await fetch(
                 `${SUPABASE_URL}/rest/v1/app_users?uuid=in.(${userUuids.join(",")})`,
                 {
                     headers: {
                         "Accept": "application/json",
                         "apikey": SUPABASE_API_KEY,
-                        "Authorization":
-                            "Bearer " + SUPABASE_API_KEY
+                        "Authorization": "Bearer " + SUPABASE_API_KEY
                     }
                 }
             );
 
-
-            if (!responseUsers.ok) {
-
-                throw new Error(
-                    await responseUsers.text()
-                );
-            }
-
-
-            usuaris =
-                await responseUsers.json();
+            if (!responseUsers.ok) throw new Error(await responseUsers.text());
+            usuaris = await responseUsers.json();
         }
 
-
-        // =====================================================
-        // 3. RESPOSTES
-        // =====================================================
-
-        const questionariUserUuids =
-            assignacions
-                .map(x => x.uuid)
-                .filter(Boolean);
-
-
+        const questionariUserUuids = assignacions.map(x => x.uuid).filter(Boolean);
         let respostes = [];
 
+        if (questionariUserUuids.length > 0) respostes = await getAnswersByQuestionari(questionariUserUuids);
 
-        if (questionariUserUuids.length > 0) {
-
-            respostes =
-                await getAnswersByQuestionari(
-                    questionariUserUuids
-                );
-        }
-
-
-        // =====================================================
-        // 4. PREGUNTES
-        // =====================================================
-
-        const preguntes =
-            await getQuestionsFromQuestionari(
-                q.uuid
-            );
-
-
-        // =====================================================
-        // 5. EQUIPS DELS USUARIS
-        // =====================================================
+        const preguntes = await getQuestionsFromQuestionari(q.uuid);
 
         let userTeams = [];
-
 
         if (userUuids.length > 0) {
 
@@ -416,44 +421,21 @@ async function carregarRespostesQuestionari(q) {
                     headers: {
                         "Accept": "application/json",
                         "apikey": SUPABASE_API_KEY,
-                        "Authorization":
-                            "Bearer " + SUPABASE_API_KEY
+                        "Authorization": "Bearer " + SUPABASE_API_KEY
                     }
                 }
             );
 
 
-            if (!responseTeams.ok) {
+            if (!responseTeams.ok) throw new Error(await responseTeams.text());
 
-                throw new Error(
-                    await responseTeams.text()
-                );
-            }
-
-
-            userTeams =
-                await responseTeams.json();
+            userTeams = await responseTeams.json();
         }
 
-
-        // =====================================================
-        // 6. EQUIPS
-        // =====================================================
-
-        const teamUuids = [
-            ...new Set(
-                userTeams
-                    .map(x => x.team_uuid)
-                    .filter(Boolean)
-            )
-        ];
-
-
+        const teamUuids = [...new Set(userTeams.map(x => x.team_uuid).filter(Boolean))];
         let equips = [];
 
-
         if (teamUuids.length > 0) {
-
             const responseTeams = await fetch(
                 `${SUPABASE_URL}/rest/v1/teams?uuid=in.(${teamUuids.join(",")})`,
                 {
@@ -466,416 +448,52 @@ async function carregarRespostesQuestionari(q) {
                 }
             );
 
-
-            if (!responseTeams.ok) {
-
-                throw new Error(
-                    await responseTeams.text()
-                );
-            }
-
-
-            equips =
-                await responseTeams.json();
+            if (!responseTeams.ok) throw new Error(await responseTeams.text());
+            equips = await responseTeams.json();
         }
 
-
-        // =====================================================
-        // 7. CONSTRUIR DADES
-        // =====================================================
-
         const dades = assignacions.map(assignacio => {
-
-            const user =
-                usuaris.find(
-                    u =>
-                        u.uuid ===
-                        assignacio.user_uuid
-                );
-
-
-            /*
-             * Un usuari podria tenir més d'un equip.
-             *
-             * Per defecte agafem el primer equip.
-             * Això manté el comportament actual.
-             */
-
-            const userTeam =
-                userTeams.find(
-                    ut =>
-                        ut.user_uuid ===
-                        assignacio.user_uuid
-                );
-
-
-            const team =
-                userTeam
-                    ? equips.find(
-                        t =>
-                            t.uuid ===
-                            userTeam.team_uuid
-                    )
-                    : null;
-
-
-            const respostesJugador =
-                respostes.filter(
-                    r =>
-                        r.questionari_user_uuid ===
-                        assignacio.uuid
-                );
-
+            const user = usuaris.find(u => u.uuid === assignacio.user_uuid);
+            const userTeam = userTeams.find(ut => ut.user_uuid === assignacio.user_uuid);
+            const team = userTeam ? equips.find(t => t.uuid === userTeam.team_uuid) : null;
+            const respostesJugador = respostes.filter(r => r.questionari_user_uuid === assignacio.uuid);
 
             return {
-
-                jugador: user
-                    ? `${user.name || ""} ${user.surname || ""}`.trim()
-                    : "Jugador desconegut",
-
-                jugadorUuid:
-                    assignacio.user_uuid,
-
-                equip:
-                    team
-                        ? team.team_name
-                        : "",
-
-                equipUuid:
-                    team
-                        ? team.uuid
-                        : null,
-
-                dataEnviament:
-                    assignacio.data_enviament,
-
-                contestat:
-                    assignacio.contestat,
-
-                assignacioUuid:
-                    assignacio.uuid,
-
-                respostes:
-                    preguntes.map(pregunta => {
-
-                        const resposta =
-                            respostesJugador.find(
-                                r =>
-                                    r.question_uuid ===
-                                        pregunta.uuid ||
-
-                                    r.pregunta_uuid ===
-                                        pregunta.uuid
-                            );
-
-
+                jugador: user ? `${user.name || ""} ${user.surname || ""}`.trim() : "Jugador desconegut",
+                jugadorUuid: assignacio.user_uuid,
+                equip: team ? team.team_name : "",
+                equipUuid: team ? team.uuid : null,
+                dataEnviament: assignacio.data_enviament,
+                contestat: assignacio.contestat,
+                assignacioUuid: assignacio.uuid,
+                respostes: preguntes.map(pregunta => {
+                        const resposta = respostesJugador.find(r => r.question_uuid === pregunta.uuid || r.pregunta_uuid === pregunta.uuid);
                         return {
-
-                            preguntaUuid:
-                                pregunta.uuid,
-
-                            pregunta:
-                                pregunta.pregunta,
-
-                            resposta:
-                                resposta
-                                    ? (
-                                        resposta.resposta ??
-                                        resposta.answer ??
-                                        resposta.valor ??
-                                        ""
-                                    )
-                                    : ""
-
+                            preguntaUuid: pregunta.uuid,
+                            pregunta: pregunta.pregunta,
+                            resposta: resposta ? (resposta.resposta ?? resposta.answer ?? resposta.valor ?? "") : ""
                         };
-
                     })
-
             };
-
         });
 
-        // =====================================================
-        // 8. GUARDAR DADES
-        // =====================================================
-
-        window.respostesQuestionariActuals =
-            dades;
-
-        window.preguntesQuestionariActuals =
-            preguntes;
-
-
-        // =====================================================
-        // 9. INICIALITZAR PREGUNTA
-        // =====================================================
-
+        window.respostesQuestionariActuals = dades;
+        window.preguntesQuestionariActuals = preguntes;
         window.indexPreguntaRespostes = 0;
 
-
-        // =====================================================
-        // 10. PINTAR FILTRES
-        // =====================================================
-
-        pintarFiltresRespostes(
-            dades
-        );
-
-
-        // =====================================================
-        // 11. PINTAR SELECTOR DE PREGUNTA
-        // =====================================================
-
-        pintarSelectorPreguntaRespostes(
-            preguntes
-        );
-
-
-        // =====================================================
-        // 12. PINTAR TAULA
-        // =====================================================
+        pintarFiltresRespostes(dades);
+        pintarSelectorPreguntaRespostes(preguntes);
 
         aplicarFiltresRespostes();
-
-
     } catch (error) {
-
-        console.error(
-            "Error carregant respostes del qüestionari:",
-            error
-        );
-
-
+        console.error("Error carregant respostes del qüestionari:", error);
         div.innerHTML = `
-            <div style="padding:20px;color:red;">
-                Error carregant les respostes.
-            </div>
+            <div style="padding:20px;color:red;">Error carregant les respostes.</div>
         `;
     }
 }
 
 
-// ============================================================
-// FILTRES
-// ============================================================
-
-function pintarFiltresRespostes(dades) {
-
-    const selectEquip =
-        document.getElementById(
-            "filtreEquipRespostes"
-        );
-
-    const selectJugador =
-        document.getElementById(
-            "filtreJugadorRespostes"
-        );
-
-    const inputData =
-        document.getElementById(
-            "filtreDataRespostes"
-        );
-
-
-    // =========================================================
-    // EQUIPS
-    // =========================================================
-
-    selectEquip.innerHTML = `
-        <option value="">
-            Tots els equips
-        </option>
-    `;
-
-
-    const equips = [
-        ...new Map(
-            dades
-                .filter(x => x.equipUuid)
-                .map(x => [
-                    x.equipUuid,
-                    x.equip
-                ])
-        ).entries()
-    ];
-
-
-    equips
-        .sort((a, b) =>
-            a[1].localeCompare(
-                b[1],
-                "ca"
-            )
-        )
-        .forEach(([uuid, nom]) => {
-
-            const option =
-                document.createElement("option");
-
-            option.value = uuid;
-
-            option.textContent = nom;
-
-            selectEquip.appendChild(
-                option
-            );
-        });
-
-
-    // =========================================================
-    // JUGADORS
-    // =========================================================
-
-    selectJugador.innerHTML = `
-        <option value="">
-            Tots els jugadors
-        </option>
-    `;
-
-
-    const jugadors = [
-        ...new Map(
-            dades
-                .filter(x => x.jugadorUuid)
-                .map(x => [
-                    x.jugadorUuid,
-                    x.jugador
-                ])
-        ).entries()
-    ];
-
-
-    jugadors
-        .sort((a, b) =>
-            a[1].localeCompare(
-                b[1],
-                "ca"
-            )
-        )
-        .forEach(([uuid, nom]) => {
-
-            const option =
-                document.createElement("option");
-
-            option.value = uuid;
-
-            option.textContent = nom;
-
-            selectJugador.appendChild(
-                option
-            );
-        });
-
-
-    // =========================================================
-    // EVENTS
-    // =========================================================
-
-    inputData.onchange =
-        aplicarFiltresRespostes;
-
-    selectEquip.onchange =
-        aplicarFiltresRespostes;
-
-    selectJugador.onchange =
-        aplicarFiltresRespostes;
-}
-
-
-// ============================================================
-// SELECTOR DE PREGUNTA
-// ============================================================
-
-// ============================================================
-// SELECTOR DE PREGUNTA (AMB DESPLEGABLE I FLETXES)
-// ============================================================
-
-function pintarSelectorPreguntaRespostes(preguntes) {
-
-    const contenidor = document.querySelector(".filtresRespostes");
-
-    if (!contenidor) return;
-
-    // Eliminar selector anterior si existeix
-    const anterior = document.getElementById("selectorPreguntaRespostes");
-    if (anterior) anterior.remove();
-
-    if (!preguntes || preguntes.length === 0) return;
-
-    const filtre = document.createElement("div");
-    filtre.className = "filtre filtrePreguntaRespostes";
-
-    filtre.innerHTML = `
-        <label>Pregunta</label>
-        <div id="selectorPreguntaRespostes" class="selectorPreguntaRespostes">
-            <button type="button" id="preguntaAnteriorRespostes" class="fletxaPregunta">
-                ←
-            </button>
-
-            <select id="selectPreguntaRespostes" class="selectPreguntaRespostes">
-                ${preguntes.map((p, index) => `
-                    <option value="${index}">
-                        ${index + 1}. ${escaparHTML(p.pregunta)}
-                    </option>
-                `).join('')}
-            </select>
-
-            <button type="button" id="preguntaSeguentRespostes" class="fletxaPregunta">
-                →
-            </button>
-        </div>
-    `;
-
-    contenidor.appendChild(filtre);
-
-    // Event de canvi directament des del Select
-    const select = document.getElementById("selectPreguntaRespostes");
-    select.onchange = (e) => {
-        window.indexPreguntaRespostes = parseInt(e.target.value, 10);
-        aplicarFiltresRespostes();
-    };
-
-    // Event Fletxa Anterior
-    document.getElementById("preguntaAnteriorRespostes").onclick = () => {
-        if (!window.preguntesQuestionariActuals) return;
-        const total = window.preguntesQuestionariActuals.length;
-        if (total === 0) return;
-
-        window.indexPreguntaRespostes--;
-        if (window.indexPreguntaRespostes < 0) {
-            window.indexPreguntaRespostes = total - 1;
-        }
-
-        actualitzarPreguntaRespostes();
-        aplicarFiltresRespostes();
-    };
-
-    // Event Fletxa Següent
-    document.getElementById("preguntaSeguentRespostes").onclick = () => {
-        if (!window.preguntesQuestionariActuals) return;
-        const total = window.preguntesQuestionariActuals.length;
-        if (total === 0) return;
-
-        window.indexPreguntaRespostes++;
-        if (window.indexPreguntaRespostes >= total) {
-            window.indexPreguntaRespostes = 0;
-        }
-
-        actualitzarPreguntaRespostes();
-        aplicarFiltresRespostes();
-    };
-
-    actualitzarPreguntaRespostes();
-}
-
-
-// ============================================================
-// ACTUALITZAR TEXT DE LA PREGUNTA
-// ============================================================
-
-// ============================================================
-// ACTUALITZAR SELECT DE LA PREGUNTA
-// ============================================================
 
 function actualitzarPreguntaRespostes() {
 
@@ -886,427 +504,42 @@ function actualitzarPreguntaRespostes() {
     select.value = index;
 }
 
-// ============================================================
-// APLICAR FILTRES
-// ============================================================
-
-function aplicarFiltresRespostes() {
-
-    const dades =
-        window.respostesQuestionariActuals || [];
 
 
-    const inputData =
-        document.getElementById(
-            "filtreDataRespostes"
-        );
+function dataRespostaCoincideix(dataResposta, dataFiltre) {
+    if (!dataResposta || !dataFiltre) return false;
 
-    const selectEquip =
-        document.getElementById(
-            "filtreEquipRespostes"
-        );
+    const valor = String(dataResposta).trim();
 
-    const selectJugador =
-        document.getElementById(
-            "filtreJugadorRespostes"
-        );
+    if (valor.substring(0, 10) === dataFiltre) return true;
 
-
-    const dataSeleccionada =
-        inputData
-            ? inputData.value
-            : "";
-
-
-    const equipSeleccionat =
-        selectEquip
-            ? selectEquip.value
-            : "";
-
-
-    const jugadorSeleccionat =
-        selectJugador
-            ? selectJugador.value
-            : "";
-
-
-    const dadesFiltrades =
-        dades.filter(r => {
-
-            // =================================================
-            // DATA
-            // =================================================
-
-            if (dataSeleccionada) {
-
-                if (
-                    !dataRespostaCoincideix(
-                        r.dataEnviament,
-                        dataSeleccionada
-                    )
-                ) {
-                    return false;
-                }
-            }
-
-
-            // =================================================
-            // EQUIP
-            // =================================================
-
-            if (
-                equipSeleccionat &&
-                r.equipUuid !==
-                    equipSeleccionat
-            ) {
-
-                return false;
-            }
-
-
-            // =================================================
-            // JUGADOR
-            // =================================================
-
-            if (
-                jugadorSeleccionat &&
-                r.jugadorUuid !==
-                    jugadorSeleccionat
-            ) {
-
-                return false;
-            }
-
-
-            return true;
-        });
-
-
-    pintarTaulaRespostes(
-        questionariSeleccionat,
-        dadesFiltrades
-    );
-}
-
-
-// ============================================================
-// COMPROVAR DATA
-// ============================================================
-
-function dataRespostaCoincideix(
-    dataResposta,
-    dataFiltre
-) {
-
-    if (
-        !dataResposta ||
-        !dataFiltre
-    ) {
-        return false;
-    }
-
-
-    const valor =
-        String(dataResposta).trim();
-
-
-    // =========================================================
-    // FORMAT YYYY-MM-DD
-    // =========================================================
-
-    if (
-        valor.substring(0, 10) ===
-        dataFiltre
-    ) {
-        return true;
-    }
-
-
-    // =========================================================
-    // FORMAT DD-MM-YYYY
-    // =========================================================
-
-    const match =
-        valor.match(
-            /^(\d{2})-(\d{2})-(\d{4})/
-        );
-
+    const match = valor.match(/^(\d{2})-(\d{2})-(\d{4})/);
 
     if (match) {
-
-        const normalitzada =
-            `${match[3]}-${match[2]}-${match[1]}`;
-
-        return (
-            normalitzada ===
-            dataFiltre
-        );
+        const normalitzada = `${match[3]}-${match[2]}-${match[1]}`;
+        return (normalitzada === dataFiltre);
     }
 
-
-    // =========================================================
-    // FORMAT DD/MM/YYYY
-    // =========================================================
-
-    const matchSlash =
-        valor.match(
-            /^(\d{2})\/(\d{2})\/(\d{4})/
-        );
-
+    const matchSlash = valor.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
 
     if (matchSlash) {
-
-        const normalitzada =
-            `${matchSlash[3]}-${matchSlash[2]}-${matchSlash[1]}`;
-
-        return (
-            normalitzada ===
-            dataFiltre
-        );
+        const normalitzada = `${matchSlash[3]}-${matchSlash[2]}-${matchSlash[1]}`;
+        return (normalitzada === dataFiltre);
     }
 
-
-    // =========================================================
-    // ÚLTIM RECURS: DATE
-    // =========================================================
-
-    const data =
-        new Date(valor);
-
-
-    if (
-        !isNaN(
-            data.getTime()
-        )
-    ) {
-
-        const any =
-            data.getFullYear();
-
-        const mes =
-            String(
-                data.getMonth() + 1
-            ).padStart(2, "0");
-
-        const dia =
-            String(
-                data.getDate()
-            ).padStart(2, "0");
-
-
-        return (
-            `${any}-${mes}-${dia}` ===
-            dataFiltre
-        );
+    const data = new Date(valor);
+    if (!isNaN(data.getTime())) {
+        const any = data.getFullYear();
+        const mes = String(data.getMonth() + 1).padStart(2, "0");
+        const dia = String(data.getDate()).padStart(2, "0");
+        return (`${any}-${mes}-${dia}` === dataFiltre);
     }
-
-
     return false;
 }
 
 
-// ============================================================
-// PINTAR TAULA
-// ============================================================
-
-function pintarTaulaRespostes(
-    q,
-    respostes
-) {
-
-    const div =
-        document.getElementById(
-            "taulaRespostesQuestionari"
-        );
-
-
-    div.innerHTML = "";
-
-
-    if (
-        !respostes ||
-        respostes.length === 0
-    ) {
-
-        div.innerHTML = `
-            <div class="senseRespostes">
-                No hi ha persones que compleixin els filtres.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    // =========================================================
-    // PREGUNTA ACTUAL
-    // =========================================================
-
-    const preguntes =
-        window.preguntesQuestionariActuals || [];
-
-
-    if (
-        preguntes.length === 0
-    ) {
-
-        div.innerHTML = `
-            <div class="senseRespostes">
-                Aquest qüestionari no té preguntes.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    let index =
-        window.indexPreguntaRespostes || 0;
-
-
-    if (
-        index < 0 ||
-        index >= preguntes.length
-    ) {
-        index = 0;
-    }
-
-
-    const preguntaActual =
-        preguntes[index];
-
-
-    // =========================================================
-    // TAULA
-    // =========================================================
-
-    const taula =
-        document.createElement("table");
-
-
-    taula.className =
-        "taulaRespostes";
-
-
-    taula.innerHTML = `
-
-        <thead>
-
-            <tr>
-
-                <th>
-                    Jugador
-                </th>
-
-                <th>
-                    Equip
-                </th>
-
-                <th>
-                    Data enviament
-                </th>
-
-                <th>
-                    Resposta
-                </th>
-
-            </tr>
-
-        </thead>
-
-        <tbody></tbody>
-    `;
-
-
-    const tbody =
-        taula.querySelector("tbody");
-
-
-    // =========================================================
-    // FILES
-    // =========================================================
-
-    respostes.forEach(r => {
-
-        const tr =
-            document.createElement("tr");
-
-
-        const resposta =
-            r.respostes.find(
-                x =>
-                    x.preguntaUuid ===
-                    preguntaActual.uuid
-            );
-
-
-        const valor =
-            resposta
-                ? resposta.resposta
-                : "";
-
-
-        const respostaMostrada =
-            valor !== null &&
-            valor !== undefined &&
-            String(valor).trim() !== ""
-                ? valor
-                : "—";
-
-
-        tr.innerHTML = `
-
-            <td>
-                ${escaparHTML(
-                    r.jugador
-                )}
-            </td>
-
-            <td>
-                ${escaparHTML(
-                    r.equip || "—"
-                )}
-            </td>
-
-            <td>
-                ${formatejarDataResposta(
-                    r.dataEnviament
-                )}
-            </td>
-
-            <td class="respostaTaula">
-
-                ${escaparHTML(
-                    String(
-                        respostaMostrada
-                    )
-                )}
-
-            </td>
-        `;
-
-
-        tbody.appendChild(tr);
-    });
-
-
-    div.appendChild(taula);
-}
-
-
-// ============================================================
-// ESCAPAR HTML
-// ============================================================
-
 function escaparHTML(valor) {
-
-    if (
-        valor === null ||
-        valor === undefined
-    ) {
-        return "";
-    }
-
+    if (valor === null || valor === undefined) return "";
 
     return String(valor)
         .replace(/&/g, "&amp;")
@@ -1317,64 +550,20 @@ function escaparHTML(valor) {
 }
 
 
-// ============================================================
-// FORMAT DATA
-// ============================================================
+function formatejarDataResposta(data) {
 
-function formatejarDataResposta(
-    data
-) {
+    if (!data) return "—";
 
-    if (!data) {
-        return "—";
-    }
+    const valor = String(data).trim();
 
+    let match = valor.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (match) return `${match[3]}/${match[2]}/${match[1]}`;
 
-    const valor =
-        String(data).trim();
+    match = valor.match(/^(\d{2})-(\d{2})-(\d{4})/);
+    if (match) return `${match[1]}/${match[2]}/${match[3]}`;
 
-
-    // YYYY-MM-DD
-    let match =
-        valor.match(
-            /^(\d{4})-(\d{2})-(\d{2})/
-        );
-
-
-    if (match) {
-
-        return `${match[3]}/${match[2]}/${match[1]}`;
-    }
-
-
-    // DD-MM-YYYY
-    match =
-        valor.match(
-            /^(\d{2})-(\d{2})-(\d{4})/
-        );
-
-
-    if (match) {
-
-        return `${match[1]}/${match[2]}/${match[3]}`;
-    }
-
-
-    // DD/MM/YYYY
-    match =
-        valor.match(
-            /^(\d{2})\/(\d{2})\/(\d{4})/
-        );
-
-
-    if (match) {
-
-        return valor.substring(
-            0,
-            10
-        );
-    }
-
+    match = valor.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+    if (match) return valor.substring(0, 10);
 
     return valor;
 }
