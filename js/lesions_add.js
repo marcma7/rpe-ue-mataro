@@ -47,9 +47,9 @@ async function guardarLesio(){
         });
 
         await enviarNotificacioFisio(
-    jugadorActualLesio,
-    injury.team_uuid
-);
+            jugadorActualLesio,
+            injury.team_uuid
+        );
     }
 
     mostrarPantalla("teams");

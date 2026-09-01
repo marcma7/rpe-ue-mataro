@@ -458,7 +458,16 @@ for (const jugador of jugadors) {
             const dataPrac = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
             dataPrac.setHours(0, 0, 0, 0);
 
+            // Descartem sessions de dies futurs
             if (dataPrac > avui) continue;
+
+            // --- NOVA CONDICIÓ ---
+            // Si la sessió és d'avui I l'equip NO té cap RPE registrat avui, la saltem
+            const esSessioAvui = dataPrac.getTime() === avui.getTime();
+            if (esSessioAvui && !equipsAmbRPEAvui.has(playerTeam.team_uuid)) {
+                continue;
+            }
+            // ----------------------
 
             if (!ultimaDataEquip || dataPrac > ultimaDataEquip) {
                 ultimaDataEquip = dataPrac;
