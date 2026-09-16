@@ -103,9 +103,9 @@ async function carregarLesions(){
         }
 
         lesio.showText =
-            (lesio.user?.name ?? "") +
+            (capitalize(lesio.user?.name) ?? "") +
             " " +
-            (lesio.user?.surname ?? "") +
+            (capitalize(lesio.user?.surname) ?? "") +
             " - " +
             lesio.data_lesio;
     });
