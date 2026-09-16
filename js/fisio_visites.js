@@ -78,7 +78,7 @@ function pintarVisitesFisio(){
         fila.innerHTML = `
             <b>${capitalize(visita.user?.name ?? "")} ${capitalize(visita.user?.surname ?? "")}</b>
             <br>
-            ${visita.date ?? "-"} &nbsp; ${visita.hour ?? ""}
+            ${visita.date ?? "-"} &nbsp; ${visita.hour ?? ""} &nbsp; ${visita.fisio ?? ""}
             <br>
             ${visita.injury?.zona ?? "-"} &nbsp; | &nbsp; ${visita.injury?.tipus ?? "-"} &nbsp; | &nbsp; ${visita.injury?.gravetat ?? "-"}
             <br>
@@ -97,9 +97,9 @@ function pintarVisitesFisio(){
 
 function mostrarDetallVisitaFisio(visita){
 
-    document.getElementById("dialogTitle") .textContent = visita.user?.name + " " + visita.user?.surname;
+    document.getElementById("dialogTitle") .textContent = capitalize(visita.user?.name) + " " + capitalize(visita.user?.surname);
 
-    let missatge = "Data visita: " + visita.date + " " + visita.hour + "\n\n" + "Zona: " + visita.injury?.zona + "  |  " + "Tipus: " + visita.injury?.tipus + "  |  " + "Gravetat: " + visita.injury?.gravetat + "\n\nEquip: " + visita.team?.team_name;
+    let missatge = "Data visita: " + visita.date + " " + visita.hour + "\nFisio: " + visita.fisio || "" + "\n\n" + "Zona: " + visita.injury?.zona + "  |  " + "Tipus: " + visita.injury?.tipus + "  |  " + "Gravetat: " + visita.injury?.gravetat + "\n\nEquip: " + visita.team?.team_name;
 
     document .getElementById("dialogMessage").textContent = missatge;
 

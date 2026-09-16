@@ -8,7 +8,32 @@ let visitesFisioHora = [];
 
 async function obrirAssignarHora(injuryUuid){
     injuryAssignada = injuryUuid;
+
+    // 1. Netejar el select per defecte
+    const selectFisio = document.getElementById("selectFisio");
+    if(selectFisio) selectFisio.value = "";
+
     mostrarPantalla("assignarHora");
+
+    // 2. Comprovar si ja té un fisio assignat a l'última visita
+    try {
+        const episodes = await getEpisodesByInjury([injuryAssignada]);
+        if (episodes.length > 0) {
+            const visits = await getVisitsByEpisodes(episodes.map(e => e.uuid));
+            if (visits.length > 0) {
+                const ultimaVisita = visits.sort((a, b) => b.num_visit - a.num_visit)[0];
+
+                // Si existeix la visita i té un fisio guardat, el seleccionem al desplegable
+                if (ultimaVisita && ultimaVisita.physio_uuid && selectFisio) {
+                    selectFisio.value = ultimaVisita.physio_uuid;
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error en carregar el fisio preassignat:", error);
+    }
+
+    // 3. Carregar la graella de hores
     await carregarGraellaFisio();
 }
 
@@ -140,6 +165,15 @@ document.getElementById("confirmarHoraFisioButton").addEventListener("click", as
         return;
     }
 
+    // Comprovem que s'hagi seleccionat un fisio del desplegable
+    const selectFisio = document.getElementById("selectFisio");
+    const fisioSeleccionat = selectFisio.value;
+
+    if(!fisioSeleccionat){
+        alert("Selecciona un fisio");
+        return;
+    }
+
     const episodes = await getEpisodesByInjury([injuryAssignada]);
 
     if(episodes.length===0){
@@ -155,7 +189,7 @@ document.getElementById("confirmarHoraFisioButton").addEventListener("click", as
     }
 
     const ultimaVisita = visits.sort((a,b)=>b.num_visit-a.num_visit)[0];
-    
+
     const dataFisio = diesFilterFisio[horaSeleccionadaFisio.index];
     const horaFisio = horaSeleccionadaFisio.hora;
 
@@ -163,7 +197,8 @@ document.getElementById("confirmarHoraFisioButton").addEventListener("click", as
         {
             uuid: ultimaVisita.uuid,
             date: dataFisio,
-            hour: horaFisio
+            hour: horaFisio,
+            fisio: fisioSeleccionat // Afegim el fisio seleccionat (canvia 'physio_uuid' si el teu camp es diu diferent)
         }
     ]);
 
@@ -176,6 +211,10 @@ document.getElementById("confirmarHoraFisioButton").addEventListener("click", as
     document.getElementById("pantallaAssignarHora").style.display="none";
     alert("HORA ASSIGNADA");
     horaSeleccionadaFisio = null;
+
+    // Opcional: netejar el select un cop guardat
+    selectFisio.value = "";
+
     await obrirLesionsFisio();
 });
 

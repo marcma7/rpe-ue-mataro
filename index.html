@@ -377,24 +377,43 @@
     </div>
 
     <!-- ASSIGNAR HORA FISIO -->
-    <div id="pantallaAssignarHora" class="container" style="display:none;">
-        <h1>ASSIGNAR HORA</h1>
-        <div class="graellaWrapper">
-            <div id="graellaFisio"></div>
-        </div>
-
-        <div class="horaEscollidaFila">
-            <h3>HORA ESCOLLIDA:</h3>
-            <div id="horaSeleccionada"></div>
-        </div>
-
-        <div id="visitesHoraFisio"></div>
-
-        <div class="barraBotons">
-            <button id="tornarLesionsButton">TORNAR A LESIONS</button>
-            <button id="confirmarHoraFisioButton">CONFIRMAR</button>
-        </div>
+<div id="pantallaAssignarHora" class="container" style="display:none;">
+    <h1>ASSIGNAR HORA</h1>
+    <div class="graellaWrapper">
+        <div id="graellaFisio"></div>
     </div>
+
+    <!-- Contenidor en paral·lel per a la hora i el fisio -->
+    <div style="display: flex; gap: 15px; align-items: center; margin: 15px 0;">
+
+        <!-- Hora escollida -->
+        <div class="horaEscollidaFila" style="flex: 1; margin: 0;">
+            <h3 style="margin-bottom: 5px; font-size: 0.9rem;">HORA ESCOLLIDA:</h3>
+            <div id="horaSeleccionada" style="padding: 8px; background: #f5f5f5; border-radius: 4px; border: 1px solid #ccc; text-align: center; font-weight: bold;"></div>
+        </div>
+
+        <!-- Desplegable de fisios -->
+        <div class="fisioSelectFila" style="flex: 1; margin: 0;">
+            <label for="selectFisio" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">FISIO:</label>
+            <select id="selectFisio" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; background: white;">
+                <option value="" disabled selected>Selecciona un fisio...</option>
+                <option value="David Garcia">David Garcia</option>
+                <option value="David Urban">David Urban</option>
+                <option value="Júlia Velázquez">Júlia Velázquez</option>
+                <option value="Pau Díaz">Pau Díaz</option>
+                <option value="Santi Martín">Santi Martín</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div id="visitesHoraFisio"></div>
+
+    <div class="barraBotons">
+        <button id="tornarLesionsButton">TORNAR A LESIONS</button>
+        <button id="confirmarHoraFisioButton">CONFIRMAR</button>
+    </div>
+</div>
 
     <!-- VISITES FISIO -->
     <div id="pantallaVisites" class="container" style="display:none;">
@@ -818,7 +837,7 @@
 <script src="js/valoracio_items.js"></script>
 <script src="js/rpe_team.js"></script>
 <script src="service-worker.js"></script>
-<script src="js/notifications.js?v=2"></script>
+<script src="js/notifications.js?v=3"></script>
 <script src="js/app.js?v=62"></script>
 </body>
 </html>

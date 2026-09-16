@@ -286,12 +286,13 @@ async function enviarNotificacioHoraFisio(jugador, data, hora) {
         if (!usuaris || usuaris.length === 0) return;
 
         const nomJugador = `${capitalize(jugador.name)} ${capitalize(jugador.surname)}`;
-
         for (const user of usuaris) {
             try {
                 const esJugador = user.uuid === jugador.uuid;
                 const title = esJugador ? "🏥 Hora de fisioteràpia" : "🏥 Fisioteràpia assignada";
                 const body = esJugador ? `T'han assignat fisioteràpia el ${data} a les ${hora}.` : `${nomJugador} té fisioteràpia el ${data} a les ${hora}.`;
+
+                console.log(user);
 
                 const response = await fetch(
                     `${SUPABASE_URL}/functions/v1/clever-service`,
