@@ -45,7 +45,8 @@ async function guardarVisitaFisio(tancar){
 
     if(tancar){
         await closeEpisode({
-            uuid: visitaInfoActual.episode_uuid
+            uuid: visitaInfoActual.episode_uuid,
+            closed: 1
         });
     }else{
         await insertVisit({

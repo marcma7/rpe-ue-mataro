@@ -10,7 +10,7 @@ document.getElementById("lesionsButton").addEventListener("click", async()=>{
 
 
 async function obrirLesionsFisio(){
-    document.getElementById("filtreLesions").value = "Totes";
+    document.getElementById("filtreLesions").value = "Lesions obertes";
     mostrarPantalla("lesions");
     await carregarLesions();
 }
@@ -161,43 +161,64 @@ function pintarLesions(){
 }
 
 
-function mostrarDetallLesio(lesio){
+async function mostrarDetallLesio(lesio){
 
     document.getElementById("dialogTitle").textContent = lesio.showText;
     let missatge = "Data lesió: " + lesio.data_lesio + "\n\n" + "Zona: " + lesio.zona + "  |  " + "Tipus: " + lesio.tipus + "  |  " + "Gravetat: " + lesio.gravetat;
-    
+
     if(lesio.demana_fisio > 0) missatge += "\n\nFISIO SOL·LICITAT";
     else missatge += "\n\nNo necessita fisio";
 
     document.getElementById("dialogMessage").textContent = missatge;
+
     const buttons = document.getElementById("dialogButtons");
     buttons.innerHTML = "";
     buttons.style.display = "flex";
     buttons.style.flexDirection = "row";
     buttons.style.gap = "10px";
-    buttons.innerHTML = "";
 
+    // 1. Botó d'assignar hora (si demana fisio)
     if(lesio.demana_fisio > 0){
-        const boto = document.createElement("button");
-        boto.textContent = "ASSIGNAR HORA";
-        boto.style.flex = "1";
-        boto.onclick = ()=>{
-            document.getElementById("dialogOverlay").style.display="none";
+        const botoFisio = document.createElement("button");
+        botoFisio.textContent = "ASSIGNAR HORA";
+        botoFisio.style.flex = "1";
+        botoFisio.onclick = ()=>{
+            document.getElementById("dialogOverlay").style.display = "none";
             obrirAssignarHora(lesio.uuid);
         };
-        buttons.appendChild(boto);
+        buttons.appendChild(botoFisio);
     }
 
+    // 2. Nou botó: Tancar Lesió
+    const botoTancarLesio = document.createElement("button");
+    botoTancarLesio.textContent = "TANCAR LESIÓ";
+    botoTancarLesio.style.flex = "1";
+    botoTancarLesio.onclick = async () => {
+        document.getElementById("dialogOverlay").style.display = "none";
+
+        // Tanco l'episodi amb la funció que ja utilitzes
+        await closeEpisode({
+            uuid: lesio.episode.uuid,
+            closed: 1
+        });
+        lesio.episode.closed = 1;
+
+        // Actualitza la llista de lesions de la interfície
+        // Substitueix 'obrirLlistaLesions' per la funció real que refresqui la teva vista
+        filtrarLesions();
+    };
+    buttons.appendChild(botoTancarLesio);
+
+    // 3. Botó Enrere / Tancar diàleg
     const tancar = document.createElement("button");
     tancar.textContent = "ENRERE";
     tancar.style.flex = "1";
     tancar.onclick = ()=>{
-        document.getElementById("dialogOverlay").style.display="none";
+        document.getElementById("dialogOverlay").style.display = "none";
     };
-
     buttons.appendChild(tancar);
 
-    document.getElementById("dialogOverlay").style.display="flex";
+    document.getElementById("dialogOverlay").style.display = "flex";
 }
 
 
@@ -208,11 +229,12 @@ document.getElementById("filtreLesions").addEventListener("change", ()=>{
 
 function filtrarLesions(){
     const filtre = document.getElementById("filtreLesions").value;
-    if(filtre === "Totes") injuriesShowing = injuries;
-    else if(filtre === "Sense hora de fisio") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora == 0);
-    else if(filtre === "Pendent de primera visita") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora > 0 && l.visites_fetes == 0);
-    else if(filtre === "En tractament") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora > 0 && l.visites_fetes > 0 && l.te_hora > l.visites_fetes);
-    else if(filtre === "Tancades") injuriesShowing = injuries.filter(l => l.demana_fisio == 0 || l.te_hora == l.visites_fetes);
+    console.log(injuries);
+    if(filtre === "Lesions obertes") injuriesShowing = injuries.filter(l => l.episode.closed == 0);
+    else if(filtre === "Sense hora de fisio") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora == 0 && l.episode.closed == 0);
+    else if(filtre === "Pendent de primera visita") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora > 0 && l.visites_fetes == 0 && l.episode.closed == 0);
+    else if(filtre === "En tractament") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora > 0 && l.visites_fetes > 0 && l.te_hora > l.visites_fetes && l.episode.closed == 0);
+    else if(filtre === "Tancades") injuriesShowing = injuries.filter(l => l.demana_fisio == 0 || l.episode.closed == 1);
     
     pintarLesions();
 }
