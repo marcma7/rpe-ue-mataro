@@ -430,63 +430,69 @@
 
     <!-- AFEGIR LESIÓ JUGADOR -->
     <div id="pantallaAfegirLesio" class="container" style="display:none;">
-        <h1>LESIONS</h1>
-        <h2 id="nomJugadorLesio"></h2>
-        <div class="dataRow">
-            <label>Data lesió</label>
-            <input id="dataLesio" type="date">
-        </div>
-
-        <div class="dataRow">    
-            <label>Zona</label>
-            <select id="zonaLesio">
-                <option>Cap</option>
-                <option>Coll</option>
-                <option>Braç</option>
-                <option>Colze</option>
-                <option>Canell</option>
-                <option>Mà</option>
-                <option>Dit</option>
-                <option>Tronc</option>
-                <option>Esquena</option>
-                <option>Cama</option>
-                <option>Genoll</option>
-                <option>Turmell</option>
-                <option>Peu</option>
-                <option>Altres</option>
-            </select>
-        </div>
-
-        <div class="dataRow">
-            <label>Tipus</label>
-            <select id="tipusLesio">
-                <option>Torçada/mal gest</option>
-                <option>Cop</option>
-                <option>Sobrecàrrega</option>
-                <option>Altres</option>
-            </select>
-        </div>
-
-        <div class="dataRow">
-            <label>Gravetat</label>
-            <select id="gravetatLesio">
-                <option>Lleu</option>
-                <option>Moderada</option>
-                <option>Greu</option>
-                <option>Molt greu</option>
-            </select>
-        </div>
-    
-        <div class="dataRow">
-            <label>Demana fisio?</label>
-            <input id="needsFisio" type="checkbox">
-        </div>
-    
-        <div class="barraBotons">
-            <button id="enrereLesions">ENRERE</button>
-            <button id="afegirLesioButton">AFEGIR</button>
-        </div>
+    <h1>LESIONS</h1>
+    <h2 id="nomJugadorLesio"></h2>
+    <div class="dataRow">
+        <label>Data lesió</label>
+        <input id="dataLesio" type="date">
     </div>
+
+    <div class="dataRow">
+        <label>Zona</label>
+        <select id="zonaLesio">
+            <option>Cap</option>
+            <option>Coll</option>
+            <option>Braç</option>
+            <option>Colze</option>
+            <option>Canell</option>
+            <option>Mà</option>
+            <option>Dit</option>
+            <option>Tronc</option>
+            <option>Esquena</option>
+            <option>Cama</option>
+            <option>Genoll</option>
+            <option>Turmell</option>
+            <option>Peu</option>
+            <option>Altres</option>
+        </select>
+    </div>
+
+    <div class="dataRow">
+        <label>Tipus</label>
+        <select id="tipusLesio">
+            <option>Torçada/mal gest</option>
+            <option>Cop</option>
+            <option>Sobrecàrrega</option>
+            <option>Altres</option>
+        </select>
+    </div>
+
+    <div class="dataRow">
+        <label>Gravetat</label>
+        <select id="gravetatLesio">
+            <option>Lleu</option>
+            <option>Moderada</option>
+            <option>Greu</option>
+            <option>Molt greu</option>
+        </select>
+    </div>
+
+    <div class="dataRow">
+        <label>Demana fisio?</label>
+        <input id="needsFisio" type="checkbox">
+    </div>
+
+    <!-- Nou camp de text lliure -->
+    <div class="dataRow">
+        <label>Descripció</label>
+        <textarea id="descripcioLesio" placeholder="Explica què ha passat (opcional)..." rows="3"></textarea>
+    </div>
+
+    <div class="barraBotons">
+        <button id="enrereLesions">ENRERE</button>
+        <button id="afegirLesioButton">AFEGIR</button>
+    </div>
+</div>
 
     <!-- ENVIAR QÜESTIONARIS DES DE JUGADOR -->
     <div id="pantallaEnviarQuestionarisJugador" class="container" style="display:none;">

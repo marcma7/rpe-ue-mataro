@@ -142,6 +142,10 @@ function pintarLesions(){
             <br>    
             Gravetat: ${lesio.gravetat ?? "-"}
             <br>
+            <br>
+            ${lesio.descripcio ?? "-"}
+            <br>
+            <br>
             ${lesio.demana_fisio > 0 ? (lesio.te_hora > 0 ?
               "🟢 Hora: " + (ultimaVisita?.date ?? "") + " " + (ultimaVisita ?.hour ?? "")
             :

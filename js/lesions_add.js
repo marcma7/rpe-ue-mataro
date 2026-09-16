@@ -28,7 +28,8 @@ async function guardarLesio(){
         zona: document.getElementById("zonaLesio").value,
         tipus: document.getElementById("tipusLesio").value,
         gravetat: document.getElementById("gravetatLesio").value,
-        demana_fisio: document.getElementById("needsFisio").checked ? 1 : 0
+        demana_fisio: document.getElementById("needsFisio").checked ? 1 : 0,
+        descripcio: document.getElementById("descripcioLesio").value
     };
 
     const createdInjury = await insertInjury(injury);
