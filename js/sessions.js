@@ -215,13 +215,30 @@ function pintarJugadorsModificar() {
     for (const player of modifyUsersAndPractice) {
         const fila = document.createElement("div");
         fila.className = "sessioFila";
+
+        // Estils per aliniar i espaiar correctament
+        fila.style.display = "flex";
+        fila.style.alignItems = "center";
+        fila.style.gap = "12px";
+        fila.style.marginBottom = "6px";
+
         fila.innerHTML = `
-            <div>${capitalize(player.name)} ${capitalize(player.surname)}</div>
-            <input class="train" type="number" value="${player.train}">
-            <input class="pf" type="number" value="${player.pf}">
-            <input class="game" type="number" value="${player.game}">
+            <div style="flex: 1; min-width: 140px;">${capitalize(player.name)} ${capitalize(player.surname)}</div>
+            <input class="train" type="number" value="${player.train}" style="width: 65px; padding: 4px; text-align: center;">
+            <input class="pf" type="number" value="${player.pf}" style="width: 65px; padding: 4px; text-align: center;">
+            <input class="game" type="number" value="${player.game}" style="width: 65px; padding: 4px; text-align: center;">
+            <button type="button" class="btn-reset-zero" style="background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 4px; margin-left: 5px;" title="Posar a zero">❌</button>
         `;
         fila.dataset.userTeamUuid = player.user_team_uuid;
+
+        // Lògica del botó per posar a zero
+        const botoZero = fila.querySelector(".btn-reset-zero");
+        botoZero.onclick = () => {
+            fila.querySelector(".train").value = 0;
+            fila.querySelector(".pf").value = 0;
+            fila.querySelector(".game").value = 0;
+        };
+
         llista.appendChild(fila);
     }
 }
