@@ -362,9 +362,6 @@ async function buscarJugador(){
     const nom = document.getElementById("nomJugadorFind").value;
     const cognom = document.getElementById("cognomJugadorFind").value;
 
-    console.log(nom);
-    console.log(cognom);
-
     const userTeams = await getAllUserTeams();
     const teams = await getAllTeams();
     const userUuids = userTeams.map(u => u.user_uuid);
