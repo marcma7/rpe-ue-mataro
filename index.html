@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="css/styles.css?v=46">
+    <link rel="stylesheet" href="css/styles.css?v=47">
 </head>
 
 <body>
@@ -164,6 +164,7 @@
     <!-- MANAGEMENT -->
     <div id="pantallaManagement" class="container" style="display:none;">
         <h1>GESTIÓ</h1>
+        <button id="playerSearcherButton">BUSCADOR JUGADORS</button>
         <button id="equipsButton">EQUIPS</button>
         <button id="dadesButton">DADES</button>
         <button id="fisioButton">GESTIÓ FISIO</button>
@@ -201,6 +202,22 @@
     <button id="modificarSessioButton">MODIFICAR SESSIONS</button>
     <button id="eliminarSessionsButton">ELIMINAR SESSIONS</button>
     <button id="enrereSessionsATeams">ENRERE</button>
+</div>
+    </div>
+
+    <!-- BUSCADOR DE JUGADORS -->
+    <div id="pantallaBuscadorJugadors" class="container pantallaTeams" style="display:none;">
+        <h1>BUSCADOR DE JUGADORS</h1>
+
+        <div id="findPlayerRow" class="addPlayerRow proporcioJugador">
+            <input id="nomJugadorFind" type="text" placeholder="Nom">
+            <input id="cognomJugadorFind" type="text" placeholder="Cognom">
+            <button id="findJugadorButton">BUSCAR</button>
+        </div>
+
+        <div id="llistaJugadorsFind"></div>
+        <div id="teamsBottomButtonsFind" class="barraBotons">
+    <button id="enrereSessionsATeamsFind">ENRERE</button>
 </div>
     </div>
 
@@ -670,19 +687,6 @@
 
     </div>
 
-    <div id="pantallaEstatRPE" class="pantallaEstatRPE" style="display:none;">
-
-    <div class="capEstatRPE">
-        <h1>ESTAT DESPRÉS DE L'ÚLTIMA SESSIÓ</h1>
-    </div>
-
-    <div class="contenidorTaulaEstatRPE">
-        <div id="llistaEstatRPE" class="llistaEstatRPE">
-        </div>
-    </div>
-    <button id="accedirAppEstatRPE" class="botoAccedirAppEstatRPE">ACCEDIR A L'APP</button>
-</div>
-
     <div id="playerCard" class="dialogOverlay" style="display:none;">
 
         <div class="playerCard">
@@ -821,7 +825,7 @@
 <script src="js/config.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/supabase.js?v=4"></script>
-<script src="js/rpe.js?v=6"></script>
+<script src="js/rpe.js?v=7"></script>
 <script src="js/questionaris.js"></script>
 <script src="js/teams.js"></script>
 <script src="js/dialogs.js"></script>
@@ -844,6 +848,6 @@
 <script src="js/rpe_team.js"></script>
 <script src="service-worker.js"></script>
 <script src="js/notifications.js?v=4"></script>
-<script src="js/app.js?v=64"></script>
+<script src="js/app.js?v=65"></script>
 </body>
 </html>

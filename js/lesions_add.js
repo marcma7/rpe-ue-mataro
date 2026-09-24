@@ -1,9 +1,19 @@
 let jugadorActualLesio = null;
+let finder = false;
 
 
-function obrirAfegirLesio(user){
+document.getElementById("enrereLesions").addEventListener("click", ()=>{
+    if(finder) {
+        mostrarPantalla("playerSearcher");
+    } else {
+        mostrarPantalla("teams")
+    }
+});
+
+function obrirAfegirLesio(user, veDeFinder){
 
     jugadorActualLesio = user;
+    finder = veDeFinder;
 
     document.getElementById("nomJugadorLesio").textContent = capitalize(user.name) + " " + capitalize(user.surname);
 

@@ -49,10 +49,6 @@ document.getElementById("questionarisButton").addEventListener("click", async ()
     await loadGestQuestionaris();
 });
 
-document.getElementById("enrereLesions").addEventListener("click", ()=>{
-    mostrarPantalla("teams");
-});
-
 document.getElementById("enrereVeureRespostes").addEventListener("click", async ()=>{
     mostrarPantalla("gestioQuestionaris");
     await loadGestQuestionaris();
@@ -95,6 +91,10 @@ document.getElementById("confirmarQuestionariButton").addEventListener("click", 
 document.getElementById("equipsButton").addEventListener("click", async () => {
     mostrarPantalla("teams");
     await loadTeams();
+});
+
+document.getElementById("playerSearcherButton").addEventListener("click", async () => {
+    mostrarPantalla("playerSearcher");
 });
 
 document.getElementById("pantallaEnviarQuestionarisJugador").addEventListener("click", async () => {
@@ -178,8 +178,24 @@ async function decideRoute(user) {
         return;
     }
 
-    mostrarPantalla("estatRPE");
-    await loadEstatRPE(user);
+    const code = obtenirCodeLocal();
+
+    if (!user) {
+        sortir();
+        return;
+    }
+
+    if(user.role !== "SUPERADMIN") {
+        document.getElementById("playerSearcherButton").style.display = "none";
+    } else {
+        document.getElementById("playerSearcherButton").style.display = "button";
+    }
+
+    // 1. Canviem de pantalla immediatament per donar sensació de fluïdesa
+    mostrarPantalla("management");
+
+    // 2. Gestionem les notificacions en segon pla (sense 'await' al flux principal)
+    await activarNotificacionsPush(user.uuid);
 }
 
 
@@ -189,6 +205,7 @@ function mostrarPantalla(pantalla) {
     document.getElementById("pantallaQuestionaris").style.display = "none";
     document.getElementById("pantallaManagement").style.display = "none";
     document.getElementById("pantallaTeams").style.display = "none";
+    document.getElementById("pantallaBuscadorJugadors").style.display = "none";
     document.getElementById("pantallaSessions").style.display = "none";
     document.getElementById("pantallaModifySessions").style.display = "none";
     document.getElementById("pantallaDeleteSessions").style.display = "none";
@@ -211,15 +228,22 @@ function mostrarPantalla(pantalla) {
     document.getElementById("pantallaEnviarQuestionarisJugador").style.display="none";
     document.getElementById("pantallaRpeTeam").style.display = "none";
     document.getElementById("pantallaEnviarValoracionsJugador").style.display="none";
-    document.getElementById("pantallaEstatRPE").style.display = "none";
     document.getElementById("pantallaRespostesQuestionari").style.display = "none";
+    document.getElementById("pantallaBuscadorJugadors").style.display = "none";
 
     if (pantalla === "login") document.getElementById("pantallaLogin").style.display = "flex";
+    if (pantalla === "playerSearcher") {
+        document.getElementById("pantallaBuscadorJugadors").style.display = "flex";
+        document.getElementById("llistaJugadorsFind").innerHTML = "";
+        document.getElementById("nomJugadorFind").value = "";
+        document.getElementById("cognomJugadorFind").value = "";
+    }
     if (pantalla === "questionariJugadors") document.getElementById("pantallaEnviarQuestionarisJugador").style.display = "flex";
     if (pantalla === "valoracioJugadors") document.getElementById("pantallaEnviarValoracionsJugador").style.display = "flex";
     if (pantalla === "rpe") document.getElementById("pantallaRPE").style.display = "flex";
     if (pantalla === "questionaris") document.getElementById("pantallaQuestionaris").style.display = "flex";
     if (pantalla === "management") document.getElementById("pantallaManagement").style.display = "flex";
+    if (pantalla === "teams") document.getElementById("pantallaTeams").style.display = "flex";
     if (pantalla === "teams") document.getElementById("pantallaTeams").style.display = "flex";
     if (pantalla === "sessions") document.getElementById("pantallaSessions").style.display = "flex";
     if (pantalla === "modifySessions") document.getElementById("pantallaModifySessions").style.display = "flex";
@@ -241,7 +265,6 @@ function mostrarPantalla(pantalla) {
     if(pantalla==="valoracioItems") document.getElementById("pantallaValoracioItems").style.display="flex";
     if(pantalla==="addValoracioItem") document.getElementById("pantallaAddValoracioItem").style.display="flex";
     if (pantalla === "rpeTeam") document.getElementById("pantallaRpeTeam").style.display = "flex";
-    if (pantalla === "estatRPE") document.getElementById("pantallaEstatRPE").style.display = "flex";
     if (pantalla === "pantallaRespostesQuestionari") document.getElementById("pantallaRespostesQuestionari").style.display = "flex";
 }
 
@@ -330,7 +353,7 @@ async function loadEstatRPE(user) {
 
     if (jugadorUuids.length > 0) promeses.push(getRPEByUsers(jugadorUuids));
     else promeses.push(Promise.resolve([]));
-    
+
     promeses.push(getAllVisits());
     const [rpesResultat, visitesFisio] = await Promise.all(promeses);
     rpes = rpesResultat || [];
@@ -370,7 +393,7 @@ async function loadEstatRPE(user) {
 
     for (const visita of visitesFisio) {
         if (visita.visita_feta === 1) continue;
-        
+
         const episode = episodesMap.get(visita.episode_uuid);
         if (!episode) continue;
 
@@ -401,10 +424,10 @@ async function loadEstatRPE(user) {
     }
 
     const totsElsTeamUuids = [...new Set(Array.from(jugadorsTeams.values()).flat().map(ut => ut.team_uuid).filter(Boolean))];
-    
+
     // 6. CARREGAR PRÀCTIQUES PER EQUIP EN PARAL·LEL
     const practicesPerTeam = new Map();
-    const resultatsPractices = await Promise.all(totsElsTeamUuids.map(async teamUuid => 
+    const resultatsPractices = await Promise.all(totsElsTeamUuids.map(async teamUuid =>
         {
             const practices = await getPracticesByTeam(teamUuid);
             return {teamUuid, practices};
@@ -414,7 +437,7 @@ async function loadEstatRPE(user) {
     for (const resultat of resultatsPractices) {
         practicesPerTeam.set(resultat.teamUuid, resultat.practices || []);
     }
-    
+
     // 6.1. CARREGAR PLAYER_TEAM_PRACTICE_TIME (PTPT)
     const totesPractices = resultatsPractices.flatMap(r => r.practices || []);
     const practiceUuids = totesPractices.map(p => p.uuid).filter(Boolean);
@@ -435,7 +458,7 @@ async function loadEstatRPE(user) {
 
         for (const playerTeam of userTeamsJug) {
             const practices = practicesPerTeam.get(playerTeam.team_uuid) || [];
-        
+
             let ultimaSessioEquip = null;
             let ultimaDataEquip = null;
 
@@ -508,11 +531,11 @@ async function loadEstatRPE(user) {
             fisioAssignada: fisioAssignada
         });
     }
-    
+
     estatRPEJugadors.sort((a, b) => {
         const equipsA = (a.equips || []).map(abreujarEquip).filter(Boolean).join(", ");
         const equipsB = (b.equips || []).map(abreujarEquip).filter(Boolean).join(", ");
-        
+
         const comparacioEquip = equipsA.localeCompare(equipsB, "ca", { sensitivity: "base" });
         if (comparacioEquip !== 0) return comparacioEquip;
 
@@ -527,7 +550,7 @@ async function loadEstatRPE(user) {
 
 
 function pintarEstatRPE() {
-    
+
     const contenidor = document.getElementById("llistaEstatRPE");
     contenidor.innerHTML = "";
 
@@ -550,7 +573,7 @@ function pintarEstatRPE() {
         const data = document.createElement("div");
         data.className = "dataJugadorEstatRPE";
         data.textContent = registre.dataUltimaSessio || "-";
-    
+
         const rpeInfo = document.createElement("div");
         rpeInfo.className = "rpeJugadorEstatRPE";
 
@@ -609,17 +632,17 @@ function pintarEstatRPE() {
         } else if (registre.teHoraFisioDemanada) {
             const textHora = document.createElement("span");
             textHora.textContent = "Hora demanada";
-        
+
             const botoHora = document.createElement("button");
             botoHora.className = "botoDemanarFisio";
             botoHora.type = "button";
             botoHora.title = "Assignar hora de fisioteràpia";
             botoHora.innerHTML = "🕐";
-        
+
             botoHora.addEventListener("click", () => {
                 obrirAssignarHora(registre.injuryFisioDemanada);
             });
-        
+
             molesties.appendChild(textHora);
             molesties.appendChild(botoHora);
         } else {
@@ -636,20 +659,3 @@ function pintarEstatRPE() {
         contenidor.appendChild(fila);
     }
 }
-
-
-document.getElementById("accedirAppEstatRPE").addEventListener("click", async () => {
-    const code = obtenirCodeLocal();
-    const user = await fetchUserByCode(code);
-    
-    if (!user) {
-        sortir();
-        return;
-    }
-
-    // 1. Canviem de pantalla immediatament per donar sensació de fluïdesa
-    mostrarPantalla("management");
-
-    // 2. Gestionem les notificacions en segon pla (sense 'await' al flux principal)
-    await activarNotificacionsPush(user.uuid);
-});

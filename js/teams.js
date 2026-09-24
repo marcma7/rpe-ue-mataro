@@ -16,6 +16,8 @@ async function obrirModificarSessions() {
 
 document.getElementById("nouEquipButton").addEventListener("click", crearEquip);
 
+document.getElementById("findJugadorButton").addEventListener("click", buscarJugador);
+
 document.getElementById("eliminarEquipButton").addEventListener("click", eliminarEquip);
 
 document.getElementById("afegirSessionsButton").addEventListener("click", obrirSessions);
@@ -25,6 +27,10 @@ document.getElementById("tornarTeamsButton").addEventListener("click", () => {
 });
 
 document.getElementById("enrereSessionsATeams").addEventListener("click", () => {
+    mostrarPantalla("management");
+});
+
+document.getElementById("enrereSessionsATeamsFind").addEventListener("click", () => {
     mostrarPantalla("management");
 });
 
@@ -63,60 +69,35 @@ async function pickPlayers(teamUuid) {
     const userTeams = await getPlayersByTeam(teamUuid);
     const userUuids = userTeams.map(u => u.user_uuid);
     const users = await getUsersByUserTeam(userUuids);
-    pintarJugadors(users);
+    pintarJugadors(users, "llistaJugadors", window.permisosEquipActual?.potGestionar === true, false);
 }
 
 
-function pintarJugadors(users) {
+function pintarJugadors(users, llistaNom, potGestionar, veDeFinder) {
 
-    const llista = document.getElementById("llistaJugadors");
+    const llista = document.getElementById(llistaNom);
     llista.innerHTML = "";
 
-    const potGestionar =
-        window.permisosEquipActual?.potGestionar === true;
-
-
     users.sort((a, b) => {
-
         function priority(role) {
-
             switch(role) {
-
-                case "JUGADOR":
-                    return 0;
-
-                case "ENTR./PREPA/FISIO":
-                    return 1;
-
-                case "SUPERADMIN":
-                    return 2;
-
-                default:
-                    return 3;
+                case "JUGADOR": return 0;
+                case "ENTR./PREPA/FISIO": return 1;
+                case "SUPERADMIN": return 2;
+                default: return 3;
             }
         }
-
         return priority(a.role) - priority(b.role);
     });
 
 
     for (const user of users) {
-
         const fila = document.createElement("div");
         fila.className = "jugadorFila";
-
-
         let accions = "";
 
-
-        // -----------------------------------------
-        // NOMÉS SI POT GESTIONAR
-        // -----------------------------------------
-
         if (potGestionar) {
-
             if (user.role === "JUGADOR") {
-
                 accions += `
                     <button
                         class="addInjuryButton"
@@ -176,45 +157,31 @@ function pintarJugadors(users) {
 
         llista.appendChild(fila);
 
-
-        // -----------------------------------------
-        // EVENTS DELS BOTONS
-        // -----------------------------------------
-
         if (!potGestionar) {
             continue;
         }
 
-
-        const deleteButton =
-            fila.querySelector(".deletePlayerButton");
+        const deleteButton = fila.querySelector(".deletePlayerButton");
 
         if (deleteButton) {
-
             deleteButton.addEventListener("click", () => {
                 eliminarJugador(user);
             });
         }
 
-
-        const addButton =
-            fila.querySelector(".addInjuryButton");
+        const addButton = fila.querySelector(".addInjuryButton");
 
         if (addButton) {
-
             addButton.addEventListener("click", () => {
-                obrirAfegirLesio(user);
+                obrirAfegirLesio(user, veDeFinder);
             });
         }
 
-
-        const questionnaireButton =
-            fila.querySelector(".questionnaireButton");
+        const questionnaireButton = fila.querySelector(".questionnaireButton");
 
         if (questionnaireButton) {
-
             questionnaireButton.addEventListener("click", () => {
-                obrirQuestionaris(user);
+                obrirQuestionaris(user, veDeFinder);
             });
         }
 
@@ -225,7 +192,7 @@ function pintarJugadors(users) {
         if (assessmentButton) {
 
             assessmentButton.addEventListener("click", () => {
-                obrirValoracions(user);
+                obrirValoracions(user, veDeFinder);
             });
         }
     }
@@ -387,6 +354,30 @@ async function eliminarEquip(){
     if(!confirm(`Segur que vols eliminar l'equip "${teamName}"?`)) return;
     await deleteTeam(teamUuid);
     await loadTeams();
+}
+
+
+async function buscarJugador(){
+
+    const nom = document.getElementById("nomJugadorFind").value;
+    const cognom = document.getElementById("cognomJugadorFind").value;
+
+    console.log(nom);
+    console.log(cognom);
+
+    const userTeams = await getAllUserTeams();
+    const teams = await getAllTeams();
+    const userUuids = userTeams.map(u => u.user_uuid);
+    const users = await getUsersByUserTeam(userUuids);
+
+    const usersFiltered = users.filter(user => {
+        const coincideixNom = !nom || user.name.toLowerCase().includes(nom.toLowerCase());
+        const coincideixCognom = !cognom || user.surname.toLowerCase().includes(cognom.toLowerCase());
+
+        return coincideixNom && coincideixCognom && user.role == "JUGADOR";
+    });
+
+    pintarJugadors(usersFiltered, "llistaJugadorsFind", true, true);
 }
 
 
