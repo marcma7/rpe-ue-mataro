@@ -35,7 +35,6 @@ async function carregarLesions(){
     // -----------------------------------------
     // FILTRE DE PERMISOS
     // -----------------------------------------
-
     const visibleUserUuids = await getUserUuidsVisibleInjuries();
 
     // SUPERADMIN -> totes
@@ -74,7 +73,7 @@ async function carregarLesions(){
     // -----------------------------------------
     // PREPARAR LESIONS
     // -----------------------------------------
-
+    console.log(injuries);
     injuries.forEach(lesio => {
 
         lesio.user = injuriesUsers.find(
@@ -108,7 +107,25 @@ async function carregarLesions(){
             (capitalize(lesio.user?.surname) ?? "") +
             " - " +
             lesio.data_lesio;
-    });
+
+        lesio.equips = "("
+        lesio.app_users.user_teams.forEach(equip => {
+            const teamName = equip.teams.team_name;
+
+            // Transforma el nom a les inicials en majúscula (ex: "Fútbol Club Barcelona" -> "FCB")
+            const initials = teamName
+                .trim()
+                .split(/\s+/) // Separa per un o més espais
+                .map(word => word.charAt(0).toUpperCase()) // Agafa la 1a lletra i la posa en majúscula
+                .join(''); // Junta-ho tot sense espais
+
+            // Finalment, ho afegeixes a la lesió
+            lesio.equips = lesio.equips + initials + ", ";
+        });
+        lesio.equips = lesio.equips.replace(/,\s*$/, ')');
+
+      });
+
 
     injuriesShowing = injuries;
 
@@ -136,7 +153,7 @@ function pintarLesions(){
         const fila = document.createElement("div");
         fila.className = "lesioFila";
         fila.innerHTML = `
-            <b>${capitalize(lesio.user?.name ?? "")} ${capitalize(lesio.user?.surname ?? "")}</b>
+            <b>${capitalize(lesio.user?.name ?? "")} ${capitalize(lesio.user?.surname ?? "")} ${capitalize(lesio.equips ?? "")}</b>
             <br>
             ${lesio.data_lesio ?? "-"} &nbsp; | &nbsp; ${lesio.zona ?? "-"} &nbsp; | &nbsp; ${lesio.tipus ?? "-"}
             <br>    

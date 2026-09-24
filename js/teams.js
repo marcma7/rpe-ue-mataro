@@ -347,7 +347,6 @@ async function crearEquip(){
 
 
 async function eliminarEquip(){
-
     const selector = document.getElementById("selectorTeams");
     const teamUuid = selector.value;
     const teamName = selector.options[selector.selectedIndex].text;

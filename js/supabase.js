@@ -1015,7 +1015,7 @@ async function getUser(userUuid){
 
 
 async function getAllInjuries(){
-    const url = `${SUPABASE_URL}/rest/v1/injuries`;
+    const url = `${SUPABASE_URL}/rest/v1/injuries?select=*,app_users(*,user_teams(*,teams(*)))`;
     const res = await fetch(
         url,
         {
