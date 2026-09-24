@@ -1,7 +1,7 @@
 let injuryAssignada = "";
 let diesFisio = [];
 let diesFilterFisio = [];
-let horesFisio = ["17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
+let horesFisio = ["18:30", "18:40", "18:50", "19:00", "19:10", "19:20", "19:30", "19:40", "19:50", "20:00", "20:10", "20:20", "20:30", "20:40", "20:50", "21:00", "21:10", "21:20", "21:30"];
 let horaSeleccionadaFisio = null;
 let visitesFisioHora = [];
 
