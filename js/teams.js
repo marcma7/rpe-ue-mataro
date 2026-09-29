@@ -65,6 +65,14 @@ document.getElementById("selectorTeams").addEventListener("change", async e => {
 });
 
 
+
+document.getElementById("lastSessionButton").addEventListener("click", async () => {
+    const teamUuid = document.getElementById("selectorTeams").value;
+    await loadGestUltimaSessios(teamUuid);
+    mostrarPantalla("lastSession");
+});
+
+
 async function pickPlayers(teamUuid) {
     const userTeams = await getPlayersByTeam(teamUuid);
     const userUuids = userTeams.map(u => u.user_uuid);

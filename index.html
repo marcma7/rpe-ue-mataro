@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="css/styles.css?v=47">
+    <link rel="stylesheet" href="css/styles.css?v=48">
 </head>
 
 <body>
@@ -140,6 +140,21 @@
 
     </div>
 
+    <div id="pantallaUltimaSessio" class="container" style="display:none;">
+        <div class="capcaleraPantalla">
+            <div>
+                <h1 id="titolUltimaSessio"></h1>
+            </div>
+        </div>
+
+        <div id="taulaRespostesUltimaSessio"></div>
+
+        <div class="barraBotons">
+            <button id="enrereVeureUltimaSessio">ENRERE</button>
+        </div>
+
+    </div>
+
     <!-- QUESTIONARIS -->
     <div id="pantallaQuestionaris" class="container" style="display:none;">
         <h1 id="questionariNom"></h1>
@@ -196,13 +211,17 @@
             <button id="afegirJugadorButton">AFEGIR</button>
         </div>
 
+        <div id="dadesLastSession" class="barraBotons">
+            <button id="lastSessionButton">DADES ÚLTIMA SESSIÓ</button>
+        </div>
+
         <div id="llistaJugadors"></div>
         <div id="teamsBottomButtons" class="barraBotons">
-    <button id="afegirSessionsButton">AFEGIR SESSIONS</button>
-    <button id="modificarSessioButton">MODIFICAR SESSIONS</button>
-    <button id="eliminarSessionsButton">ELIMINAR SESSIONS</button>
-    <button id="enrereSessionsATeams">ENRERE</button>
-</div>
+            <button id="afegirSessionsButton">AFEGIR SESSIONS</button>
+            <button id="modificarSessioButton">MODIFICAR SESSIONS</button>
+            <button id="eliminarSessionsButton">ELIMINAR SESSIONS</button>
+            <button id="enrereSessionsATeams">ENRERE</button>
+        </div>
     </div>
 
     <!-- BUSCADOR DE JUGADORS -->
@@ -824,7 +843,8 @@
 
 <script src="js/config.js"></script>
 <script src="js/storage.js"></script>
-<script src="js/supabase.js?v=4"></script>
+<script src="js/supabase.js?v=5"></script>
+<script src="js/ultima_sessio.js"></script>
 <script src="js/rpe.js?v=7"></script>
 <script src="js/questionaris.js"></script>
 <script src="js/teams.js"></script>
@@ -848,6 +868,6 @@
 <script src="js/rpe_team.js"></script>
 <script src="service-worker.js"></script>
 <script src="js/notifications.js?v=4"></script>
-<script src="js/app.js?v=65"></script>
+<script src="js/app.js?v=66"></script>
 </body>
 </html>

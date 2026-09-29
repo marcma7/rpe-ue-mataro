@@ -1030,6 +1030,96 @@ async function getAllInjuries(){
 }
 
 
+async function getPracticesFilled(teamUuid) {
+    const url = `${SUPABASE_URL}/rest/v1/practices?select=*,teams(*,user_teams(*,app_users(*, rpe_registers(*))))&team_uuid=eq.${teamUuid}`;
+    const res = await fetch(
+        url,
+        {
+            headers: {
+                "Accept": "application/json",
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY
+            }
+        }
+    );
+    const practices = await res.json();
+
+    // Si no és un array o ve buit, ho retornem tal qual
+    if (!Array.isArray(practices)) return practices;
+
+    // Funció auxiliar per convertir "dd-mm-yyyy" a un objecte Date de JavaScript
+    const parseDateDDMMYYYY = (dateStr) => {
+        if (!dateStr) return new Date(0);
+        const [day, month, year] = dateStr.split('-');
+        return new Date(`${year}-${month}-${day}`);
+    };
+
+    // Ordenem les pràctiques per data (de més recent a més antiga. Si vols al revés, inverteix a i b)
+    practices.sort((a, b) => {
+        return parseDateDDMMYYYY(b.practice_date) - parseDateDDMMYYYY(a.practice_date);
+    });
+
+    // Recorrem cada pràctica i filtrem els RPE de cada usuari per la data de l'entreno
+    const mappedPractices = practices.map(practice => {
+        const practiceDate = practice.practice_date; // Canvia 'date' pel nom real del camp de data del teu entreno si es diu diferent
+
+        if (!practice.teams || !Array.isArray(practice.teams.user_teams)) {
+            return practice;
+        }
+
+        const filteredUserTeams = practice.teams.user_teams.map(ut => {
+            if (!ut.app_users || !Array.isArray(ut.app_users.rpe_registers)) {
+                return ut;
+            }
+
+            return {
+                ...ut,
+                app_users: {
+                    ...ut.app_users,
+                    // Deixem exclusivament el registre RPE de la mateixa data
+                    rpe_registers: ut.app_users.rpe_registers.filter(
+                        rpe => rpe.date_practice === practiceDate
+                    )
+                }
+            };
+        });
+
+        return {
+            ...practice,
+            teams: {
+                ...practice.teams,
+                user_teams: filteredUserTeams
+            }
+        };
+    });
+
+    // 3. Filtrem: només pràctiques anteriors a avui I que tinguin almenys un RPE
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Posem l'hora a 00:00 per comparar només dies
+
+    return mappedPractices.filter(practice => {
+        // Comprovem que la data sigui anterior a avui (fins al dia anterior)
+        const practiceDateObj = parseDateDDMMYYYY(practice.practice_date);
+        if (practiceDateObj >= today) return false;
+
+        // Comprovem que tingui equips i usuaris vàlids
+        const teams = practice.teams;
+        if (!teams) return false;
+
+        const userTeams = Array.isArray(teams) ? teams[0]?.user_teams : teams.user_teams;
+        if (!Array.isArray(userTeams)) return false;
+
+        // Comprovem si algun usuari té registres RPE
+        return userTeams.some(ut => {
+            const appUser = ut.app_users;
+            if (!appUser) return false;
+
+            const rpeRegisters = appUser.rpe_registers;
+            return Array.isArray(rpeRegisters) && rpeRegisters.length > 0;
+        });
+    });
+}
+
 async function getEpisodesByInjury(uuids){
     if(uuids.length === 0) return [];
     const url = `${SUPABASE_URL}/rest/v1/physio_episodes?injury_uuid=in.(${uuids.join(",")})`;

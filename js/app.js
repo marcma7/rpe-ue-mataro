@@ -54,6 +54,10 @@ document.getElementById("enrereVeureRespostes").addEventListener("click", async 
     await loadGestQuestionaris();
 });
 
+document.getElementById("enrereVeureUltimaSessio").addEventListener("click", async ()=>{
+    mostrarPantalla("teams");
+});
+
 const botoSortir = document.getElementById("botoSortir");
 botoSortir.addEventListener("click", sortir);
 
@@ -230,6 +234,7 @@ function mostrarPantalla(pantalla) {
     document.getElementById("pantallaEnviarValoracionsJugador").style.display="none";
     document.getElementById("pantallaRespostesQuestionari").style.display = "none";
     document.getElementById("pantallaBuscadorJugadors").style.display = "none";
+    document.getElementById("pantallaUltimaSessio").style.display = "none";
 
     if (pantalla === "login") document.getElementById("pantallaLogin").style.display = "flex";
     if (pantalla === "playerSearcher") {
@@ -238,6 +243,7 @@ function mostrarPantalla(pantalla) {
         document.getElementById("nomJugadorFind").value = "";
         document.getElementById("cognomJugadorFind").value = "";
     }
+    if (pantalla === "lastSession") document.getElementById("pantallaUltimaSessio").style.display = "flex";
     if (pantalla === "questionariJugadors") document.getElementById("pantallaEnviarQuestionarisJugador").style.display = "flex";
     if (pantalla === "valoracioJugadors") document.getElementById("pantallaEnviarValoracionsJugador").style.display = "flex";
     if (pantalla === "rpe") document.getElementById("pantallaRPE").style.display = "flex";
