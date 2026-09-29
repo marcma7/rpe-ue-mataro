@@ -73,7 +73,6 @@ async function carregarLesions(){
     // -----------------------------------------
     // PREPARAR LESIONS
     // -----------------------------------------
-    console.log(injuries);
     injuries.forEach(lesio => {
 
         lesio.user = injuriesUsers.find(
@@ -250,7 +249,6 @@ document.getElementById("filtreLesions").addEventListener("change", ()=>{
 
 function filtrarLesions(){
     const filtre = document.getElementById("filtreLesions").value;
-    console.log(injuries);
     if(filtre === "Lesions obertes") injuriesShowing = injuries.filter(l => l.episode.closed == 0);
     else if(filtre === "Sense hora de fisio") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora == 0 && l.episode.closed == 0);
     else if(filtre === "Pendent de primera visita") injuriesShowing = injuries.filter(l => l.demana_fisio > 0 && l.te_hora > 0 && l.visites_fetes == 0 && l.episode.closed == 0);
