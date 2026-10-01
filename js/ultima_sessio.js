@@ -82,6 +82,7 @@ function pintarTaulaUltimaSessio(q, respostes) {
             <tr>
                 <th>Jugador</th>
                 <th style="text-align: center;">RPE</th>
+                <th style="text-align: center;">Load</th>
                 <th style="text-align: center;">Molèsties</th>
             </tr>
         </thead>
@@ -95,6 +96,7 @@ function pintarTaulaUltimaSessio(q, respostes) {
 
         const valor = r ? r.rpe : "";
         const molest = r ? r.molestia : "";
+        const load = r ? r.load : "";
         const teResposta = valor !== null && valor !== undefined && String(valor).trim() !== "";
 
         // Apliquem la transformació de majúscules al nom del jugador
@@ -108,6 +110,13 @@ function pintarTaulaUltimaSessio(q, respostes) {
             <td class="colResposta" style="text-align: center;">
                 ${teResposta
                     ? `<div class="caixaRespostaCompletada">${escaparHTML(String(valor))}</div>`
+                    : `<span class="tagPendent">Pendent</span>`
+                }
+            </td>
+
+            <td class="colResposta" style="text-align: center;">
+                ${teResposta
+                    ? `<div class="caixaRespostaCompletada">${escaparHTML(String(load))}</div>`
                     : `<span class="tagPendent">Pendent</span>`
                 }
             </td>
@@ -143,6 +152,7 @@ async function carregarRespostesUltimaSessio(q) {
         return {
             jugador: u.app_users ? `${u.app_users.name || ""} ${u.app_users.surname || ""}`.trim() : "Jugador desconegut",
             rpe: u.app_users.rpe_registers[0] ? u.app_users.rpe_registers[0].register : "No registrat",
+            load: u.app_users.rpe_registers[0] ? (u.app_users.rpe_registers[0].weighted_register + " AU") : "No registrat",
             molestia: u.app_users.rpe_registers[0] ? (u.app_users.rpe_registers[0].molesties ? u.app_users.rpe_registers[0].molesties : "-") : "-"
         };
     });
@@ -151,8 +161,8 @@ async function carregarRespostesUltimaSessio(q) {
     window.indexPreguntaRespostes = 0;
 
     pintarTaulaUltimaSessio(ultimaSessioSeleccionat, dades);
-
 }
+
 
 function escaparHTML(valor) {
     if (valor === null || valor === undefined) return "";

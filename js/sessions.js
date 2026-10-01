@@ -503,15 +503,25 @@ async function updateModifySession() {
         const practice = modifyPractices.find(x => x.uuid === practiceUuid);
         if (!practice) return;
     
-        const userTeams = await getPlayersByTeam(window.teamSeleccionat.uuid);
-        const playerUuids = userTeams.map(x => x.user_uuid);
+        const userTeams = await getAllUserTeams();
+        // 1. Obtenim un Set amb els user_uuid dels usuaris que estan en aquest equip
+        const userUuidsInTeam = new Set(
+          userTeams
+            .filter(ut => ut.team_uuid === window.teamSeleccionat.uuid)
+            .map(ut => ut.user_uuid)
+        );
+
+        // 2. Filtrem la llista per quedar-nos amb tots els registres d'aquests usuaris
+        const result = userTeams.filter(ut => userUuidsInTeam.has(ut.user_uuid));
+
+        const playerUuids = result.map(x => x.user_uuid);
 
         // 1. Obtenir tots els RPEs existents per a aquests jugadors en la data de la sessió
         const rpes = await getRPEByUsersAndDate(playerUuids, practice.practice_date);
         if (rpes.length === 0) return;
     
         // 2. Obtenir TOTES les sessions de l'equip en aquesta mateixa data
-        const allTeamPractices = await getPracticesByTeam(window.teamSeleccionat.uuid);
+        const allTeamPractices = await getPracticesByDate(practice.practice_date);
         const sameDayPractices = allTeamPractices.filter(p => p.practice_date === practice.practice_date);
         const sameDayPracticeUuids = sameDayPractices.map(p => p.uuid);
 
@@ -521,16 +531,20 @@ async function updateModifySession() {
         const actualitzacions = [];
 
         for (const rpe of rpes) {
-            const userTeam = userTeams.find(x => x.user_uuid === rpe.player_uuid);
-            if (!userTeam) continue;
+            // 1. Obtenim TOTS els registres de user_team d'aquest jugador
+            const userTeamsForPlayer = result.filter(x => x.user_uuid === rpe.player_uuid);
+            if (userTeamsForPlayer.length === 0) continue;
 
-            // Filterm tots els temps del jugador EN TOTS ELS ENTRENAMENTS D'AQUELL DIA
-            const meusTempsDelDia = sameDayTimes.filter(x => x.player_team_uuid === userTeam.uuid);
+            // 2. Extraiem els UUIDs de totes les seves relacions user_team
+            // (substitueix '.uuid' pel nom del camp real si es diu 'id' o similar)
+            const userTeamUuids = userTeamsForPlayer.map(ut => ut.uuid);
 
+            // 3. Filtrem: el temps del dia ha de coincidir amb algun dels user_team uuid del jugador
+            const meusTempsDelDia = sameDayTimes.filter(x => userTeamUuids.includes(x.player_team_uuid));
             const trainTotal = meusTempsDelDia.filter(x => x.practice_type === "train").reduce((s, x) => s + Number(x.time), 0);
             const pfTotal = meusTempsDelDia.filter(x => x.practice_type === "prepfis").reduce((s, x) => s + Number(x.time), 0);
             const gameTotal = meusTempsDelDia.filter(x => x.practice_type === "game").reduce((s, x) => s + Number(x.time), 0);
-    
+
             actualitzacions.push({
                 player_uuid: rpe.player_uuid,
                 register: rpe.register,

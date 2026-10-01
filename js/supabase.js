@@ -486,6 +486,21 @@ async function getPracticesByTeam(teamUuid) {
 }
 
 
+async function getPracticesByDate(pracDate) {
+    const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/practices?practice_date=eq.${pracDate}`,
+        {
+            headers: {
+                "Accept": "application/json",
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY
+            }
+        }
+    );
+    return await response.json();
+}
+
+
 async function insertPractice(practice) {
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/practices`,
