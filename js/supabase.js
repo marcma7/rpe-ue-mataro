@@ -58,8 +58,6 @@ async function getQuestionarisPerContestar(userUuid) {
         // Data d'avui a les 00:00:00 per comparar només dies
         const avui = new Date();
         avui.setHours(0, 0, 0, 0);
-        console.log(data);
-        console.log(avui);
         // Filtrem per data d'enviament anterior o igual a avui
         return data.filter(q => {
             // Canvia 'data_enviament' pel nom real del teu camp de data a la BBDD
@@ -71,7 +69,45 @@ async function getQuestionarisPerContestar(userUuid) {
             const dataQuestionari = new Date(any, mes - 1, dia);
             dataQuestionari.setHours(0, 0, 0, 0);
 
-            console.log(dataQuestionari);
+            // Retorna true si la data és menor o igual a avui
+            return dataQuestionari <= avui;
+        });
+
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+
+async function getQuestionarisPerContestarGlobal() {
+    const url = SUPABASE_URL + "/rest/v1/questionaris_contestar" + "?contestat=eq.0";
+
+    try {
+        const resposta = await fetch(url, {
+            headers: {
+                "Accept": "application/json",
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY
+            }
+        });
+        const data = await resposta.json();
+
+        if (!Array.isArray(data)) return [];
+
+        // Data d'avui a les 00:00:00 per comparar només dies
+        const avui = new Date();
+        avui.setHours(0, 0, 0, 0);
+        // Filtrem per data d'enviament anterior o igual a avui
+        return data.filter(q => {
+            // Canvia 'data_enviament' pel nom real del teu camp de data a la BBDD
+            const textData = q.data_enviament;
+            if (!textData) return false;
+
+            // Desglossem "dd-mm-yyyy"
+            const [dia, mes, any] = textData.split("-").map(Number);
+            const dataQuestionari = new Date(any, mes - 1, dia);
+            dataQuestionari.setHours(0, 0, 0, 0);
 
             // Retorna true si la data és menor o igual a avui
             return dataQuestionari <= avui;
@@ -662,6 +698,24 @@ async function getRPEByUsersAndDate(users, selDate){
 }
 
 
+async function getRPEByDate(selDate){
+    if(users.length===0) return [];
+
+    const joined = users.join(",");
+    const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/rpe_registers?date_practice=eq.${encodeURIComponent(selDate)}`,
+        {
+            headers:{
+                "Accept":"application/json",
+                "apikey":SUPABASE_API_KEY,
+                "Authorization":"Bearer " + SUPABASE_API_KEY
+            }
+        }
+    );
+    return await response.json();
+}
+
+
 async function upsertRPE(data){
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/rpe_registers?on_conflict=player_uuid,date_practice`,
@@ -1230,6 +1284,33 @@ async function upsertPhysioHour(data){
 }
 
 
+async function upsertLastMassivePush(dataAvui, novaHoraStr) {
+    try {
+        // 1. Eliminar qualsevol registre anterior de la taula
+        // (Fem un .neq('id', 0) o similar per assegurar que borra tot, o .not.is('id', null))
+        const { error: errorDelete } = await supabase
+            .from('last_massive_push')
+            .delete()
+            .neq('id', 0); // o un filtre que englobi tota la taula, depèn de la clau primària
+
+        if (errorDelete) console.error("Error esborrant registre antic:", errorDelete);
+
+        // 2. Inserir el nou registre
+        const { error: errorInsert } = await supabase
+            .from('last_massive_push')
+            .insert([{
+                data: dataAvui,
+                hora: novaHoraStr
+            }]);
+
+        if (errorInsert) throw errorInsert;
+
+    } catch (error) {
+        console.error("Error actualitzant last_massive_push:", error);
+    }
+}
+
+
 async function getEpisodesByUuid(uuids){
     if(uuids.length === 0) return [];
     const url = `${SUPABASE_URL}/rest/v1/physio_episodes?uuid=in.(${uuids.join(",")})`;
@@ -1766,6 +1847,21 @@ async function deleteQuestion(uuid){
 async function getAllUserTeams() {
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/user_teams`,
+        {
+            headers: {
+                "Accept": "application/json",
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY
+            }
+        }
+    );
+
+    return await response.json();
+}
+
+
+async function getLastMassivePush() {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/last_massive_push`,
         {
             headers: {
                 "Accept": "application/json",

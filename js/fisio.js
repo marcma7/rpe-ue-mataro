@@ -23,9 +23,16 @@ document.getElementById("enrereFisio").addEventListener("click", ()=>{
     mostrarPantalla("management");
 });
 
-document.getElementById("fisioButton").addEventListener("click", ()=>{
-    mostrarPantalla("fisio");
+document.getElementById("fisioButton").addEventListener("click", async ()=> {
+    await fisioButtonFuncio();
 });
+
+
+
+
+async function fisioButtonFuncio(){
+    mostrarPantalla("fisio");
+}
 
 
 async function carregarLesions(){

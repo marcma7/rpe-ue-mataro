@@ -168,7 +168,7 @@ async function decideRoute(user) {
     }
 
     const questionaris = await getQuestionarisPerContestar(user.uuid);
-    console.log(questionaris);
+
     if (questionaris.length > 0) {
         mostrarPantalla("questionaris");
         await loadQuestionarisPendents(user, questionaris);
@@ -198,6 +198,9 @@ async function decideRoute(user) {
 
     // 1. Canviem de pantalla immediatament per donar sensació de fluïdesa
     mostrarPantalla("management");
+
+    // 2. Executem la comprovació i les notificacions en segon pla (sense bloquetjar)
+    comprovarIEnviarMassivePush().catch(err => console.error("Error en push massiu:", err));
 
     // 2. Gestionem les notificacions en segon pla (sense 'await' al flux principal)
     await activarNotificacionsPush(user.uuid);
@@ -665,4 +668,114 @@ function pintarEstatRPE() {
 
         contenidor.appendChild(fila);
     }
+}
+
+
+async function comprovarIEnviarMassivePush() {
+    try {
+        // 1. Obtenir l'últim registre de last_massive_push (suposant una funció o query a la BD)
+        // Aquest camp té data ("dd-mm-yyyy") i hora ("hh:mm") en text.
+        const ultimPush = await getLastMassivePush(); // Retorna un objecte { data: "02-10-2026", hora: "14:30" } o null
+        const ara = new Date();
+
+        if (ultimPush[0]) {
+            const [dia, mes, any] = ultimPush[0].data.split("-");
+            const [hores, minuts] = ultimPush[0].hora.split(":");
+            const dataUltim = new Date(any, mes - 1, dia, hores, minuts);
+
+            const diferenciaHores = (ara - dataUltim) / (1000 * 60 * 60); // Passar a hores
+
+            // Si han passat menys de 2 hores, no fem res
+            if (diferenciaHores < 2) {
+                return;
+            }
+        }
+
+        // 2. Determinar la data per al RPE segons la franja horària actual
+        const horaActual = ara.getHours();
+        const minutActual = ara.getMinutes();
+        const esDespresDe2230 = (horaActual > 22) || (horaActual === 22 && minutActual >= 30);
+
+        let dataRPE;
+        if (esDespresDe2230) {
+            // A partir de les 22:30 fins les 00:00 -> RPE d'avui
+            dataRPE = formatarData(ara);
+        } else {
+            // Fins les 22:30 -> RPE del dia anterior
+            constahir = new Date(ara);
+            constahir.setDate(constahir.getDate() - 1);
+            dataRPE = formatarData(constahir);
+        }
+
+        const dataAvui = formatarData(ara);
+
+        // 3. Buscar usuaris pendents
+        async function getUsuarisAmbRPEgetPendent(dataRPE) {
+            try {
+                // 1. Obtenir les pràctiques d'aquesta data
+                // (Suposant que tens una funció o query per filtrar per 'practice_date')
+                const practices = await getPracticesByDate(dataRPE);
+                if (!practices || practices.length === 0) return [];
+
+                const practiceUuids = practices.map(p => p.uuid);
+
+                // 2. Obtenir els player_team_uuid convocats/assignats a aquestes pràctiques
+                const ptptList = await getPTPTByPractice(practiceUuids);
+                // Extraiem els player_team_uuid únics que havien de contestar
+                const playerTeamsObligats = [...new Set(ptptList.map(item => item.player_team_uuid))];
+                if (playerTeamsObligats.length === 0) return [];
+
+                const userTeams = await getAllUserTeams();
+                userTeamsObligats = userTeams.filter(u => playerTeamsObligats.includes(u.uuid));
+                usuarisObligats = [...new Set(userTeamsObligats.map(r => r.user_uuid))];
+
+                // 3. Obtenir els RPEs registrats per a aquesta data
+                const rpesDelDia = await getRPEByDate(dataRPE);
+                // Creem un Set amb els player_team_uuid (o user_uuid segons com guardis el RPE) que ja l'han fet
+                const playersQueHanContestat = new Set(rpesDelDia.map(r => r.player_uuid));
+                // 4. Filtrar: quedar-nos amb els que TENEN sessió però NO tenen RPE
+                const playersPendents = usuarisObligats.filter(ptUuid => !playersQueHanContestat.has(ptUuid));
+
+                return playersPendents;
+
+            } catch (error) {
+                console.error("Error calculant usuaris amb RPE pendent:", error);
+                return [];
+            }
+        }
+
+        // - Usuaris amb RPE pendent per a dataRPE
+        const usuarisRPEDependent = await getUsuarisAmbRPEgetPendent(dataRPE);
+
+        // - Usuaris amb qüestionari pendent per a avui
+        const questionarisPerContestar = await getQuestionarisPerContestarGlobal(dataAvui);
+
+        // Unir llistes evitant duplicats si algú té les dues coses pendents
+        const usuarisADenviar = [...new Set([...usuarisRPEDependent, ...questionarisPerContestar.map(x => x.user_uuid)])];
+
+        if (usuarisADenviar.length > 0) {
+            for(const usuari of usuarisADenviar) {
+                // 4. Enviar les notificacions push
+                await enviarNotificacio(usuari, "‼️Acció pendent", `Tens RPE o qüestionaris per completar!`, "/");
+            }
+        }
+
+        // 5. Actualitzar la taula last_massive_push amb el moment actual
+        const novaHoraStr = String(ara.getHours()).padStart(2, "0") + ":" + String(ara.getMinutes()).padStart(2, "0");
+        await upsertLastMassivePush({
+            data: dataAvui,
+            hora: novaHoraStr
+        });
+
+    } catch (error) {
+        console.error("Error en comprovar el massive push:", error);
+    }
+}
+
+// Funció auxiliar per formatar data a "dd-mm-yyyy"
+function formatarData(dateObj) {
+    const d = String(dateObj.getDate()).padStart(2, "0");
+    const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const y = dateObj.getFullYear();
+    return `${d}-${m}-${y}`;
 }
