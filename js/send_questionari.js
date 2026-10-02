@@ -246,7 +246,7 @@ async function enviarQuestionaris(){
         alert("Qüestionari enviat");
 
         // En lloc de sortir directament, obrim el diàleg de duplicació
-        document.getElementById("duplicateDialog").style.display = "flex";
+        document.getElementById("duplicateDialogQuestionaris").style.display = "flex";
 
     } catch(error){
         console.error(error);
