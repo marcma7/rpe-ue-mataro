@@ -762,10 +762,7 @@ async function comprovarIEnviarMassivePush() {
 
         // 5. Actualitzar la taula last_massive_push amb el moment actual
         const novaHoraStr = String(ara.getHours()).padStart(2, "0") + ":" + String(ara.getMinutes()).padStart(2, "0");
-        await upsertLastMassivePush({
-            data: dataAvui,
-            hora: novaHoraStr
-        });
+        await upsertLastMassivePush(dataAvui, novaHoraStr);
 
     } catch (error) {
         console.error("Error en comprovar el massive push:", error);
