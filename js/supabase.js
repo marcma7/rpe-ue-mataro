@@ -41,7 +41,6 @@ async function getQuestionarisPerUsuari(userUuid) {
 
 
 async function getQuestionarisPerContestar(userUuid) {
-
     const url = SUPABASE_URL + "/rest/v1/questionaris_contestar" + "?user_uuid=eq." + encodeURIComponent(userUuid) + "&contestat=eq.0";
 
     try {
@@ -52,7 +51,32 @@ async function getQuestionarisPerContestar(userUuid) {
                 "Authorization": "Bearer " + SUPABASE_API_KEY
             }
         });
-        return await resposta.json();
+        const data = await resposta.json();
+
+        if (!Array.isArray(data)) return [];
+
+        // Data d'avui a les 00:00:00 per comparar només dies
+        const avui = new Date();
+        avui.setHours(0, 0, 0, 0);
+        console.log(data);
+        console.log(avui);
+        // Filtrem per data d'enviament anterior o igual a avui
+        return data.filter(q => {
+            // Canvia 'data_enviament' pel nom real del teu camp de data a la BBDD
+            const textData = q.data_enviament;
+            if (!textData) return false;
+
+            // Desglossem "dd-mm-yyyy"
+            const [dia, mes, any] = textData.split("-").map(Number);
+            const dataQuestionari = new Date(any, mes - 1, dia);
+            dataQuestionari.setHours(0, 0, 0, 0);
+
+            console.log(dataQuestionari);
+
+            // Retorna true si la data és menor o igual a avui
+            return dataQuestionari <= avui;
+        });
+
     } catch (error) {
         console.error(error);
         return [];

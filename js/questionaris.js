@@ -222,12 +222,3 @@ async function eliminarQuestionari(uuid){
     await deleteQuestionari(uuid);
     await loadGestQuestionaris();
 }
-
-
-let questionariEnviar = null;
-
-function obrirEnviar(q){
-    questionariEnviar = q;
-    mostrarPantalla("enviarQuestionari");
-    carregarUsuarisEnviar();
-}

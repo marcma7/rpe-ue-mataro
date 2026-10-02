@@ -168,6 +168,7 @@ async function decideRoute(user) {
     }
 
     const questionaris = await getQuestionarisPerContestar(user.uuid);
+    console.log(questionaris);
     if (questionaris.length > 0) {
         mostrarPantalla("questionaris");
         await loadQuestionarisPendents(user, questionaris);

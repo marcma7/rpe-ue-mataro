@@ -244,11 +244,91 @@ async function enviarQuestionaris(){
     try {
         await upsertContestarQuestionari(registres);
         alert("Qüestionari enviat");
-        mostrarPantalla("gestioQuestionaris");
+
+        // En lloc de sortir directament, obrim el diàleg de duplicació
+        document.getElementById("duplicateDialog").style.display = "flex";
+
     } catch(error){
         console.error(error);
         alert("Error enviant qüestionari");
     }
 }
+
+
+async function duplicarQuestionari(questionariUuid, usuaris, daily, weekly, limitDateStr, dataIniciOriginal) {
+    if (!limitDateStr) {
+        alert("Selecciona una data límit");
+        return;
+    }
+
+    // Convertim la data inicial del qüestionari enviat (format DD-MM-YYYY o objecte Date)
+    // Suposant que rep una cadena "DD-MM-YYYY":
+    const [dia, mes, any] = dataIniciOriginal.split("-");
+    let data = new Date(`${any}-${mes}-${dia}`);
+    const dataLimit = new Date(limitDateStr);
+
+    // Increment inicial
+    data.setDate(data.getDate() + (daily ? 1 : 7));
+
+    while (data <= dataLimit) {
+        const nouDia = String(data.getDate()).padStart(2,"0");
+        const nouMes = String(data.getMonth()+1).padStart(2,"0");
+        const nouAny = data.getFullYear();
+        const novaDataStr = `${nouDia}-${nouMes}-${nouAny}`;
+
+        const registresNous = usuaris.map(u => ({
+            user_uuid: u,
+            questionari_uuid: questionariUuid,
+            data_enviament: novaDataStr,
+            contestat: 0
+        }));
+
+        try {
+            await upsertContestarQuestionari(registresNous);
+        } catch (error) {
+            console.error("Error duplicant qüestionari per a la data:", novaDataStr, error);
+        }
+
+        if (daily) data.setDate(data.getDate() + 1);
+        else data.setDate(data.getDate() + 7);
+    }
+
+    alert("QÜESTIONARIS DUPLICATS CORRECTAMENT");
+    document.getElementById("duplicateDialogQuestionaris").style.display = "none";
+    mostrarPantalla("gestioQuestionaris");
+}
+
+
+document.getElementById("confirmDuplicateButtonQuestionaris").addEventListener("click", async () => {
+    const daily = document.getElementById("repeatDailyQuestionaris").checked;
+    const weekly = document.getElementById("repeatWeeklyQuestionaris").checked;
+    const limit = document.getElementById("duplicateLimitDateQuestionaris").value;
+
+    if (!daily && !weekly) {
+        alert("Selecciona diari o setmanal");
+        return;
+    }
+
+    // Suposant que guardes globalment el questionariEnviar.uuid i la data d'avui
+    const avui = new Date();
+    const dia = String(avui.getDate()).padStart(2,"0");
+    const mes = String(avui.getMonth()+1).padStart(2,"0");
+    const any = avui.getFullYear();
+    const dataAvuiStr = `${dia}-${mes}-${any}`;
+
+    await duplicarQuestionari(
+        questionariEnviar.uuid,
+        usuarisSeleccionats,
+        daily,
+        weekly,
+        limit,
+        dataAvuiStr
+    );
+});
+
+document.getElementById("cancelDuplicateButtonQuestionaris").addEventListener("click", () => {
+    document.getElementById("duplicateDialogQuestionaris").style.display = "none";
+    mostrarPantalla("gestioQuestionaris");
+});
 
 
