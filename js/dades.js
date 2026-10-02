@@ -561,7 +561,7 @@ function pintarWellness(w){
             valor:w.dolor
         },
         {
-            nom:"Ànim",
+            nom:"Son",
             valor:w.anim
         }
     ];
@@ -581,13 +581,6 @@ function pintarWellness(w){
 function colorWellness(tipus, valor){
 
     if(valor == null) return "#bbb";
-
-    if(tipus === "Ànim"){
-        if(valor >= 4) return "#006400";
-        if(valor === 3) return "#FCB714";
-        return "#D90808";
-    }
-
     if(valor <= 2) return "#006400";
     if(valor === 3) return "#FCB714";
     return "#D90808";
@@ -596,9 +589,9 @@ function colorWellness(tipus, valor){
 
 function colorGlobalWellness(valor){
 
-    if(valor >= 4) return "#006400";
+    if(valor >= 4) return "#D90808";
     if(valor >= 3) return "#FCB714";
-    return "#D90808";
+    return "#006400";
 }
 
 
