@@ -1286,24 +1286,39 @@ async function upsertPhysioHour(data){
 
 async function upsertLastMassivePush(dataAvui, novaHoraStr) {
     try {
-        // 1. Eliminar qualsevol registre anterior de la taula
-        // (Fem un .neq('id', 0) o similar per assegurar que borra tot, o .not.is('id', null))
-        const { error: errorDelete } = await supabase
-            .from('last_massive_push')
-            .delete()
-            .neq('id', 0); // o un filtre que englobi tota la taula, depèn de la clau primària
+        // 1. Esborrar tot el contingut anterior de la taula 'last_massive_push'
+        // A l'API REST de Supabase, un DELETE sense filtres o amb un filtre genèric borra les files.
+        // Per assegurar que borra tot, podem filtrar per un camp que no sigui nul (ex: id.not.is.null o uuid.not.is.null, o directament sense paràmetres si l'API ho permet, tot i que Supabase demana algun filtre per seguretat).
+        const deleteUrl = `${SUPABASE_URL}/rest/v1/last_massive_push?id=not.is.null`; // O el camp clau primària que tinguis
 
-        if (errorDelete) console.error("Error esborrant registre antic:", errorDelete);
+        await fetch(deleteUrl, {
+            method: "DELETE",
+            headers: {
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY,
+                "Content-Type": "application/json"
+            }
+        });
 
         // 2. Inserir el nou registre
-        const { error: errorInsert } = await supabase
-            .from('last_massive_push')
-            .insert([{
+        const insertUrl = `${SUPABASE_URL}/rest/v1/last_massive_push`;
+        const res = await fetch(insertUrl, {
+            method: "POST",
+            headers: {
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY,
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal" // Perquè no retorni res innecessari
+            },
+            body: JSON.stringify({
                 data: dataAvui,
                 hora: novaHoraStr
-            }]);
+            })
+        });
 
-        if (errorInsert) throw errorInsert;
+        if (!res.ok) {
+            throw new Error(`Error en inserir a last_massive_push: ${res.statusText}`);
+        }
 
     } catch (error) {
         console.error("Error actualitzant last_massive_push:", error);
