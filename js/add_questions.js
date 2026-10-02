@@ -113,17 +113,26 @@ async function guardarPregunta(){
 
     if(tipusPregunta==="ESCALA NUMÈRICA"){
         let arr=[];
+        minimPregunta = document.getElementById("minPregunta").value;
+        maximPregunta = document.getElementById("maxPregunta").value;
+
         for(let i=minimPregunta; i<=maximPregunta; i++){
             arr.push(i);
         }
         opcions = arr.join("//");
+        console.log(opcions);
     }
 
     if(tipusPregunta==="OPCIONS"){
         opcions = opcionsPregunta.join("//");
     }
 
-    const numeroPregunta = questions.length + 1;
+    let numeroPregunta = 0;
+    if(preguntaEditant.uuid) {
+        numeroPregunta = preguntaEditant.num_pregunta;
+    } else {
+        numeroPregunta = questions.length + 1;
+    }
 
     const data = {
         pregunta:text,
@@ -136,6 +145,7 @@ async function guardarPregunta(){
     if (preguntaEditant.uuid) {
         data.uuid = preguntaEditant.uuid;
         delete data.num_pregunta;
+        console.log(data);
         await upsertQuestion(data);
     } else {
         await addQuestion(data);
