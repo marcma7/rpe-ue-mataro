@@ -319,6 +319,7 @@ function pintarTaulaRespostes(q, respostes) {
     `;
 
     const tbody = taula.querySelector("tbody");
+    console.log(respostes);
 
     respostes.forEach(r => {
         const tr = document.createElement("tr");
@@ -356,126 +357,81 @@ function tornarGestQuestionaris() {
 
 
 async function carregarRespostesQuestionari(q) {
-
     const div = document.getElementById("taulaRespostesQuestionari");
     div.innerHTML = `
         <div style="padding:20px;">Carregant respostes...</div>
     `;
 
+    // Obtenim les preguntes del qüestionari i les ordenem pel seu número (num_pregunta)
+    const preguntes = await getQuestionsFromQuestionari(q.uuid);
+    preguntes.sort((a, b) => (a.num_pregunta || 0) - (b.num_pregunta || 0));
+
     try {
         const responseQU = await fetch(
-            `${SUPABASE_URL}/rest/v1/questionaris_contestar?questionari_uuid=eq.${q.uuid}`,
+            `${SUPABASE_URL}/rest/v1/questionaris_contestar?questionari_uuid=eq.${q.uuid}&contestat=eq.1&select=*, questionari_respostes(*), questionaris(*, questions(*)), app_users(*, user_teams(teams(uuid, team_name)))`,
             {
                 headers: {
                     "Accept": "application/json",
                     "apikey": SUPABASE_API_KEY,
-                    "Authorization": "Bearer " + SUPABASE_API_KEY
+                    "Authorization": "Bearer " + SUPABASE_API_KEY,
+                    "Range": "0-9999" // 👈 AQUESTA CAPÇALERA EVITA EL LÍMIT DE 1000 FILES
                 }
             }
         );
 
         if (!responseQU.ok) throw new Error(await responseQU.text());
-
         const assignacions = await responseQU.json();
+        console.log("Respostes rebudes de Supabase:", assignacions);
 
-        const userUuids = [...new Set(assignacions.map(x => x.user_uuid).filter(Boolean))];
+        // Mapegem directament les dades rebudes de la taula questionari_respostes
+        const dadesMap = new Map();
 
-        let usuaris = [];
-        if (userUuids.length > 0) {
-            const responseUsers = await fetch(
-                `${SUPABASE_URL}/rest/v1/app_users?uuid=in.(${userUuids.join(",")})`,
-                {
-                    headers: {
-                        "Accept": "application/json",
-                        "apikey": SUPABASE_API_KEY,
-                        "Authorization": "Bearer " + SUPABASE_API_KEY
-                    }
-                }
-            );
+        assignacions.forEach(a => {
+            const user = a.app_users;
+            if (!user) return;
+            const team = user?.user_teams?.[0]?.teams;
 
-            if (!responseUsers.ok) throw new Error(await responseUsers.text());
-            usuaris = await responseUsers.json();
-        }
-
-        const questionariUserUuids = assignacions.map(x => x.uuid).filter(Boolean);
-        let respostes = [];
-
-        if (questionariUserUuids.length > 0) respostes = await getAnswersByQuestionari(questionariUserUuids);
-
-        const preguntes = await getQuestionsFromQuestionari(q.uuid);
-
-        let userTeams = [];
-
-        if (userUuids.length > 0) {
-
-            const responseTeams = await fetch(
-                `${SUPABASE_URL}/rest/v1/user_teams?user_uuid=in.(${userUuids.join(",")})`,
-                {
-                    headers: {
-                        "Accept": "application/json",
-                        "apikey": SUPABASE_API_KEY,
-                        "Authorization": "Bearer " + SUPABASE_API_KEY
-                    }
-                }
-            );
-
-
-            if (!responseTeams.ok) throw new Error(await responseTeams.text());
-
-            userTeams = await responseTeams.json();
-        }
-
-        const teamUuids = [...new Set(userTeams.map(x => x.team_uuid).filter(Boolean))];
-        let equips = [];
-
-        if (teamUuids.length > 0) {
-            const responseTeams = await fetch(
-                `${SUPABASE_URL}/rest/v1/teams?uuid=in.(${teamUuids.join(",")})`,
-                {
-                    headers: {
-                        "Accept": "application/json",
-                        "apikey": SUPABASE_API_KEY,
-                        "Authorization":
-                            "Bearer " + SUPABASE_API_KEY
-                    }
-                }
-            );
-
-            if (!responseTeams.ok) throw new Error(await responseTeams.text());
-            equips = await responseTeams.json();
-        }
-
-        const dades = assignacions.map(assignacio => {
-            const user = usuaris.find(u => u.uuid === assignacio.user_uuid);
-            const userTeam = userTeams.find(ut => ut.user_uuid === assignacio.user_uuid);
-            const team = userTeam ? equips.find(t => t.uuid === userTeam.team_uuid) : null;
-            const respostesJugador = respostes.filter(r => r.questionari_user_uuid === assignacio.uuid);
-
-            return {
+            dadesMap.set(user.uuid, {
                 jugador: user ? `${user.name || ""} ${user.surname || ""}`.trim() : "Jugador desconegut",
-                jugadorUuid: assignacio.user_uuid,
+                jugadorUuid: user.uuid,
                 equip: team ? team.team_name : "",
                 equipUuid: team ? team.uuid : null,
-                dataEnviament: assignacio.data_enviament,
-                contestat: assignacio.contestat,
-                assignacioUuid: assignacio.uuid,
-                respostes: preguntes.map(pregunta => {
-                        const resposta = respostesJugador.find(r => r.question_uuid === pregunta.uuid || r.pregunta_uuid === pregunta.uuid);
-                        return {
-                            preguntaUuid: pregunta.uuid,
-                            pregunta: pregunta.pregunta,
-                            resposta: resposta ? (resposta.resposta ?? resposta.answer ?? resposta.valor ?? "") : ""
-                        };
-                    })
-            };
+                dataEnviament: a.data_enviament,
+                contestat: a.contestat,
+                assignacioUuid: a.questionaris_contestar?.uuid,
+                respostesMap: preguntes.map(pregunta => {
+                    // Aquí has de buscar la resposta d'aquesta pregunta concreta per a aquest usuari.
+                    // Si tens un array de respostes relacionades, ho busques així:
+                    const respostaTrobada = a.questionari_respostes?.find(r => r.question_uuid === pregunta.uuid);
+                    return {
+                        preguntaUuid: pregunta.uuid,
+                        pregunta: pregunta.pregunta,
+                        num_pregunta: pregunta.num_pregunta,
+                        resposta: respostaTrobada ? respostaTrobada.resposta : ""
+                    };
+                })
+            });
         });
+
+        console.log(dadesMap);
+
+
+        // Convertim el mapa a un array final on cada jugador té un array de respostes alineat amb les preguntes
+        const dades = Array.from(dadesMap.values()).map(item => ({
+            ...item,
+            respostes: preguntes.map(pregunta => ({
+                preguntaUuid: pregunta.uuid,
+                pregunta: pregunta.pregunta,
+                num_pregunta: pregunta.num_pregunta,
+                resposta: item.respostesMap.find(x => x.preguntaUuid === pregunta.uuid)?.resposta ?? ""
+            }))
+        }));
 
         window.respostesQuestionariActuals = dades;
         window.preguntesQuestionariActuals = preguntes;
         window.indexPreguntaRespostes = 0;
 
         carregarFiltreDatesRespostes(dades);
-
         pintarFiltresRespostes(dades);
         pintarSelectorPreguntaRespostes(preguntes);
 

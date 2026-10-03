@@ -973,6 +973,45 @@ async function getAnswersByQuestionari(questionariUserUuids) {
 }
 
 
+async function getAnswersByQuestionariTipus(questionariUuids) {
+
+    if (questionariUuids.length === 0) return [];
+
+    const url =
+        `${SUPABASE_URL}/rest/v1/questionari_respostes` +
+        `?questionari_uuid=eq.(${questionariUuids})` +
+        `&select=*,questions(*)` +
+        `&order=question_uuid`;
+
+    try {
+
+        const response = await fetch(url, {
+            headers: {
+                "Accept": "application/json",
+                "apikey": SUPABASE_API_KEY,
+                "Authorization": "Bearer " + SUPABASE_API_KEY
+            }
+        });
+
+        if (!response.ok) {
+            console.error(
+                "Error obtenint respostes:",
+                response.status,
+                await response.text()
+            );
+            return [];
+        }
+
+        return await response.json();
+
+    } catch (error) {
+
+        console.error("Error obtenint respostes:", error);
+        return [];
+    }
+}
+
+
 async function getValoracio(uuid){
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/valoracions?uuid=eq.${uuid}`,
