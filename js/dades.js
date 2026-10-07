@@ -643,38 +643,87 @@ function ordenarPerDataDesc(array, camp) {
 
 
 async function carregarQuestionarisJugador(userUuid) {
-
     const questionaris = await getQuestionarisPerUsuari(userUuid);
 
     if (!questionaris || questionaris.length === 0) return [];
 
     const allQuestionaris = await getAllQuestionaris();
-    
-    const questionariUserUuids = questionaris.map(q => q.uuid);
 
-    const respostes = await getAnswersByQuestionari(questionariUserUuids);
+    // 1. Agrupem per tipus de qüestionari (questionari_uuid)
+    const mapPerTipus = new Map();
 
-    const resultat = questionaris.map(q => {
+    // 1. Obtenim la data d'avui en format "YYYY-MM-DD"
+    const avui = new Date();
+    const anyAvui = avui.getFullYear();
+    const mesAvui = String(avui.getMonth() + 1).padStart(2, '0');
+    const diaAvui = String(avui.getDate()).padStart(2, '0');
+    const avuiString = `${anyAvui}-${mesAvui}-${diaAvui}`;
 
-        const preguntesRespostes = respostes
-            .filter(r => r.questionari_user_uuid === q.uuid)
-            .sort((a, b) => {
-                const numA = Number(a.questions?.num_pregunta ?? 999);
-                const numB = Number(b.questions?.num_pregunta ?? 999);
-                return numA - numB;
+    // 2. Filtrem convertint el "dd-mm-yyyy" a "yyyy-mm-dd"
+    const questionarisPassatsOAvui = questionaris.filter(q => {
+        if (!q.data_enviament) return false;
+
+        // Suposant format "dd-mm-yyyy" o "dd/MM/yyyy"
+        const parts = q.data_enviament.substring(0, 10).split(/[-/]/);
+        if (parts.length !== 3) return false;
+
+        const [dia, mes, any] = parts;
+        const dataNormalitzada = `${any}-${mes}-${dia}`; // Queda "yyyy-mm-dd"
+
+        // Ara ja podem comparar alfabèticament de manera segura
+        return dataNormalitzada <= avuiString;
+    });
+
+    questionarisPassatsOAvui.forEach(q => {
+        const qTypeId = q.questionari_uuid;
+        if (!mapPerTipus.has(qTypeId)) {
+            const infoTipus = allQuestionaris.find(item => item.uuid === qTypeId);
+            mapPerTipus.set(qTypeId, {
+                questionariUuid: qTypeId,
+                nom: infoTipus?.name || "Qüestionari",
+                assignacions: []
             });
+        }
+        mapPerTipus.get(qTypeId).assignacions.push(q);
+    });
 
-        const thisQuestionari = allQuestionaris
-            .filter(r => r.uuid === q.questionari_uuid);
+    // 2. Processem cada grup per calcular l'últim enviat i l'últim contestat
+    const resultat = Array.from(mapPerTipus.values()).map(grup => {
+        // Ordenem les assignacions per data d'enviament (de més nova a més antiga)
+        const assignacionsOrdenades = grup.assignacions.sort((a, b) =>
+            new Date(b.data_enviament || 0) - new Date(a.data_enviament || 0)
+        );
+
+        // L'últim enviat és el primer de la llista ordenada
+        const ultimEnviat = assignacionsOrdenades[0]?.data_enviament || null;
+
+        // Busquem d'entre totes les assignacions quals estan contestades
+        const contestades = assignacionsOrdenades.filter(a => Number(a.contestat) === 1 || a.data_resposta);
+
+        // Ordenem les contestades per trobar la més recent
+        contestades.sort((a, b) => {
+            const dataA = new Date(a.data_resposta || a.data_enviament || 0);
+            const dataB = new Date(b.data_resposta || b.data_enviament || 0);
+            return dataB - dataA;
+        });
+
+        const ultimContestat = contestades[0]?.data_enviament || null;
+        const dataUltimaResposta = contestades[0]?.data_resposta || null;
+
+        // Opcional: Determinar si l'últim enviat està contestat o no per pintar l'estat
+        const ultimEstaContestat = assignacionsOrdenades[0] ? Number(assignacionsOrdenades[0].contestat) === 1 : false;
 
         return {
-            ...q,
-            preguntesRespostes,
-            thisQuestionari
+            nom: grup.nom,
+            ultimEnviat,
+            ultimContestat,
+            dataUltimaResposta,
+            contestat: ultimEstaContestat,
+            totalAssignacions: grup.assignacions.length
         };
     });
 
-    return ordenarPerDataDesc(resultat, "data_resposta");
+    return resultat;
 }
 
 
@@ -692,19 +741,21 @@ function pintarQuestionarisTargeta(questionaris) {
     }
 
     questionaris.forEach(q => {
-        const nom = q.thisQuestionari[0]?.name || "Qüestionari";
-        const contestat = Number(q.contestat) === 1;
-        const data = q.data_resposta || q.data_enviament;
         const item = document.createElement("div");
-
         item.className = "dataItem";
+
         item.innerHTML = `
             <div class="dataItemLeft">
-                <span class="dataItemTitle">${escaparHTML(nom)}</span>
-                <span class="dataItemDate">${contestat ? "Última resposta: " + data : "Enviat: " + q.data_enviament}</span>
+                <span class="dataItemTitle">${escaparHTML(q.nom)}</span>
+                <span class="dataItemDate" style="display: flex; flex-direction: column; gap: 2px; margin-top: 4px;">
+                    <span>📤 Últim enviat: <strong>${q.ultimEnviat || "N/A"}</strong></span>
+                    <span>📥 Última resposta: <strong>${q.dataUltimaResposta || "Cap"}</strong> (Qüestionari enviat el ${q.ultimContestat})</span>
+                </span>
             </div>
 
-            <span class="dataItemStatus ${contestat ? "statusDone" : "statusPending"}">${contestat ? "CONTESTAT" : "PENDENT"}</span>
+            <span class="dataItemStatus ${q.contestat ? "statusDone" : "statusPending"}">
+                ${q.contestat ? "CONTESTAT" : "PENDENT"}
+            </span>
         `;
         container.appendChild(item);
     });
