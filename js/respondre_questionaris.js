@@ -319,7 +319,6 @@ function pintarTaulaRespostes(q, respostes) {
     `;
 
     const tbody = taula.querySelector("tbody");
-    console.log(respostes);
 
     respostes.forEach(r => {
         const tr = document.createElement("tr");
@@ -381,7 +380,6 @@ async function carregarRespostesQuestionari(q) {
 
         if (!responseQU.ok) throw new Error(await responseQU.text());
         const assignacions = await responseQU.json();
-        console.log("Respostes rebudes de Supabase:", assignacions);
 
         // Mapegem directament les dades rebudes de la taula questionari_respostes
         const dadesMap = new Map();
@@ -390,8 +388,9 @@ async function carregarRespostesQuestionari(q) {
             const user = a.app_users;
             if (!user) return;
             const team = user?.user_teams?.[0]?.teams;
+            const clauUnica = `${user.uuid}_${a.data_enviament}`;
 
-            dadesMap.set(user.uuid, {
+            dadesMap.set(clauUnica, {
                 jugador: user ? `${user.name || ""} ${user.surname || ""}`.trim() : "Jugador desconegut",
                 jugadorUuid: user.uuid,
                 equip: team ? team.team_name : "",
@@ -412,9 +411,6 @@ async function carregarRespostesQuestionari(q) {
                 })
             });
         });
-
-        console.log(dadesMap);
-
 
         // Convertim el mapa a un array final on cada jugador té un array de respostes alineat amb les preguntes
         const dades = Array.from(dadesMap.values()).map(item => ({

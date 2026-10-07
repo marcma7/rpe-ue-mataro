@@ -120,7 +120,6 @@ async function guardarPregunta(){
             arr.push(i);
         }
         opcions = arr.join("//");
-        console.log(opcions);
     }
 
     if(tipusPregunta==="OPCIONS"){
@@ -145,7 +144,6 @@ async function guardarPregunta(){
     if (preguntaEditant.uuid) {
         data.uuid = preguntaEditant.uuid;
         delete data.num_pregunta;
-        console.log(data);
         await upsertQuestion(data);
     } else {
         await addQuestion(data);
